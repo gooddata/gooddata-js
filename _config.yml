@@ -1,0 +1,4 @@
+name: GoodData Javascript SDK
+pygments: true
+safe: true
+url: "http://sdk.gooddata.com/gd-sdk-js"
