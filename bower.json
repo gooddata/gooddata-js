@@ -5,6 +5,16 @@
   "authors": [
     "GoodData A-players <da@gooddata.com>"
   ],
+  "ignore": [
+    "ci",
+    "examples",
+    "coverage",
+    "lib",
+    "src",
+    "test",
+    "tools",
+    "package.json"
+  ],
   "description": "GoodData JS SDK",
   "main": "dist/gooddata-js.min.js",
   "license": "GoodLicense",
