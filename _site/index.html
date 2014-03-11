@@ -2,22 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>GoodData Ruby GEM</title>
+    <title>GoodData Javascript SDK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
 	<link href="https://developer.gooddata.com/favicon.ico" rel="shortcut icon">
     <!-- Le styles -->
-    <link href="http://sdk.gooddata.com/gooddata-ruby/css/bootstrap.css" rel="stylesheet">
-    <link href="http://sdk.gooddata.com/gooddata-ruby/css/syntax.css" rel="stylesheet">
-    <link href="http://sdk.gooddata.com/gooddata-ruby/css/bootstrap-responsive.css" rel="stylesheet">
-	<link href="http://sdk.gooddata.com/gooddata-ruby/css/style.css" rel="stylesheet">
+    <link href="http://sdk.gooddata.com/gooddata-js/css/bootstrap.css" rel="stylesheet">
+    <link href="http://sdk.gooddata.com/gooddata-js/css/syntax.css" rel="stylesheet">
+    <link href="http://sdk.gooddata.com/gooddata-js/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="http://sdk.gooddata.com/gooddata-js/css/style.css" rel="stylesheet">
 	
 <style>
 body {
     padding-top: 20px;
     padding-bottom: 40px;
-	background: url(http://sdk.gooddata.com/gooddata-ruby/images/background.png) fixed left top no-repeat;
+	background: url(http://sdk.gooddata.com/gooddata-js/images/background.png) fixed left top no-repeat;
 	background-size: 111px 245px;
 	
   }
@@ -26,11 +26,11 @@ a.topics {margin-top: 7px; font-size: 16px;}
 
   /* Custom container */
   .container-narrow {
-    margin: 0 auto;
+    margin: 45px auto;
     max-width: 700px;
   }
   .container-narrow > hr {
-    margin: 30px 0;
+    margin: 45px 0;
   }
 
   /* Main marketing message and sign up button */
@@ -61,12 +61,7 @@ a.topics {margin-top: 7px; font-size: 16px;}
 /*        border: 1px solid red;*/
   }
 
-  a#read-next {
-	height: 40px;
-	background: #f6f6f6;
-	padding: 10px 30px 10px 30px;
-	display: block;
-}
+
 </style>
 
 </head>
@@ -83,17 +78,20 @@ a.topics {margin-top: 7px; font-size: 16px;}
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="brand" href="http://sdk.gooddata.com/gooddata-ruby">GoodData Ruby</a>
+     <a class="brand" href="http://sdk.gooddata.com/gooddata-js">
+      <img src="http://sdk.gooddata.com/gooddata-js/images/header-logo.png" alt="GoodData Labs" width="24" height="24">
+      GoodData<span style="color: #FCAF28;">JS
+</a>
       <div class="nav-collapse collapse container"  >
         <ul class="nav">
           <li class="active">
-            <a href="http://sdk.gooddata.com/gooddata-ruby">Home</a>
+            <a href="http://sdk.gooddata.com/gooddata-js">Home</a>
           </li>
           <li class="">
-            <a href="http://sdk.gooddata.com/gooddata-ruby/getting-started">Get Started</a>
+            <a href="http://sdk.gooddata.com/gooddata-js/getting-started">Get Started</a>
           </li>
 		<li class="">
-            <a href="http://sdk.gooddata.com/gooddata-ruby/tutorials">Tutorials</a>
+            <a href="http://sdk.gooddata.com/gooddata-js/tutorials">Tutorials</a>
           </li>
           <li class="">
             <a href="https://developer.gooddata.com/forum" target="_blank">Forum</a>
@@ -110,13 +108,13 @@ a.topics {margin-top: 7px; font-size: 16px;}
   	<p style="margin-top: 5px;">See other <br />SDKs</p>
   </a>
 	
-  <img src="http://www.prestonlee.com/wp-content/uploads/2008/09/ruby.png" width="200px" style="margin-bottom: 10px;">
+  <img src="http://ericleads.com/wp-content/uploads/2011/09/JS.png" width="200px" style="margin-bottom: 10px;">
 	<br />
-  <h1>Leverage power of GoodData API.<br />Now.</h1>
+  <h1>Javascript SDK for<br />GoodData Platform</h1>
   
-  <a class="callout" target="_blank" href="https://github.com/gooddata/gooddata-ruby">Fork me on Github</a>
+  <a class="callout" target="_blank" href="https://github.com/gooddata/gooddata-js">Fork me on Github</a>
   <div style="margin-top: 25px;">
-	<iframe src="http://ghbtns.com/github-btn.html?user=gooddata&repo=gooddata-ruby&type=watch&count=true&size=large"
+	<iframe src="http://ghbtns.com/github-btn.html?user=gooddata&repo=gooddata-js&type=watch&count=true&size=large"
 			  allowtransparency="true" frameborder="0" scrolling="0" width="170" height="30"></iframe>
 	<a href="https://twitter.com/gooddata_dev" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @gooddata_dev</a>
 			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
@@ -133,14 +131,14 @@ a.topics {margin-top: 7px; font-size: 16px;}
     <div class="span6">
       <div>
         <img src="http://www.defaulticon.com/sites/default/files/styles/icon-front-page-32x32-preview/public/field/image/MD-shuffle.png?itok=zffXPwRr" width="50px">
-        <h4 style="display: inline;">Expressive</h4>
-        <p>Do more with less code.</p>
+        <h4 style="display: inline;">Lightweight</h4>
+        <p>Without a big hustle.</p>
       </div>
 
       <div>
         <img src="http://www.defaulticon.com/sites/default/files/styles/icon-front-page-32x32-preview/public/field/image/hammer.png?itok=GwaBj_x2" width="50px">
-        <h4 style="display: inline;">Battle Tested</h4>
-        <p>Used on 10s of projects written by people at GoodData.</p>
+        <h4 style="display: inline;">Extensible</h4>
+        <p>Not only data visualisations.</p>
       </div>
 
 
@@ -152,13 +150,13 @@ a.topics {margin-top: 7px; font-size: 16px;}
       <div>
         
 	        <img src="http://www.defaulticon.com/sites/default/files/styles/icon-front-page-32x32-preview/public/field/image/plugin-disabled.png?itok=lVgrl6D3" width="50px">
-        <h4 style="display: inline;">Automation friendly</h4>
-        <p>No more manual jobs.</p>
+        <h4 style="display: inline;">Compatible</h4>
+        <p>We build the dashboards using the same.</p>
       </div>
 
       <div><img src="http://www.defaulticon.com/sites/default/files/styles/icon-front-page-32x32-preview/public/field/image/layers_0.png?itok=wBvb1GYw" width="50px">
-        <h4 style="display: inline;">Full stack</h4>
-        <p>The whole cycle of a project done using dev familiar tools.</p>
+        <h4 style="display: inline;">Deployable</h4>
+        <p>Offer your custom visualisations to the others.</p>
       </div>
 
     </div>
@@ -174,7 +172,7 @@ a.topics {margin-top: 7px; font-size: 16px;}
 
   <div class="span12" >
     <div style="margin: 25px 0 25px 0;font-size: 18px;line-height:1.3;">
-	Since its beginning, GoodData was alway super adamant to have everything accessible over APIs. GoodData Ruby SDK is the most polished wrapper over them. It gives high level way to work with the most common tasks and provides low level plumbing to let you play with any API with ease. If you wanted to automate your latest project look no further.
+	We have always been huge Javascript fans and had a ton of experience. We've built complete GoodData Web Application using Javascript. Anyway, we want to unleash everybody who is missing some part of GoodData and want to quickly build it. Custom visualisation? Tooling? You are in the best place to achieve what you need. You just need to know how to code in Javascript.
     </div>
   </div>
 </div>
@@ -192,19 +190,8 @@ a.topics {margin-top: 7px; font-size: 16px;}
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/js/jquery.js"></script>
-    <script src="/js/bootstrap-transition.js"></script>
-    <script src="/js/bootstrap-alert.js"></script>
-    <script src="/js/bootstrap-modal.js"></script>
-    <script src="/js/bootstrap-dropdown.js"></script>
-    <script src="/js/bootstrap-scrollspy.js"></script>
-    <script src="/js/bootstrap-tab.js"></script>
-    <script src="/js/bootstrap-tooltip.js"></script>
-    <script src="/js/bootstrap-popover.js"></script>
-    <script src="/js/bootstrap-button.js"></script>
-    <script src="/js/bootstrap-collapse.js"></script>
-    <script src="/js/bootstrap-carousel.js"></script>
-    <script src="/js/bootstrap-typeahead.js"></script>
+     <script src="https://developer.gooddata.com/themes/site_themes/developer2012/js/jquery.js?v=1"></script>
+    <script src="http://sdk.gooddata.com/gooddata-js/js/bootstrap.min.js"></script>
 
   </body>
 </html>
