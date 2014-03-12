@@ -112,6 +112,47 @@ define(['./xhr'], function(xhr) {
         return reportDef;
     };
 
+    /**
+     * Poor man's get path
+     *
+     * @private
+     */
+    var getPath = function(obj, path) {
+        var paths = path.split('.'),
+            found = obj,
+            i;
+
+        for (i = 0; i < paths.length; ++i) {
+            if (found[paths[i]] === undefined) {
+                return undefined;
+            } else {
+                found = found[paths[i]];
+            }
+        }
+        return found;
+    };
+
+    /**
+     * @private
+     * @param {String} uri
+     * @param {Sring} method
+     * @param {Function|String} either fuction processing result or path in result object
+     *
+     */
+    // TODO deal with null resolver (=> means just call resolve)
+    var wrapInPromise = function(uri, method, resolver) {
+        var d = $.Deferred();
+        xhr.ajax(uri, { type: method }).then(function(result) {
+            if(typeof resolver === 'function') {
+                d.resolve(resolver.call(this, result));
+                return;
+            }
+            var res = (resolver !== "") ? getPath(result, resolver) : result;
+            d.resolve(res);
+        }, d.reject);
+
+        return d.promise();
+    };
     // Returns a promise which either:
     //  * **resolves** - which means user is logged in or
     //  * **rejects** - meaning is not logged in
@@ -176,15 +217,9 @@ define(['./xhr'], function(xhr) {
      * @return {Array} An Array of projects
      */
     var getProjects = function(profileId) {
-        var d = $.Deferred();
-
-        xhr.get('/gdc/account/profile/'+ profileId +'/projects').then(function(result) {
-            d.resolve(result.projects.map(function(proj) {
-                return proj.project;
-            }));
-        }, d.reject);
-
-        return d.promise();
+        return wrapInPromise('/gdc/account/profile/'+ profileId +'/projects', 'GET', function(result) {
+            return result.projects.map(function(p) { return p.project; });
+        });
     };
 
     /**
@@ -194,13 +229,7 @@ define(['./xhr'], function(xhr) {
      * @return {Array} An array of objects containing datasets metadata
      */
     var getDatasets = function(projectId) {
-        var d = $.Deferred();
-
-        xhr.get('/gdc/md/'+ projectId +'/query/datasets').then(function(result) {
-            d.resolve(result.query.entries);
-        }, d.reject);
-
-        return d.promise();
+        return wrapInPromise('/gdc/md/'+ projectId +'/query/datasets', 'GET', 'query.entries');
     };
 
     /**
@@ -387,13 +416,7 @@ define(['./xhr'], function(xhr) {
      * @return {Array} An array of attribute objects
      */
     var getAttributes = function(projectId) {
-        var d = $.Deferred();
-
-        xhr.get('/gdc/md/'+ projectId +'/query/attributes').then(function(result) {
-            d.resolve(result.query.entries);
-        }, d.reject);
-
-        return d.promise();
+        return wrapInPromise('/gdc/md/'+ projectId +'/query/attributes', "GET", "query.entries");
     };
 
     /**
@@ -404,13 +427,7 @@ define(['./xhr'], function(xhr) {
      * @see getFolders
      */
     var getDimensions = function(projectId) {
-        var d = $.Deferred();
-
-        xhr.get('/gdc/md/'+ projectId +'/query/dimensions').then(function(result) {
-            d.resolve(result.query.entries);
-        }, d.reject);
-
-        return d.promise();
+        return wrapInPromise('/gdc/md/'+ projectId +'/query/dimensions', "GET", "query.entries");
     };
 
     /**
@@ -423,12 +440,8 @@ define(['./xhr'], function(xhr) {
      */
     var getFolders = function(projectId, type) {
         var _getFolders = function(projectId, type) {
-            var r = $.Deferred();
             var typeURL = type ? '?type='+type : '';
-            xhr.get('/gdc/md/'+ projectId +'/query/folders'+typeURL).then(function(result) {
-                r.resolve(result.query.entries);
-            }, r.reject);
-            return r.promise();
+            return wrapInPromise('/gdc/md/'+ projectId +'/query/folders'+typeURL, "GET", "query.entries");
         };
 
         switch (type) {
@@ -610,13 +623,7 @@ define(['./xhr'], function(xhr) {
      * @return {Array} An array of metric objects
      */
     var getMetrics = function(projectId) {
-        var d = $.Deferred();
-
-        xhr.get('/gdc/md/'+ projectId +'/query/metrics').then(function(result) {
-            d.resolve(result.query.entries);
-        }, d.reject);
-
-        return d.promise();
+        return wrapInPromise('/gdc/md/'+ projectId +'/query/metrics', "GET", "query.entries");
     };
 
     /**
@@ -664,16 +671,12 @@ define(['./xhr'], function(xhr) {
     };
 
     var getCurrentProjectId = function() {
-        var d = $.Deferred();
-
-        xhr.get('/gdc/app/account/bootstrap').then(function(result) {
-            var uri = result.bootstrapResource.current.project.links.self;
-            d.resolve(uri.split('/').pop());
-        }, d.reject);
-
-        return d.promise();
+        return wrapInPromise('/gdc/app/account/bootstrap', 'GET', function(result) {
+            return result.bootstrapResource.current.project.links.self.split('/').pop();
+        });
     };
 
+    // TODO this should be fixed on backend
     var getObjectDetails = function(uri) {
         var d = $.Deferred();
 
@@ -712,6 +715,7 @@ define(['./xhr'], function(xhr) {
         return d.promise();
     };
 
+    // TODO this should fixed on backend
     var getObjectUri = function(projectId, identifier) {
         var d = $.Deferred(),
             uriFinder = function(obj) {
