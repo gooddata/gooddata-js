@@ -133,26 +133,18 @@ define(['./xhr'], function(xhr) {
     };
 
     /**
-     * @private
-     * @param {String} uri
-     * @param {Sring} method
-     * @param {Function|String} either fuction processing result or path in result object
+     * Create getter function for accessing nested objects
      *
+     * @param {String} path Target path to nested object
+     *
+     * @private
      */
-    // TODO deal with null resolver (=> means just call resolve)
-    var wrapInPromise = function(uri, method, resolver) {
-        var d = $.Deferred();
-        xhr.ajax(uri, { type: method }).then(function(result) {
-            if(typeof resolver === 'function') {
-                d.resolve(resolver.call(this, result));
-                return;
-            }
-            var res = (resolver !== "") ? getPath(result, resolver) : result;
-            d.resolve(res);
-        }, d.reject);
-
-        return d.promise();
+    var getIn = function(path) {
+        return function(object) {
+            return getPath(object, path);
+        }
     };
+
     // Returns a promise which either:
     //  * **resolves** - which means user is logged in or
     //  * **rejects** - meaning is not logged in
@@ -217,7 +209,7 @@ define(['./xhr'], function(xhr) {
      * @return {Array} An Array of projects
      */
     var getProjects = function(profileId) {
-        return wrapInPromise('/gdc/account/profile/'+ profileId +'/projects', 'GET', function(result) {
+        return xhr.get('/gdc/account/profile/' + profileId + '/projects').then(function(result) {
             return result.projects.map(function(p) { return p.project; });
         });
     };
@@ -229,7 +221,7 @@ define(['./xhr'], function(xhr) {
      * @return {Array} An array of objects containing datasets metadata
      */
     var getDatasets = function(projectId) {
-        return wrapInPromise('/gdc/md/'+ projectId +'/query/datasets', 'GET', 'query.entries');
+        return xhr.get('/gdc/md/' + projectId + '/query/datasets').then(getIn('query.entries'));
     };
 
     /**
@@ -416,7 +408,7 @@ define(['./xhr'], function(xhr) {
      * @return {Array} An array of attribute objects
      */
     var getAttributes = function(projectId) {
-        return wrapInPromise('/gdc/md/'+ projectId +'/query/attributes', "GET", "query.entries");
+        return xhr.get('/gdc/md/' + projectId + '/query/attributes').then(getIn('query.entries'));
     };
 
     /**
@@ -427,7 +419,7 @@ define(['./xhr'], function(xhr) {
      * @see getFolders
      */
     var getDimensions = function(projectId) {
-        return wrapInPromise('/gdc/md/'+ projectId +'/query/dimensions', "GET", "query.entries");
+        return xhr.get('/gdc/md/' + projectId + '/query/dimensions').then(getIn('query.entries'));
     };
 
     /**
@@ -441,7 +433,8 @@ define(['./xhr'], function(xhr) {
     var getFolders = function(projectId, type) {
         var _getFolders = function(projectId, type) {
             var typeURL = type ? '?type='+type : '';
-            return wrapInPromise('/gdc/md/'+ projectId +'/query/folders'+typeURL, "GET", "query.entries");
+
+            return xhr.get('/gdc/md/' + projectId + '/query/folders' + typeURL).then(getIn('query.entries'));
         };
 
         switch (type) {
@@ -623,7 +616,7 @@ define(['./xhr'], function(xhr) {
      * @return {Array} An array of metric objects
      */
     var getMetrics = function(projectId) {
-        return wrapInPromise('/gdc/md/'+ projectId +'/query/metrics', "GET", "query.entries");
+        return xhr.get('/gdc/md/' + projectId + '/query/metrics').then(getIn('query.entries'));
     };
 
     /**
@@ -671,7 +664,7 @@ define(['./xhr'], function(xhr) {
     };
 
     var getCurrentProjectId = function() {
-        return wrapInPromise('/gdc/app/account/bootstrap', 'GET', function(result) {
+        return xhr.get('/gdc/app/account/bootstrap').then(function(result) {
             return result.bootstrapResource.current.project.links.self.split('/').pop();
         });
     };
