@@ -18,7 +18,7 @@ You can find more about the GD authentication mechanism here.
 * Depends on [jQuery JavaScript library](http://jquery.com/) javascript library
 * Each SDK function returns [jQuery Deferred promise](http://api.jquery.com/deferred.promise/)
 
-## GD Authentication Mechansim
+## GD Authentication Mechanism
 
 In this JS SDK library we provide you with a simple `login(username, passwd)` function
 that does the magic for you.
