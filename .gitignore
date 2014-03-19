@@ -1,7 +1,0 @@
-dist/
-coverage/
-examples/gd-sdk-js.js
-node_modules/
-lib/
-# for jekyll
-_site/

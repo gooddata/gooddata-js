@@ -1,0 +1,137 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <div id="api-tabview" class="tabview">
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul class="tabs">
+                <li><a href="#api-modules" class="category">Modules</a>
+                    <ul id="api-modules" class="apis modules">
+                    
+                        <li><a href="../modules/execution.html">execution</a></li>
+                    
+                        <li><a href="../modules/metadata.html">metadata</a></li>
+                    
+                        <li><a href="../modules/project.html">project</a></li>
+                    
+                        <li><a href="../modules/sdk.html">sdk</a></li>
+                    
+                        <li><a href="../modules/user.html">user</a></li>
+                    
+                        <li><a href="../modules/util.html">util</a></li>
+                    
+                        <li><a href="../modules/xhr.html">xhr</a></li>
+                    
+                    </ul>
+                </li>
+                <li><a href="#api-classes" class="category">Classes</a>
+                    <ul id="api-classes" class="apis classes">
+                    
+                        <li><a href="../classes/execution.html">execution</a></li>
+                    
+                        <li><a href="../classes/metadata.html">metadata</a></li>
+                    
+                        <li><a href="../classes/project.html">project</a></li>
+                    
+                        <li><a href="../classes/sdk.html">sdk</a></li>
+                    
+                        <li><a href="../classes/user.html">user</a></li>
+                    
+                        <li><a href="../classes/util.html">util</a></li>
+                    
+                        <li><a href="../classes/xhr.html">xhr</a></li>
+                    
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v0.0.13</span>
+                        <h1 class="file-heading">File: src/util.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+// Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
+define(function() {
+    &#x27;use strict&#x27;;
+
+    /**
+     * Utility methods. Mostly private
+     *
+     * @module util
+     * @class util
+     *
+     */
+
+    /**
+     * Simple get path helper method
+     *
+     * @private
+     * @method getPath
+     * @param {Object} obj object to start getting path from
+     * @param {String} path path identifier
+     * @return object at given path
+     */
+    var getPath = function(obj, path) {
+        var paths = path.split(&#x27;.&#x27;),
+            found = obj,
+            i;
+
+        for (i = 0; i &lt; paths.length; ++i) {
+            if (found[paths[i]] === undefined) {
+                return undefined;
+            } else {
+                found = found[paths[i]];
+            }
+        }
+        return found;
+    };
+
+    /**
+     * Create getter function for accessing nested objects
+     *
+     * @param {String} path Target path to nested object
+     * @method getIn
+     * @private
+     */
+    var getIn = function(path) {
+        return function(object) {
+            return getPath(object, path);
+        };
+    };
+
+    return {
+        getPath: getPath,
+        getIn: getIn
+    };
+});
+
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
