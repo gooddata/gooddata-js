@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GoodData Javascript SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://developer.gooddata.com/favicon.ico" rel="shortcut icon">
+    <!-- Le styles -->
+    <link href="http://localhost:4000/css/bootstrap.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/syntax.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/style.css" rel="stylesheet">
+
+<style>
+body {
+    padding-top: 20px;
+    padding-bottom: 40px;
+    background: url(http://sdk.gooddata.com/gooddata-js/images/background.png) fixed left top no-repeat;
+    background-size: 111px 245px;
+
+  }
+
+a.topics {margin-top: 7px; font-size: 16px;}
+
+  /* Custom container */
+  .container-narrow {
+    margin: 45px auto;
+    max-width: 700px;
+  }
+  .container-narrow > hr {
+    margin: 45px 0;
+  }
+
+  /* Main marketing message and sign up button */
+  .jumbotron {
+    padding: 60px 0;
+    text-align: center;
+  }
+  .jumbotron h1 {
+    font-size: 48px;
+    line-height: 1;
+  }
+  .jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+  }
+
+  /* Supporting marketing content */
+  .marketing {
+    margin: 60px 0;
+  }
+  .marketing p + h4 {
+    margin-top: 28px;
+  }
+
+  img.centered {
+    margin: 30px auto;
+    display: block;
+/*        border: 1px solid red;*/
+  }
+
+
+</style>
+
+</head>
+  <body>
+    <div>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div style="margin-left: 100px;">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="http://localhost:4000">
+                <img src="http://localhost:4000/images/header-logo.png" alt="GoodData JS SDK" width="24" height="24">
+            GoodData<span style="color: #F0E040;">JS
+            </a>
+            <div class="nav-collapse collapse container">
+                <ul class="nav">
+                    
+                    
+                    <li>
+                        <a href="http://localhost:4000/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//getting-started">Get Started</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//api">API</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//tutorials">Tutorials</a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://developer.gooddata.com/forum" target="_blank">Forum</a>
+                    </li>
+                </ul>
+            </div>
+            </div>
+        </div>
+        </div>
+      <div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div style="margin-left: 100px;">
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="brand" href="http://localhost:4000">
+      <img src="http://localhost:4000/images/header-logo.png" alt="GoodData Labs" width="24" height="24">
+      GoodData<span style="color: #FCAF28;">JS
+</a>
+      <div class="nav-collapse collapse container">
+        <ul class="nav">
+          <li class="">
+            <a href="http://localhost:4000/">Home</a>
+          </li>
+          <li class="">
+            <a href="http://localhost:4000/getting-started">Get started</a>
+          </li>
+          <li class="active">
+            <a href="http://localhost:4000/tutorials">Tutorials</a>
+          </li>
+		<li class="">
+            <a href="https://developer.gooddata.com/forum" target="_blank">Forum</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-narrow" style="margin-top: 40px;">
+  <h2>Available Functions</h2>
+  <p>Here is a set of functions that mostly are a thin wraper over the <a href='https://developer.gooddata.com/api'>GoodData API</a>. Before calling any of those functions, you need to authenticate with a valid GoodData user credentials. After that, every subsequent call in the current session is authenticated. You can find more about the GD authentication mechanism here.</p>
+
+<h2 id='conventions_and_dependencies'>Conventions and Dependencies</h2>
+
+<ul>
+<li>Depends on <a href='http://jquery.com/'>jQuery JavaScript library</a> javascript library</li>
+
+<li>Each SDK function returns <a href='http://api.jquery.com/deferred.promise/'>jQuery Deferred promise</a></li>
+</ul>
+
+<h2 id='gd_authentication_mechanism'>GD Authentication Mechanism</h2>
+
+<p>In this JS SDK library we provide you with a simple <code>login(username, passwd)</code> function that does the magic for you. To fully understand the authentication mechansim, please read <a href='http://developer.gooddata.com/article/authentication-via-api'>Authentication via API article</a> on <a href='http://developer.gooddata.com/'>GooData Developer Portal</a></p>
+
+<h1 id='functions'>Functions</h1>
+
+<h2 id='loginusername_password'>login(username, password)</h2>
+
+<p>This function provides an authentication entry point to the GD API. It is needed to authenticate by calling this function prior any other API calls. After providing valid credentiols every subsequent API call in a current session will be authenticated.</p>
+
+<h3 id='params'>Params:</h3>
+
+<ul>
+<li>
+<p><strong>String</strong> <em>username</em></p>
+</li>
+
+<li>
+<p><strong>String</strong> <em>password</em></p>
+</li>
+</ul>
+
+<h2 id='getprojectsprofileid'>getProjects(profileId)</h2>
+
+<p>Fetches projects available for the user represented by the given profileId</p>
+
+<h3 id='params'>Params:</h3>
+
+<ul>
+<li><strong>String</strong> <em>profileId</em> - User profile identifier</li>
+</ul>
+
+<h3 id='return'>Return:</h3>
+
+<ul>
+<li><strong>Array</strong> An Array of projects</li>
+</ul>
+
+<h2 id='getdatasetsprojectid'>getDatasets(projectId)</h2>
+
+<p>Fetches all datasets for the given project</p>
+
+<h3 id='params'>Params:</h3>
+
+<ul>
+<li><strong>String</strong> <em>projectId</em> - GD project identifier</li>
+</ul>
+
+<h3 id='return'>Return:</h3>
+
+<ul>
+<li><strong>Array</strong> An array of objects containing datasets metadata</li>
+</ul>
+
+<h2 id='getcolorpaletteprojectid'>getColorPalette(projectId)</h2>
+
+<p>Fetches a chart color palette for a project represented by the given projectId parameter.</p>
+
+<h3 id='params'>Params:</h3>
+
+<ul>
+<li><strong>String</strong> <em>projectId</em> - A project identifier</li>
+</ul>
+
+<h3 id='return'>Return:</h3>
+
+<ul>
+<li><strong>Array</strong> An array of objects with r, g, b fields representing a project&#39;s</li>
+</ul>
+
+<h2 id='setcolorpaletteprojectid_colors'>setColorPalette(projectId, colors)</h2>
+
+<p>Sets given colors as a color palette for a given project.</p>
+
+<h3 id='params'>Params:</h3>
+
+<ul>
+<li>
+<p><strong>String</strong> <em>projectId</em> - GD project identifier</p>
+</li>
+
+<li>
+<p><strong>Array</strong> <em>colors</em> - An array of colors that we want to use within the project.</p>
+</li>
+</ul>
+
+<h2 id='getdataprojectid_elements'>getData(projectId, elements)</h2>
+
+<p>For the given projectId it returns table structure with the given elements in column headers.</p>
+
+<h3 id='params'>Params:</h3>
+
+<ul>
+<li>
+<p><strong>String</strong> <em>projectId</em> - GD project identifier</p>
+</li>
+
+<li>
+<p><strong>Array</strong> <em>elements</em> - An array of attribute or metric identifiers.</p>
+</li>
+</ul>
+
+<h3 id='return'>Return:</h3>
+
+<ul>
+<li><strong>Object</strong> Structure with <code>headers</code> and <code>rawData</code> keys filled with values from execution.</li>
+</ul>
+
+<h2 id='getattributesproject'>getAttributes(Project)</h2>
+
+<p>Reutrns all attributes in a project specified by projectId param</p>
+
+<h3 id='params'>Params:</h3>
+
+<ul>
+<li><strong>projectId</strong> <em>Project</em> identifier</li>
+</ul>
+
+<h3 id='return'>Return:</h3>
+
+<ul>
+<li><strong>Array</strong> An array of attribute objects</li>
+</ul>
+
+<h2 id='getdimensionsproject'>getDimensions(Project)</h2>
+
+<p>Returns all dimensions in a project specified by projectId param</p>
+
+<h3 id='params'>Params:</h3>
+
+<ul>
+<li><strong>projectId</strong> <em>Project</em> identifier</li>
+</ul>
+
+<h3 id='return'>Return:</h3>
+
+<ul>
+<li><strong>Array</strong> An array of dimension objects</li>
+</ul>
+
+<h2 id='getmetricsproject'>getMetrics(Project)</h2>
+
+<p>Returns all metrics in a project specified by the given projectId</p>
+
+<h3 id='params'>Params:</h3>
+
+<ul>
+<li><strong>projectId</strong> <em>Project</em> identifier</li>
+</ul>
+
+<h3 id='return'>Return:</h3>
+
+<ul>
+<li><strong>Array</strong> An array of metric objects</li>
+</ul>
+
+<h2 id='getavailablemetricsprojectid_attrs'>getAvailableMetrics(projectId, attrs)</h2>
+
+<p>Returns all metrics that are reachable (with respect to ldm of the project specified by the given projectId) for given attributes</p>
+
+<p>See: getAvailableAttributes</p>
+
+<h3 id='params'>Params:</h3>
+
+<ul>
+<li>
+<p><strong>String</strong> <em>projectId</em> - Project identifier</p>
+</li>
+
+<li>
+<p><strong>Array</strong> <em>attrs</em> - An array of attribute uris for which we want to get</p>
+</li>
+</ul>
+
+<h3 id='return'>Return:</h3>
+
+<ul>
+<li><strong>Array</strong> An array of reachable metrics for the given attrs</li>
+</ul>
+
+<h2 id='getavailableattributesprojectid_metrics'>getAvailableAttributes(projectId, metrics)</h2>
+
+<p>Returns all attributes that are reachable (with respect to ldm of the project specified by the given projectId) for given metrics (also called as drillCrossPath)</p>
+
+<p>See: getAvailableMetrics</p>
+
+<h3 id='params'>Params:</h3>
+
+<ul>
+<li>
+<p><strong>String</strong> <em>projectId</em> - Project identifier</p>
+</li>
+
+<li>
+<p><strong>Array</strong> <em>metrics</em> - An array of metric uris for which we want to get</p>
+</li>
+</ul>
+
+<h3 id='return'>Return:</h3>
+
+<ul>
+<li><strong>Array</strong> An array of reachable attributes for the given metrics</li>
+</ul>
+
+<h2 id='validatemaqlmaqlexpression_projectid'>validateMaql(maqlExpression, projectId)</h2>
+
+<p>Validates a given MAQL expression in the context of the project specified by a given projectId.</p>
+
+<h3 id='params'>Params:</h3>
+
+<ul>
+<li>
+<p><strong>String</strong> <em>maqlExpression</em> - MAQL Expression</p>
+</li>
+
+<li>
+<p><strong>String</strong> <em>projectId</em> - GD project identifier</p>
+</li>
+</ul>
+
+<h3 id='return'>Return:</h3>
+
+<ul>
+<li><strong>Object</strong> JSON object with either <code>maqlOK</code> or <code>maqlErr</code> field based on the</li>
+</ul>
+  
+  <div class="section-nav">
+  <div class="left align-right">
+    
+      <span class="prev disabled">Back</span>
+    
+  </div>
+  <div class="right align-left">
+    
+      <a href="http://localhost:4000/recipe/d3-viz/" class="next">
+        Next
+      </a>
+    
+  </div>
+  <div class="clear"></div>
+</div>
+
+</div>
+
+      <hr>
+
+<div class="footer" style="text-align: center; font-size: 80%;">
+<p>&copy; GoodData 2014</p>
+<p>Pictograms used on this page are from <a href="http://www.defaulticon.com/">http://www.defaulticon.com/</a> created by <a href="http://www.interactivemania.com/">http://www.interactivemania.com/</a></p>
+      </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+     <script src="https://developer.gooddata.com/themes/site_themes/developer2012/js/jquery.js?v=1"></script>
+    <script src="http://localhost:4000/js/bootstrap.min.js"></script>
+
+  </body>
+</html>

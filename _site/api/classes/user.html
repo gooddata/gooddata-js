@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GoodData Javascript SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://developer.gooddata.com/favicon.ico" rel="shortcut icon">
+    <!-- Le styles -->
+    <link href="http://localhost:4000/css/bootstrap.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/syntax.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.14.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="http://localhost:4000/api/assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="http://localhost:4000/api/assets/css/main.css" id="site_styles">
+    <style type="text/css">
+        .navbar {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 20px;
+            color: #333333;
+        }
+    </style>
+    <script src="http://yui.yahooapis.com/combo?3.14.1/build/yui/yui-min.js"></script>
+
+</head>
+<body class="yui3-skin-sam">
+    <div>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div style="margin-left: 100px;">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="http://localhost:4000">
+                <img src="http://localhost:4000/images/header-logo.png" alt="GoodData JS SDK" width="24" height="24">
+            GoodData<span style="color: #F0E040;">JS
+            </a>
+            <div class="nav-collapse collapse container">
+                <ul class="nav">
+                    
+                    
+                    <li>
+                        <a href="http://localhost:4000/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//getting-started">Get Started</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//api">API</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//tutorials">Tutorials</a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://developer.gooddata.com/forum" target="_blank">Forum</a>
+                    </li>
+                </ul>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <div id="api-tabview" class="tabview">
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul class="tabs">
+                <li><a href="#api-modules" class="category">Modules</a>
+                    <ul id="api-modules" class="apis modules">
+                    
+                        <li><a href="../modules/execution.html">execution</a></li>
+                    
+                        <li><a href="../modules/metadata.html">metadata</a></li>
+                    
+                        <li><a href="../modules/project.html">project</a></li>
+                    
+                        <li><a href="../modules/sdk.html">sdk</a></li>
+                    
+                        <li><a href="../modules/user.html">user</a></li>
+                    
+                        <li><a href="../modules/util.html">util</a></li>
+                    
+                        <li><a href="../modules/xhr.html">xhr</a></li>
+                    
+                    </ul>
+                </li>
+                <li><a href="#api-classes" class="category">Classes</a>
+                    <ul id="api-classes" class="apis classes">
+                    
+                        <li><a href="../classes/execution.html">execution</a></li>
+                    
+                        <li><a href="../classes/metadata.html">metadata</a></li>
+                    
+                        <li><a href="../classes/project.html">project</a></li>
+                    
+                        <li><a href="../classes/sdk.html">sdk</a></li>
+                    
+                        <li><a href="../classes/user.html">user</a></li>
+                    
+                        <li><a href="../classes/util.html">util</a></li>
+                    
+                        <li><a href="../classes/xhr.html">xhr</a></li>
+                    
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v0.0.13</span>
+                        <h1>user Class</h1>
+<div class="meta">
+    
+
+    
+
+    
+        <div class="foundat">
+            <strong>Defined in:</strong> <a href="../files/src_user.js.html#l5"><code>src&#x2F;user.js:5</code></a>
+        </div>
+    
+
+    
+        
+            <strong>Module:</strong> <a href="../modules/user.html">user</a>
+        
+    
+
+    
+</div>
+
+
+
+<div class="intro">
+    
+</div>
+
+
+
+<div id="classdocs" class="tabview no-columns">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+        
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+        
+        
+        
+        
+    </ul>
+    <div>
+
+        <div id="index" class="api-class-tabpanel index">
+                <div class="api-options">
+        Show:
+        <label>
+            <input type="checkbox" class="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label>
+            <input type="checkbox" class="api-show-protected">
+            Protected
+        </label>
+
+        <label>
+            <input type="checkbox" class="api-show-private">
+            Private
+        </label>
+        <label>
+            <input type="checkbox" class="api-show-deprecated">
+            Deprecated
+        </label>
+    </div>
+
+
+
+            
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods">
+                        
+                            <li class="index-item method">
+                                <a href="#method_isLoggedIn">isLoggedIn</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_login">login</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_logout">logout</a>
+
+                                
+                                
+                            </li>
+                        
+                    </ul>
+                </div>
+            
+
+            
+
+            
+
+            
+        </div>
+
+        
+            <div id="methods" class="api-class-tabpanel">
+                    <div class="api-options">
+        Show:
+        <label>
+            <input type="checkbox" class="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label>
+            <input type="checkbox" class="api-show-protected">
+            Protected
+        </label>
+
+        <label>
+            <input type="checkbox" class="api-show-private">
+            Private
+        </label>
+        <label>
+            <input type="checkbox" class="api-show-deprecated">
+            Deprecated
+        </label>
+    </div>
+
+
+
+                
+                    <div id="method_isLoggedIn" class="method item">
+    <h3 class="name"><code>isLoggedIn</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_user.js.html#l10"><code>src&#x2F;user.js:10</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Find out whether a user is logged in</p>
+<p>Returns a promise which either:
+<strong>resolves</strong> - which means user is logged in or
+<strong>rejects</strong> - meaning is not logged in</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_login" class="method item">
+    <h3 class="name"><code>login</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>username</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>password</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_user.js.html#l23"><code>src&#x2F;user.js:23</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>This function provides an authentication entry point to the GD API. It is needed to authenticate
+by calling this function prior any other API calls. After providing valid credentials
+every subsequent API call in a current session will be authenticated.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">username</code>
+                        <span class="type">String</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">password</code>
+                        <span class="type">String</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_logout" class="method item">
+    <h3 class="name"><code>logout</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_user.js.html#l46"><code>src&#x2F;user.js:46</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Logs out current user</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+            </div>
+        
+
+        
+
+        
+
+        
+    </div>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <hr />
+        <div class="footer" style="text-align: center; font-size: 80%;">
+            <p>&copy; GoodData 2014</p>
+            <p>Pictograms used on this page are from <a href="http://www.defaulticon.com/">http://www.defaulticon.com/</a> created by <a href="http://www.interactivemania.com/">http://www.interactivemania.com/</a></p>
+        </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://developer.gooddata.com/themes/site_themes/developer2012/js/jquery.js?v=1"></script>
+    <script src="http://localhost:4000/js/bootstrap.min.js"></script>
+    <script src="http://localhost:4000/api/assets/vendor/store.min.js"></script>
+    <script src="http://localhost:4000/api/assets/vendor/prettify/prettify-min.js"></script>
+    <script>prettyPrint();</script>
+    <script src="http://localhost:4000/api/assets/js/yui-prettify.js"></script>
+    <script src="http://localhost:4000/api/assets/../api.js"></script>
+    <script src="http://localhost:4000/api/assets/js/api-filter.js"></script>
+    <script src="http://localhost:4000/api/assets/js/api-search.js"></script>
+    <script src="http://localhost:4000/api/assets/js/api-list.js"></script>
+    <script src="http://localhost:4000/api/assets/js/apidocs.js"></script>
+
+  </body>
+</html>
+
