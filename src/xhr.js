@@ -139,6 +139,11 @@ define(['_jquery'], function($) { 'use strict';
             }
         }).done(function(data, textStatus, xhr) {
             if (xhr.status === 202) {
+                // if the response is an async task, poll the
+                // poll link instead of the original link
+                if (data.asyncTask){
+                    settings.url = data.asyncTask.link.poll;
+                }
                 handlePolling(settings, d);
             } else {
                 d.resolve(data, textStatus, xhr);
