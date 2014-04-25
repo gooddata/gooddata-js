@@ -64,7 +64,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.1</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.3</span>
                         <h1 class="file-heading">File: src/xhr.js</h1>
 
 <div class="file">
@@ -210,6 +210,11 @@ define([&#x27;_jquery&#x27;], function($) { &#x27;use strict&#x27;;
             }
         }).done(function(data, textStatus, xhr) {
             if (xhr.status === 202) {
+                // if the response is 202 and Location header is not empty, let&#x27;s poll on the new Location
+                var location = xhr.getResponseHeader(&#x27;Location&#x27;);
+                if (location){
+                    settings.url = location;
+                }
                 handlePolling(settings, d);
             } else {
                 d.resolve(data, textStatus, xhr);

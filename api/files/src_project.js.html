@@ -64,7 +64,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.1</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.3</span>
                         <h1 class="file-heading">File: src/project.js</h1>
 
 <div class="file">
@@ -89,6 +89,12 @@ define([&#x27;xhr&#x27;, &#x27;util&#x27;], function(xhr, util) {
      */
     var getCurrentProjectId = function() {
         return xhr.get(&#x27;/gdc/app/account/bootstrap&#x27;).then(function(result) {
+            var currentProject = result.bootstrapResource.current.project;
+            // handle situation in which current project is missing (e.g. new user)
+            if (!currentProject) {
+                return null;
+            }
+
             return result.bootstrapResource.current.project.links.self.split(&#x27;/&#x27;).pop();
         });
     };

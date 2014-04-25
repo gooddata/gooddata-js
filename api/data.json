@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.1",
+        "version": "0.1.3",
         "url": ""
     },
     "files": {
@@ -555,7 +555,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 25,
+            "line": 31,
             "description": "Fetches projects available for the user represented by the given profileId",
             "itemtype": "method",
             "name": "getProjects",
@@ -575,7 +575,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 38,
+            "line": 44,
             "description": "Fetches all datasets for the given project",
             "itemtype": "method",
             "name": "getDatasets",
@@ -595,7 +595,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 70,
+            "line": 76,
             "description": "Fetches a chart color palette for a project represented by the given\nprojectId parameter.",
             "itemtype": "method",
             "name": "getColorPalette",
@@ -615,7 +615,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 100,
+            "line": 106,
             "description": "Sets given colors as a color palette for a given project.",
             "itemtype": "method",
             "name": "setColorPalette",
@@ -747,7 +747,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 160,
+            "line": 165,
             "description": "Wrapper for xhr.ajax method GET",
             "itemtype": "method",
             "name": "get",
@@ -756,7 +756,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 166,
+            "line": 171,
             "description": "Wrapper for xhr.ajax method POST",
             "itemtype": "method",
             "name": "post",
@@ -765,7 +765,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 173,
+            "line": 178,
             "description": "Wrapper for xhr.ajax method PUT",
             "itemtype": "method",
             "name": "put",
