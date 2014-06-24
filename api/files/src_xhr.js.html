@@ -18,6 +18,8 @@ title: foobar
                 <li><a href="#api-modules" class="category">Modules</a>
                     <ul id="api-modules" class="apis modules">
                     
+                        <li><a href="../modules/config.html">config</a></li>
+                    
                         <li><a href="../modules/execution.html">execution</a></li>
                     
                         <li><a href="../modules/metadata.html">metadata</a></li>
@@ -36,6 +38,8 @@ title: foobar
                 </li>
                 <li><a href="#api-classes" class="category">Classes</a>
                     <ul id="api-classes" class="apis classes">
+                    
+                        <li><a href="../classes/config.html">config</a></li>
                     
                         <li><a href="../classes/execution.html">execution</a></li>
                     
@@ -64,13 +68,13 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.4</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.5</span>
                         <h1 class="file-heading">File: src/xhr.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 // Copyright (C) 2007-2013, GoodData(R) Corporation. All rights reserved.
-define([&#x27;_jquery&#x27;], function($) { &#x27;use strict&#x27;;
+define([&#x27;_jquery&#x27;, &#x27;config&#x27;], function($, config) { &#x27;use strict&#x27;;
 
     /**
      * Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.
@@ -87,6 +91,19 @@ define([&#x27;_jquery&#x27;], function($) { &#x27;use strict&#x27;;
     var tokenRequest,
         xhrSettings,
         xhr = {}; // returned module
+
+    xhr.enrichSettingWithCustomDomain = function(settings, domain) {
+        if (domain) {
+            // protect url to be prepended with domain on retry
+            if (settings.url.indexOf(domain) === -1) {
+                settings.url = domain + settings.url;
+            }
+            settings.xhrFields = settings.xhrFields || {};
+            settings.xhrFields.withCredentials = true;
+        }
+
+        return settings;
+    };
 
     var retryAjaxRequest = function(req, deferred) {
         // still use our extended ajax, because is still possible to fail recoverably in again
@@ -112,7 +129,7 @@ define([&#x27;_jquery&#x27;], function($) { &#x27;use strict&#x27;;
         if (!tokenRequest) {
             // Create only single token request for any number of waiting request.
             // If token request exist, just listen for it&#x27;s end.
-            tokenRequest = $.ajax(&#x27;/gdc/account/token/&#x27;).always(function() {
+            tokenRequest = $.ajax(xhr.enrichSettingWithCustomDomain({ url: &#x27;/gdc/account/token/&#x27; }, config.domain)).always(function() {
                 tokenRequest = null;
             }).fail(function(xhr, textStatus, err) {
                 //unauthorized when retrieving token -&gt; not logged
@@ -189,6 +206,7 @@ define([&#x27;_jquery&#x27;], function($) { &#x27;use strict&#x27;;
         if (url) {
             settings.url = url;
         }
+
         if ($.isPlainObject(settings.data)) {
             settings.data = JSON.stringify(settings.data);
         }
@@ -202,7 +220,8 @@ define([&#x27;_jquery&#x27;], function($) { &#x27;use strict&#x27;;
             continueAfterTokenRequest(settings, d);
             return d;
         }
-        $.ajax(settings).fail(function(xhr, textStatus, err) {
+
+        $.ajax(xhr.enrichSettingWithCustomDomain(settings, config.domain)).fail(function(xhr, textStatus, err) {
             if (xhr.status === 401) {
                 handleUnauthorized(settings, d);
             } else {
@@ -252,7 +271,7 @@ define([&#x27;_jquery&#x27;], function($) { &#x27;use strict&#x27;;
      */
     xhr.put = xhrMethod(&#x27;PUT&#x27;);
 
-    // setup dafault settings
+    // setup default settings
     xhr.ajaxSetup({});
     return xhr;
 

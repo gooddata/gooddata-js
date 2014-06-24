@@ -69,67 +69,53 @@ title: foobar
                 <div id="docs-main">
                     <div class="content">
                         <strong>gooddata-js</strong> <span class="version">v0.1.5</span>
-                        <h1 class="file-heading">File: src/util.js</h1>
+                        <h1>config Module</h1>
+<div class="clearfix meta">
+    
 
-<div class="file">
-    <pre class="code prettyprint linenums">
-// Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
-define(function() {
-    &#x27;use strict&#x27;;
+    
 
-    /**
-     * Utility methods. Mostly private
-     *
-     * @module util
-     * @class util
-     *
-     */
+    
+        <div class="foundat">
+            Defined in: <a href="../files/src_config.js.html#l6"><code>src&#x2F;config.js:6</code></a>
+        </div>
+    
 
-    /**
-     * Simple get path helper method
-     *
-     * @private
-     * @method getPath
-     * @param {Object} obj object to start getting path from
-     * @param {String} path path identifier
-     * @return object at given path
-     */
-    var getPath = function(obj, path) {
-        var paths = path.split(&#x27;.&#x27;),
-            found = obj,
-            i;
-
-        for (i = 0; i &lt; paths.length; ++i) {
-            if (found[paths[i]] === undefined) {
-                return undefined;
-            } else {
-                found = found[paths[i]];
-            }
-        }
-        return found;
-    };
-
-    /**
-     * Create getter function for accessing nested objects
-     *
-     * @param {String} path Target path to nested object
-     * @method getIn
-     * @private
-     */
-    var getIn = function(path) {
-        return function(object) {
-            return getPath(object, path);
-        };
-    };
-
-    return {
-        getPath: getPath,
-        getIn: getIn
-    };
-});
+    
+</div>
 
 
-    </pre>
+
+<div class="intro">
+    <p>Config module holds SDK configuration variables</p>
+<p>Currently its only custom domain - which enabled using
+sdk from different domain (using CORS)</p>
+<p>Never set properties directly - always use setter methods</p>
+
+</div>
+
+
+
+<div class="yui3-g">
+    <div class="yui3-u-1-2">
+        
+            <p>This module provides the following classes:</p>
+
+            <ul class="module-classes">
+            
+                <li class="module-class">
+                    <a href="../classes/config.html">
+                        config
+                    </a>
+                </li>
+            
+            </ul>
+        
+    </div>
+
+    <div class="yui3-u-1-2">
+        
+    </div>
 </div>
 
                     </div>

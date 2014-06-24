@@ -69,7 +69,7 @@ title: foobar
                 <div id="docs-main">
                     <div class="content">
                         <strong>gooddata-js</strong> <span class="version">v0.1.5</span>
-                        <h1>execution Class</h1>
+                        <h1>config Class</h1>
 <div class="meta">
     
 
@@ -77,13 +77,13 @@ title: foobar
 
     
         <div class="foundat">
-            <strong>Defined in:</strong> <a href="../files/src_execution.js.html#l5"><code>src&#x2F;execution.js:5</code></a>
+            <strong>Defined in:</strong> <a href="../files/src_config.js.html#l6"><code>src&#x2F;config.js:6</code></a>
         </div>
     
 
     
         
-            <strong>Module:</strong> <a href="../modules/execution.html">execution</a>
+            <strong>Module:</strong> <a href="../modules/config.html">config</a>
         
     
 
@@ -93,7 +93,10 @@ title: foobar
 
 
 <div class="intro">
-    <p>Module for execution on experimental execution resource</p>
+    <p>Config module holds SDK configuration variables</p>
+<p>Currently its only custom domain - which enabled using
+sdk from different domain (using CORS)</p>
+<p>Never set properties directly - always use setter methods</p>
 
 </div>
 
@@ -144,7 +147,7 @@ title: foobar
                     <ul class="index-list methods">
                         
                             <li class="index-item method">
-                                <a href="#method_getData">getData</a>
+                                <a href="#method_setCustomDomain">setCustomDomain</a>
 
                                 
                                 
@@ -188,33 +191,13 @@ title: foobar
 
 
                 
-                    <div id="method_getData" class="method item">
-    <h3 class="name"><code>getData</code></h3>
+                    <div id="method_setCustomDomain" class="method item">
+    <h3 class="name"><code>setCustomDomain</code></h3>
 
     
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code>projectId</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code>elements</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
+        <span class="paren">()</span>
     
 
-    
-        <span class="returns-inline">
-            <span class="type">Object</span>
-        </span>
     
 
     
@@ -240,7 +223,7 @@ title: foobar
             
         
         
-        <a href="../files/src_execution.js.html#l12"><code>src&#x2F;execution.js:12</code></a>
+        <a href="../files/src_config.js.html#l21"><code>src&#x2F;config.js:21</code></a>
         
         </p>
 
@@ -251,71 +234,15 @@ title: foobar
     </div>
 
     <div class="description">
-        <p>For the given projectId it returns table structure with the given
-elements in column headers.</p>
+        <p>Sets custom domain. Parameter is url which has always to be https://
+(if you don&#39;t provide it, we will do it for you).</p>
+<p>RegExp inspired taken from
+<a href="https://github.com/jarib/google-closure-library/blob/master/closure/goog/string/linkify.js">https://github.com/jarib/google-closure-library/blob/master/closure/goog/string/linkify.js</a></p>
 
     </div>
 
     
-        <div class="params">
-            <h4>Parameters</h4>
 
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name">projectId</code>
-                        <span class="type">String</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <ul>
-<li>GD project identifier</li>
-</ul>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name">elements</code>
-                        <span class="type">Array</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <ul>
-<li>An array of attribute or metric identifiers.</li>
-</ul>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
-    
-
-    
-        <div class="returns">
-            <h4>Returns</h4>
-
-            <div class="returns-description">
-                
-                    
-                        <span class="type">Object</span>:
-                    
-                    <p>Structure with <code>headers</code> and <code>rawData</code> keys filled with values from execution.</p>
-
-                
-            </div>
-        </div>
     
 
     

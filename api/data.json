@@ -2,10 +2,21 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.4",
+        "version": "0.1.5",
         "url": ""
     },
     "files": {
+        "src/config.js": {
+            "name": "src/config.js",
+            "modules": {
+                "config": 1
+            },
+            "classes": {
+                "config": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "src/execution.js": {
             "name": "src/execution.js",
             "modules": {
@@ -85,6 +96,19 @@
         }
     },
     "modules": {
+        "config": {
+            "name": "config",
+            "submodules": {},
+            "classes": {
+                "config": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/config.js",
+            "line": 6,
+            "description": "Config module holds SDK configuration variables\n\nCurrently its only custom domain - which enabled using\nsdk from different domain (using CORS)\n\nNever set properties directly - always use setter methods"
+        },
         "execution": {
             "name": "execution",
             "submodules": {},
@@ -108,7 +132,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/gooddata.js",
-            "line": 19,
+            "line": 21,
             "description": "# JS SDK\nHere is a set of functions that mostly are a thin wraper over the [GoodData API](https://developer.gooddata.com/api).\nBefore calling any of those functions, you need to authenticate with a valid GoodData\nuser credentials. After that, every subsequent call in the current session is authenticated.\nYou can find more about the GD authentication mechanism here.\n\n## Conventions and Dependencies\n* Depends on [jQuery JavaScript library](http://jquery.com/) javascript library\n* Each SDK function returns [jQuery Deferred promise](http://api.jquery.com/deferred.promise/)\n\n## GD Authentication Mechansim\nIn this JS SDK library we provide you with a simple `login(username, passwd)` function\nthat does the magic for you.\nTo fully understand the authentication mechansim, please read\n[Authentication via API article](http://developer.gooddata.com/article/authentication-via-api)\non [GoodData Developer Portal](http://developer.gooddata.com/)"
         },
         "metadata": {
@@ -177,6 +201,20 @@
         }
     },
     "classes": {
+        "config": {
+            "name": "config",
+            "shortname": "config",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "config",
+            "namespace": "",
+            "file": "src/config.js",
+            "line": 6,
+            "description": "Config module holds SDK configuration variables\n\nCurrently its only custom domain - which enabled using\nsdk from different domain (using CORS)\n\nNever set properties directly - always use setter methods"
+        },
         "execution": {
             "name": "execution",
             "shortname": "execution",
@@ -186,6 +224,7 @@
             "plugin_for": [],
             "extension_for": [],
             "module": "execution",
+            "namespace": "",
             "file": "src/execution.js",
             "line": 5,
             "description": "Module for execution on experimental execution resource"
@@ -201,7 +240,7 @@
             "module": "sdk",
             "namespace": "",
             "file": "src/gooddata.js",
-            "line": 19,
+            "line": 21,
             "description": "# JS SDK\nHere is a set of functions that mostly are a thin wraper over the [GoodData API](https://developer.gooddata.com/api).\nBefore calling any of those functions, you need to authenticate with a valid GoodData\nuser credentials. After that, every subsequent call in the current session is authenticated.\nYou can find more about the GD authentication mechanism here.\n\n## Conventions and Dependencies\n* Depends on [jQuery JavaScript library](http://jquery.com/) javascript library\n* Each SDK function returns [jQuery Deferred promise](http://api.jquery.com/deferred.promise/)\n\n## GD Authentication Mechansim\nIn this JS SDK library we provide you with a simple `login(username, passwd)` function\nthat does the magic for you.\nTo fully understand the authentication mechansim, please read\n[Authentication via API article](http://developer.gooddata.com/article/authentication-via-api)\non [GoodData Developer Portal](http://developer.gooddata.com/)"
         },
         "metadata": {
@@ -275,6 +314,15 @@
         }
     },
     "classitems": [
+        {
+            "file": "src/config.js",
+            "line": 21,
+            "description": "Sets custom domain. Parameter is url which has always to be https://\n(if you don't provide it, we will do it for you).\n\nRegExp inspired taken from\nhttps://github.com/jarib/google-closure-library/blob/master/closure/goog/string/linkify.js",
+            "itemtype": "method",
+            "name": "setCustomDomain",
+            "class": "config",
+            "module": "config"
+        },
         {
             "file": "src/execution.js",
             "line": 12,
@@ -674,6 +722,15 @@
             "module": "user"
         },
         {
+            "file": "src/user.js",
+            "line": 69,
+            "description": "Returns info about currently logged in user from bootstrap resource",
+            "itemtype": "method",
+            "name": "getAccountInfo",
+            "class": "user",
+            "module": "user"
+        },
+        {
             "file": "src/util.js",
             "line": 13,
             "description": "Simple get path helper method",
@@ -719,7 +776,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 81,
+            "line": 94,
             "description": "additional ajax configuration specific for xhr module, keys\n  unauthorized: function(xhr) - called when user is unathorized and token renewal failed\n  pollDelay: int - polling interval in milisecodns, default 1000\n\nmethod also accepts any option from original $.ajaxSetup. Options will be applied to all call of xhr.ajax().\n\nxhrSetup behave similar tp $.ajaxSetup, each call replaces settings completely.\nOptions can be also passed to particular xhr.ajax calls (same as optios for $.ajax and $.ajaxSetup)",
             "itemtype": "method",
             "name": "ajaxSetup",
@@ -728,7 +785,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 100,
+            "line": 113,
             "description": "Same api as jQuery.ajax - arguments (url, settings) or (settings) with url inside\nAdditionally content type is automatically json, and object in settings.data is converted to string\nto be consumed by GDC backend.\n\nsettings additionally accepts keys: unathorized, pollDelay  (see xhrSetup for more details)",
             "itemtype": "method",
             "name": "ajax",
@@ -747,7 +804,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 165,
+            "line": 180,
             "description": "Wrapper for xhr.ajax method GET",
             "itemtype": "method",
             "name": "get",
@@ -756,7 +813,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 171,
+            "line": 186,
             "description": "Wrapper for xhr.ajax method POST",
             "itemtype": "method",
             "name": "post",
@@ -765,7 +822,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 178,
+            "line": 193,
             "description": "Wrapper for xhr.ajax method PUT",
             "itemtype": "method",
             "name": "put",

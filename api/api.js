@@ -1,6 +1,7 @@
 YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
+        "config",
         "execution",
         "metadata",
         "project",
@@ -10,6 +11,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "xhr"
     ],
     "modules": [
+        "config",
         "execution",
         "metadata",
         "project",
@@ -19,6 +21,11 @@ YUI.add("yuidoc-meta", function(Y) {
         "xhr"
     ],
     "allModules": [
+        {
+            "displayName": "config",
+            "name": "config",
+            "description": "Config module holds SDK configuration variables\n\nCurrently its only custom domain - which enabled using\nsdk from different domain (using CORS)\n\nNever set properties directly - always use setter methods"
+        },
         {
             "displayName": "execution",
             "name": "execution",
