@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GoodData Javascript SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://developer.gooddata.com/favicon.ico" rel="shortcut icon">
+    <!-- Le styles -->
+    <link href="http://localhost:4000/css/bootstrap.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/syntax.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.14.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="http://localhost:4000/api/assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="http://localhost:4000/api/assets/css/main.css" id="site_styles">
+    <style type="text/css">
+        .navbar {
+            font-family: "Avenir", Arial, sans-serif;
+            font-size: 14px;
+            line-height: 20px;
+            color: #333333;
+        }
+    </style>
+    <script src="http://yui.yahooapis.com/combo?3.14.1/build/yui/yui-min.js"></script>
+
+</head>
+<body class="yui3-skin-sam">
+    <div>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div style="margin-left: 100px;">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="http://localhost:4000">
+                <img src="http://localhost:4000/images/header-logo.png" alt="GoodData JS SDK" width="24" height="24">
+            GoodData<span style="color: #F0E040;">JS
+            </a>
+            <div class="nav-collapse collapse container">
+                <ul class="nav">
+                    
+                    
+                    <li>
+                        <a href="http://localhost:4000/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//getting-started">Get Started</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//build-visualization">Build Visualization</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//api">API</a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://developer.gooddata.com/forum" target="_blank">Forum</a>
+                    </li>
+                </ul>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <div id="api-tabview" class="tabview">
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul class="tabs">
+                <li><a href="#api-modules" class="category">Modules</a>
+                    <ul id="api-modules" class="apis modules">
+                    
+                        <li><a href="../modules/config.html">config</a></li>
+                    
+                        <li><a href="../modules/execution.html">execution</a></li>
+                    
+                        <li><a href="../modules/metadata.html">metadata</a></li>
+                    
+                        <li><a href="../modules/project.html">project</a></li>
+                    
+                        <li><a href="../modules/sdk.html">sdk</a></li>
+                    
+                        <li><a href="../modules/user.html">user</a></li>
+                    
+                        <li><a href="../modules/util.html">util</a></li>
+                    
+                        <li><a href="../modules/xhr.html">xhr</a></li>
+                    
+                    </ul>
+                </li>
+                <li><a href="#api-classes" class="category">Classes</a>
+                    <ul id="api-classes" class="apis classes">
+                    
+                        <li><a href="../classes/config.html">config</a></li>
+                    
+                        <li><a href="../classes/execution.html">execution</a></li>
+                    
+                        <li><a href="../classes/metadata.html">metadata</a></li>
+                    
+                        <li><a href="../classes/project.html">project</a></li>
+                    
+                        <li><a href="../classes/sdk.html">sdk</a></li>
+                    
+                        <li><a href="../classes/user.html">user</a></li>
+                    
+                        <li><a href="../classes/util.html">util</a></li>
+                    
+                        <li><a href="../classes/xhr.html">xhr</a></li>
+                    
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v0.1.8</span>
+                        <h1>execution Class</h1>
+<div class="meta">
+    
+
+    
+
+    
+        <div class="foundat">
+            <strong>Defined in:</strong> <a href="../files/src_execution.js.html#l5"><code>src&#x2F;execution.js:5</code></a>
+        </div>
+    
+
+    
+        
+            <strong>Module:</strong> <a href="../modules/execution.html">execution</a>
+        
+    
+
+    
+</div>
+
+
+
+<div class="intro">
+    <p>Module for execution on experimental execution resource</p>
+
+</div>
+
+
+
+<div id="classdocs" class="tabview no-columns">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+        
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+        
+        
+        
+        
+    </ul>
+    <div>
+
+        <div id="index" class="api-class-tabpanel index">
+                <div class="api-options">
+        Show:
+        <label>
+            <input type="checkbox" class="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label>
+            <input type="checkbox" class="api-show-protected">
+            Protected
+        </label>
+
+        <label>
+            <input type="checkbox" class="api-show-private">
+            Private
+        </label>
+        <label>
+            <input type="checkbox" class="api-show-deprecated">
+            Deprecated
+        </label>
+    </div>
+
+
+
+            
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods">
+                        
+                            <li class="index-item method">
+                                <a href="#method_getData">getData</a>
+
+                                
+                                
+                            </li>
+                        
+                    </ul>
+                </div>
+            
+
+            
+
+            
+
+            
+        </div>
+
+        
+            <div id="methods" class="api-class-tabpanel">
+                    <div class="api-options">
+        Show:
+        <label>
+            <input type="checkbox" class="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label>
+            <input type="checkbox" class="api-show-protected">
+            Protected
+        </label>
+
+        <label>
+            <input type="checkbox" class="api-show-private">
+            Private
+        </label>
+        <label>
+            <input type="checkbox" class="api-show-deprecated">
+            Deprecated
+        </label>
+    </div>
+
+
+
+                
+                    <div id="method_getData" class="method item">
+    <h3 class="name"><code>getData</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>projectId</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>elements</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>executionConfiguration</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_execution.js.html#l12"><code>src&#x2F;execution.js:12</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>For the given projectId it returns table structure with the given
+elements in column headers.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">projectId</code>
+                        <span class="type">String</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <ul>
+<li>GD project identifier</li>
+</ul>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">elements</code>
+                        <span class="type">Array</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <ul>
+<li>An array of attribute or metric identifiers.</li>
+</ul>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">executionConfiguration</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <ul>
+<li>Execution configuration - can contain for example<pre><code>          property &quot;filters&quot; containing execution context filters
+          property &quot;where&quot; containing query-like filters</code></pre>
+</li>
+</ul>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">Object</span>:
+                    
+                    <p>Structure with <code>headers</code> and <code>rawData</code> keys filled with values from execution.</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+            </div>
+        
+
+        
+
+        
+
+        
+    </div>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <hr />
+        <div class="footer" style="text-align: center;">
+            <p>&copy; GoodData 2014</p>
+            
+        </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://developer.gooddata.com/themes/site_themes/developer2012/js/jquery.js?v=1"></script>
+    <script src="http://localhost:4000/js/bootstrap.min.js"></script>
+    <script src="http://localhost:4000/api/assets/vendor/store.min.js"></script>
+    <script src="http://localhost:4000/api/assets/vendor/prettify/prettify-min.js"></script>
+    <script>prettyPrint();</script>
+    <script src="http://localhost:4000/api/assets/js/yui-prettify.js"></script>
+    <script src="http://localhost:4000/api/assets/../api.js"></script>
+    <script src="http://localhost:4000/api/assets/js/api-filter.js"></script>
+    <script src="http://localhost:4000/api/assets/js/api-search.js"></script>
+    <script src="http://localhost:4000/api/assets/js/api-list.js"></script>
+    <script src="http://localhost:4000/api/assets/js/apidocs.js"></script>
+    <script type="text/javascript">
+
+                     var _gaq = _gaq || [];
+                     _gaq.push(['_setAccount', 'UA-3766725-7']);
+                     _gaq.push(['_trackPageview']);
+
+                    (function() {
+                      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                       })();
+
+    </script>
+
+  </body>
+</html>
+

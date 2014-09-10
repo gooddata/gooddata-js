@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GoodData Javascript SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://developer.gooddata.com/favicon.ico" rel="shortcut icon">
+    <!-- Le styles -->
+    <link href="http://localhost:4000/css/bootstrap.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/syntax.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://localhost:4000/css/highlight-default.min.css">
+	<script src="http://localhost:4000/js/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+
+<style>
+body {
+    padding-top: 20px;
+    padding-bottom: 40px;
+    background: url(http://sdk.gooddata.com/gooddata-js/images/background.png) left top no-repeat;
+    background-size: 111px 245px;
+
+  }
+
+a.topics {margin-top: 7px; font-size: 16px;}
+
+  /* Custom container */
+  .container-narrow {
+    margin: 45px auto;
+    max-width: 700px;
+  }
+  .container-narrow > hr {
+    margin: 45px 0;
+  }
+
+  /* Main marketing message and sign up button */
+  .jumbotron {
+    padding: 70px 0;
+    text-align: center;
+  }
+  .jumbotron h1 {
+    font-size: 48px;
+    line-height: 1;
+  }
+  .jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+  }
+
+  /* Supporting marketing content */
+  .marketing {
+    margin: 60px 0;
+  }
+  .marketing p + h4 {
+    margin-top: 28px;
+  }
+
+  img.centered {
+    margin: 30px auto;
+    display: block;
+/*        border: 1px solid red;*/
+  }
+
+
+</style>
+
+</head>
+  <body>
+    <div>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div style="margin-left: 100px;">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="http://localhost:4000">
+                <img src="http://localhost:4000/images/header-logo.png" alt="GoodData JS SDK" width="24" height="24" style="margin-bottom: 5px;" />
+            GoodData<span style="color: #F0E040;">JS
+            </a>
+            <div class="nav-collapse collapse container">
+                <ul class="nav">
+                    
+                    
+                    <li>
+                        <a href="http://localhost:4000/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//getting-started">Get Started</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//build-visualization">Build Visualization</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//api">API</a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://developer.gooddata.com/forum" target="_blank">Forum</a>
+                    </li>
+                </ul>
+            </div>
+            </div>
+        </div>
+        </div>
+      <div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div style="margin-left: 100px;">
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="brand" href="http://localhost:4000">
+          <img src="http://localhost:4000/images/header-logo.png" alt="GoodData Labs" width="24" height="24">
+      GoodData<span style="color: #F0E040;">JS
+</a>
+      <div class="nav-collapse collapse container">
+        <ul class="nav">
+          <li class="">
+            <a href="http://localhost:4000/">Home</a>
+          </li>
+          <li class="">
+            <a href="http://localhost:4000/getting-started">Get Started</a>
+          </li>
+          <li class="">
+            <a href="http://localhost:4000/build-visualization">Build Visualization</a>
+          </li>
+          <li class="">
+            <a href="http://localhost:4000/api">API</a>
+          </li>
+		<li class="">
+            <a href="https://developer.gooddata.com/forum" target="_blank">Forum</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-narrow" style="margin-top: 40px;">
+  <h2 class="title">Visualize Sales Data using a Chord Chart</h2>
+  <p>Let’s learn how to build <a href="http://bl.ocks.org/mbostock/4062006#index.html">chord chart</a> that shows you how each sales person contributed to the quarter sales results:</p>
+
+<p><img src="http://localhost:4000/images/posts/chord-chart.png" width="650px" alt="Chord Chart" /></p>
+
+<p>More info about <a href="http://www.gghh.name/dibtp/?p=234">setting up D3.js Chord chart</a>. You also <a href="https://github.com/gooddata/gooddata-js/tree/develop/examples/d3-data-viz">find complete example</a>.</p>
+
+<h3 id="get-the-data">1) Get the data</h3>
+
+<p>First of all select metric and attributes that you want to use in your visualization.</p>
+
+<p>Remember that you must specify an object identifier. The example can be <code>label.opp_owner.id.name</code> for attribute (Opportunity Owner) or <code>afSEwRwdbMeQ</code> for fact (Sales Amount).</p>
+
+<p>See the example output below. The data is exported in a raw format. Data is not cross-tabulated. Let’s see how it looks in Javascript.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">projectId</span> <span class="o">=</span> <span class="s1">&#39;PROJECT-ID&#39;</span><span class="p">,</span>
+    <span class="nx">user</span> <span class="o">=</span> <span class="s1">&#39;USERNAME&#39;</span><span class="p">,</span>
+    <span class="nx">passwd</span> <span class="o">=</span> <span class="s1">&#39;PASSWORD&#39;</span><span class="p">;</span>
+
+<span class="c1">// Report elements identifiers from which we execute a GD report</span>
+<span class="kd">var</span> <span class="nx">metric</span> <span class="o">=</span> <span class="s1">&#39;METRIC-IDENTIFIER&#39;</span><span class="p">,</span> <span class="c1">// sales</span>
+    <span class="nx">attr1</span> <span class="o">=</span> <span class="s1">&#39;oppclose.aam81lMifn6q&#39;</span><span class="p">,</span> <span class="c1">// opportunity close quarter</span>
+    <span class="nx">attr2</span> <span class="o">=</span> <span class="s1">&#39;label.opp_owner.id.name&#39;</span><span class="p">;</span> <span class="c1">// opportunity owner</span>
+
+<span class="kd">var</span> <span class="nx">elements</span> <span class="o">=</span> <span class="p">[</span><span class="nx">attr1</span><span class="p">,</span> <span class="nx">attr2</span><span class="p">,</span> <span class="nx">metric</span><span class="p">];</span>
+
+<span class="c1">// Insert info label</span>
+<span class="nx">$</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;login-loader&quot;&gt;Logging in...&lt;/div&gt;&#39;</span><span class="p">);</span>
+
+<span class="nx">gooddata</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">login</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">passwd</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;div.login-loader&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;loading&quot;&gt;Loading data...&lt;/div&gt;&#39;</span><span class="p">);</span>
+
+    <span class="c1">// Ask for data for the given metric and attributes from the GoodData project</span>
+    <span class="nx">gooddata</span><span class="p">.</span><span class="nx">execution</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">projectId</span><span class="p">,</span> <span class="nx">elements</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">dataResult</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Yay, data arrived</span>
+
+ <span class="c1">// Remove loading labels</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;div.loading&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
+
+<span class="c1">// ... ... REST OF CODE - see below ... ...</span>
+
+<span class="p">});</span></code></pre></div>
+
+<p>The key part is the <code>getData()</code> method that calls the GoodData APIs and gives you data result for specified elements.</p>
+
+<h3 id="transform-data">2. Transform data</h3>
+
+<p>In our <a href="/tutorial/Your-First-Visualization">first tutorial</a>, we didn’t need any kind of data transformation because the data was ready to send to the D3. We need to do this now. This part always depends on what data you are extracting and what type of visualization you want to create. It is a fully custom javascript code.</p>
+
+<p><img src="http://localhost:4000/images/posts/transform-data.png" alt="Workflow" /></p>
+
+<p>We basically transform the data to fit the D3.js data input definition. Sometimes this can be quite complex task to solve. In our example we must transform the raw data output that looks as follows:</p>
+
+<p><img src="http://localhost:4000/images/posts/raw-data.png" alt="Raw Output" /></p>
+
+<p>to the matrix that is being consumed by D3 visualization. Check out the resulting matrix:</p>
+
+<p><img src="http://localhost:4000/images/posts/chord-chart-matrix.png" alt="Chord Chart Matrix" /></p>
+
+<p>What you can see from the matrix above is contribution of each salesperson to the Quarter Revenue. You can see that <strong>Andrew Seals</strong> brings in <strong>8083016</strong> revenue in the Q1 and <strong>9389679</strong> revenue in Q2. This is what D3 Chord chart needs as the input. If you go row by row, you can see that there is zero value between each quarters and each sales person. It is correct because they are not contributing to each other.</p>
+
+<p>The complexity here is to transform the data we receive from GoodData to this format. This is done by the transformData function.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">transformData</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dataResult</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">headers</span> <span class="o">=</span> <span class="nx">dataResult</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">h</span><span class="p">.</span><span class="nx">title</span><span class="p">;</span>
+                <span class="p">}),</span>
+                <span class="nx">data</span> <span class="o">=</span> <span class="nx">dataResult</span><span class="p">.</span><span class="nx">rawData</span><span class="p">,</span>
+                <span class="nx">length</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+                <span class="nx">attr1</span> <span class="o">=</span> <span class="nx">headers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="nx">attr2</span> <span class="o">=</span> <span class="nx">headers</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="nx">metric</span> <span class="o">=</span> <span class="nx">headers</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="nx">attr1Keys</span> <span class="o">=</span> <span class="p">{},</span>
+                <span class="nx">attr2Keys</span> <span class="o">=</span> <span class="p">{},</span>
+                <span class="nx">matrix</span> <span class="o">=</span> <span class="p">[];</span>
+
+            <span class="c1">// Compute metric values for both attributes values and store them in hashmap</span>
+            <span class="nx">data</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">key1</span> <span class="o">=</span> <span class="nx">row</span><span class="p">[</span><span class="nx">headers</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">attr1</span><span class="p">)],</span>
+                    <span class="nx">key2</span> <span class="o">=</span> <span class="nx">row</span><span class="p">[</span><span class="nx">headers</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">attr2</span><span class="p">)],</span>
+                    <span class="nx">metricVal</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">row</span><span class="p">[</span><span class="nx">headers</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">metric</span><span class="p">)]);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">attr1Keys</span><span class="p">[</span><span class="nx">key1</span><span class="p">])</span> <span class="nx">attr1Keys</span><span class="p">[</span><span class="nx">key1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">attr2Keys</span><span class="p">[</span><span class="nx">key2</span><span class="p">])</span> <span class="nx">attr2Keys</span><span class="p">[</span><span class="nx">key2</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+                <span class="nx">attr1Keys</span><span class="p">[</span><span class="nx">key1</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">metricVal</span><span class="p">);</span>
+                <span class="nx">attr2Keys</span><span class="p">[</span><span class="nx">key2</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">metricVal</span><span class="p">);</span>
+            <span class="p">});</span>
+
+            <span class="c1">// Get the keys in an array</span>
+            <span class="kd">var</span> <span class="nx">attr1Vals</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">attr1Keys</span><span class="p">),</span>
+                <span class="nx">attr2Vals</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">attr2Keys</span><span class="p">),</span>
+                <span class="nx">matrixIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+            <span class="c1">// Initialize result matrix</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">attr1Vals</span><span class="p">.</span><span class="nx">length</span><span class="o">+</span><span class="nx">attr2Vals</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="nx">matrix</span><span class="p">.</span><span class="nx">push</span><span class="p">([]);</span>
+
+            <span class="c1">// For each key in an array generate a row in a resulting matrix</span>
+            <span class="nx">attr1Vals</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">attrVal</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Generate leading zeros</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">attr1Vals</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="nx">matrix</span><span class="p">[</span><span class="nx">matrixIdx</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+                <span class="nx">matrix</span><span class="p">[</span><span class="nx">matrixIdx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">matrix</span><span class="p">[</span><span class="nx">matrixIdx</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">attr1Keys</span><span class="p">[</span><span class="nx">attrVal</span><span class="p">]);</span>
+                <span class="nx">matrixIdx</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="c1">// For each key in an array generate a row in a resulting matrix</span>
+            <span class="nx">attr2Vals</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">attrVal</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Generate leading zeros</span>
+                <span class="nx">matrix</span><span class="p">[</span><span class="nx">matrixIdx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">matrix</span><span class="p">[</span><span class="nx">matrixIdx</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">attr2Keys</span><span class="p">[</span><span class="nx">attrVal</span><span class="p">]);</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">attr2Vals</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="nx">matrix</span><span class="p">[</span><span class="nx">matrixIdx</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+                <span class="nx">matrixIdx</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="nx">labels</span><span class="o">:</span> <span class="p">[].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">attr1Vals</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">attr2Vals</span><span class="p">)),</span>
+                <span class="nx">matrix</span><span class="o">:</span> <span class="nx">matrix</span>
+            <span class="p">};</span>
+        <span class="p">};</span></code></pre></div>
+
+<ol>
+  <li>Setup the D3 Visualization</li>
+</ol>
+
+<p>This part really depends on the visualization type you use. We are using chord chart</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">fill</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">category10</span><span class="p">();</span>
+
+        <span class="c1">// Use the helper function and transform the data</span>
+        <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">transformData</span><span class="p">(</span><span class="nx">dataResult</span><span class="p">);</span>
+
+        <span class="c1">// Visualize</span>
+        <span class="kd">var</span> <span class="nx">chord</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">layout</span><span class="p">.</span><span class="nx">chord</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">padding</span><span class="p">(.</span><span class="mi">05</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">sortSubgroups</span><span class="p">(</span><span class="nx">d3</span><span class="p">.</span><span class="nx">descending</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">matrix</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">matrix</span><span class="p">);</span>
+
+        <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">960</span><span class="p">,</span>
+            <span class="nx">height</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="nx">r1</span> <span class="o">=</span> <span class="nx">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nx">innerRadius</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span> <span class="o">*</span> <span class="p">.</span><span class="mi">41</span><span class="p">,</span>
+            <span class="nx">outerRadius</span> <span class="o">=</span> <span class="nx">innerRadius</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">,</span>
+            <span class="nx">outer</span>
+
+        <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s2">&quot;body&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;svg&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="nx">width</span><span class="o">+</span><span class="mi">200</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="nx">height</span><span class="o">+</span><span class="mi">200</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;g&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;transform&quot;</span><span class="p">,</span> <span class="s2">&quot;translate(&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">width</span><span class="o">+</span><span class="mi">200</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">height</span><span class="o">+</span><span class="mi">200</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">);</span>
+
+        <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;g&quot;</span><span class="p">).</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">chord</span><span class="p">.</span><span class="nx">groups</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">enter</span><span class="p">().</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;arc&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">d</span><span class="p">.</span><span class="nx">index</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="o">?</span> <span class="s1">&#39;#444444&#39;</span> <span class="o">:</span> <span class="nx">fill</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">index</span><span class="p">);</span>
+            <span class="p">})</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">arc</span><span class="p">().</span><span class="nx">innerRadius</span><span class="p">(</span><span class="nx">innerRadius</span><span class="p">).</span><span class="nx">outerRadius</span><span class="p">(</span><span class="nx">outerRadius</span><span class="p">))</span>
+            <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;mouseover&quot;</span><span class="p">,</span> <span class="nx">fade</span><span class="p">(.</span><span class="mi">1</span><span class="p">))</span>
+            <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;mouseout&quot;</span><span class="p">,</span> <span class="nx">fade</span><span class="p">(.</span><span class="mi">7</span><span class="p">));</span>
+
+        <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;g&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;chord&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">chord</span><span class="p">.</span><span class="nx">chords</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">enter</span><span class="p">().</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">chord</span><span class="p">().</span><span class="nx">radius</span><span class="p">(</span><span class="nx">innerRadius</span><span class="p">))</span>
+            <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">fill</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">index</span><span class="p">);</span> <span class="p">})</span>
+            <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s2">&quot;opacity&quot;</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">);</span>
+
+        <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;g&quot;</span><span class="p">).</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">&quot;.arc&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">chord</span><span class="p">.</span><span class="nx">groups</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">enter</span><span class="p">().</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;svg:text&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;dy&quot;</span><span class="p">,</span> <span class="s2">&quot;.35em&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;text-anchor&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="p">((</span><span class="nx">d</span><span class="p">.</span><span class="nx">startAngle</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">endAngle</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span> <span class="o">?</span> <span class="s2">&quot;end&quot;</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span> <span class="p">})</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;transform&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">return</span> <span class="s2">&quot;rotate(&quot;</span> <span class="o">+</span> <span class="p">(((</span><span class="nx">d</span><span class="p">.</span><span class="nx">startAngle</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">endAngle</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span> <span class="o">-</span> <span class="mi">90</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+                  <span class="o">+</span> <span class="s2">&quot;translate(&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">r1</span> <span class="o">-</span> <span class="mi">15</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+                  <span class="o">+</span> <span class="p">(((</span><span class="nx">d</span><span class="p">.</span><span class="nx">startAngle</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">endAngle</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span> <span class="o">?</span> <span class="s2">&quot;rotate(180)&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+            <span class="p">})</span>
+            <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">data</span><span class="p">.</span><span class="nx">labels</span><span class="p">[</span><span class="nx">d</span><span class="p">.</span><span class="nx">index</span><span class="p">];</span>
+            <span class="p">});</span>
+
+        <span class="c1">// Returns an event handler for fading a given chord group.</span>
+        <span class="kd">function</span> <span class="nx">fade</span><span class="p">(</span><span class="nx">opacity</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">g</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">&quot;.chord path&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">.</span><span class="nx">source</span><span class="p">.</span><span class="nx">index</span> <span class="o">!=</span> <span class="nx">i</span> <span class="o">&amp;&amp;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">index</span> <span class="o">!=</span> <span class="nx">i</span><span class="p">;</span> <span class="p">})</span>
+                <span class="p">.</span><span class="nx">transition</span><span class="p">()</span>
+                <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s2">&quot;opacity&quot;</span><span class="p">,</span> <span class="nx">opacity</span><span class="p">);</span>
+            <span class="p">};</span>
+        <span class="p">}</span>
+    <span class="p">});</span></code></pre></div>
+
+<p>That’s it. You are ready to embed your new visualization to the GoodData Dashboard. If you are not sure how to do it read the <a href="/tutorial/embedding-custom-visualization-into-dashboard">embedding tutorial</a>.</p>
+
+
+
+  <div class="section-nav">
+  <div class="left align-right">
+    
+      <a href="http://localhost:4000/example/building-parallel-coordinates" class="prev">
+        Back
+      </a>
+    
+  </div>
+  <div class="right align-left">
+    
+      <a href="http://localhost:4000/example/using-dc-js-with-gooddata" class="next">
+        Next
+      </a>
+    
+  </div>
+  <div class="clear"></div>
+</div>
+
+</div>
+
+
+      <hr>
+
+<div class="footer" style="text-align: center;">
+<p>&copy; GoodData 2014</p>
+      </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+     <script src="https://developer.gooddata.com/themes/site_themes/developer2012/js/jquery.js?v=1"></script>
+    <script src="http://localhost:4000/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+
+                     var _gaq = _gaq || [];
+                     _gaq.push(['_setAccount', 'UA-3766725-7']);
+                     _gaq.push(['_trackPageview']);
+
+                    (function() {
+                      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                       })();
+
+    </script>
+  </body>
+</html>
