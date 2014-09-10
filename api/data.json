@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.5",
+        "version": "0.1.8",
         "url": ""
     },
     "files": {
@@ -339,6 +339,11 @@
                     "name": "elements",
                     "description": "- An array of attribute or metric identifiers.",
                     "type": "Array"
+                },
+                {
+                    "name": "executionConfiguration",
+                    "description": "- Execution configuration - can contain for example\n                property \"filters\" containing execution context filters\n                property \"where\" containing query-like filters",
+                    "type": "Object"
                 }
             ],
             "return": {
