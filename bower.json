@@ -7,13 +7,14 @@
     "GoodData A-players <da@gooddata.com>"
   ],
   "repository": {
-      "type": "git",
-      "url": "git@github.com:gooddata/bower-gooddata-js.git"
+    "type": "git",
+    "url": "git@github.com:gooddata/bower-gooddata-js.git"
   },
   "description": "GoodData JS SDK",
   "main": "gooddata.min.js",
   "private": true,
   "dependencies": {
-    "jquery": "~2.0.3"
+    "jquery": "~2.0.3",
+    "rsvp": "~3.0.13"
   }
 }

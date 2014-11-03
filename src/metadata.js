@@ -361,7 +361,7 @@ define(['xhr', 'util'], function(xhr, util) {
      * @return {Object} object details
      */
     var getObjectDetails = function(uri) {
-        var d = $.Deferred();
+        var d = RSVP.defer();
 
         xhr.get(uri, {
             headers: { Accept: 'application/json' },
@@ -414,7 +414,7 @@ define(['xhr', 'util'], function(xhr, util) {
      * @return {String} uri of the metadata object
      */
     var getObjectUri = function(projectId, identifier) {
-        var d = $.Deferred(),
+        var d = RSVP.defer(),
             uriFinder = function(obj) {
                 var data = (obj.attribute) ? obj.attribute : obj.metric;
                 return data.meta.uri;
@@ -426,23 +426,28 @@ define(['xhr', 'util'], function(xhr, util) {
             data: {
                 "identifierToUri": [identifier]
             }
-        }).then(function(data) {
+        })
+        .then(function(data) {
             var found = data.identifiers.filter(function(i) {
+                console.log(i);
                 return i.identifier === identifier;
             });
 
+                console.log(found);
             if(found[0]) {
+                console.log('getting object details');
                 return getObjectDetails(found[0].uri);
             }
 
             d.reject('identifier not found');
-        }, d.reject).then(function(objData) {
+        }, d.reject)
+        .then(function(objData) {
             if (!objData.attributeDisplayForm) {
                 return d.resolve(uriFinder(objData));
             } else {
                 return getObjectDetails(objData.attributeDisplayForm.content.formOf).then(function(objData) {
-                            d.resolve(uriFinder(objData));
-                        }, d.reject);
+                    d.resolve(uriFinder(objData));
+                }, d.reject);
             }
         }, d.reject);
 
