@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.8",
+        "version": "0.1.10",
         "url": ""
     },
     "files": {
@@ -342,7 +342,7 @@
                 },
                 {
                     "name": "executionConfiguration",
-                    "description": "- Execution configuration - can contain for example\n                property \"filters\" containing execution context filters\n                property \"where\" containing query-like filters",
+                    "description": "- Execution configuration - can contain for example\n                property \"filters\" containing execution context filters\n                property \"where\" containing query-like filters\n                property \"orderBy\" contains array of sorted properties to order in form\n                     [{column: 'identifier', direction: 'asc|desc'}]",
                     "type": "Object"
                 }
             ],
@@ -790,7 +790,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 113,
+            "line": 116,
             "description": "Same api as jQuery.ajax - arguments (url, settings) or (settings) with url inside\nAdditionally content type is automatically json, and object in settings.data is converted to string\nto be consumed by GDC backend.\n\nsettings additionally accepts keys: unathorized, pollDelay  (see xhrSetup for more details)",
             "itemtype": "method",
             "name": "ajax",
@@ -809,7 +809,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 180,
+            "line": 183,
             "description": "Wrapper for xhr.ajax method GET",
             "itemtype": "method",
             "name": "get",
@@ -818,7 +818,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 186,
+            "line": 189,
             "description": "Wrapper for xhr.ajax method POST",
             "itemtype": "method",
             "name": "post",
@@ -827,7 +827,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 193,
+            "line": 196,
             "description": "Wrapper for xhr.ajax method PUT",
             "itemtype": "method",
             "name": "put",
