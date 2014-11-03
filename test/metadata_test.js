@@ -162,6 +162,45 @@ define(['metadata', 'jquery'], function(md, $) {
                 });
             });
 
+            describe('getObjectUri', function() {
+                it('should return uri when identifier exists', function(done) {
+                    this.server.respondWith(
+                        'POST',
+                        '/gdc/md/myFakeProjectId/identifiers',
+                        [200, {'Content-Type': 'application/json'},
+                            JSON.stringify({
+                                identifiers: [{
+                                    uri: '/foo/bar',
+                                    identifier: 'label.foo.bar'
+                                }]
+                            })]
+                    );
+
+                    this.server.respondWith(
+                        '/foo/bar',
+                        [200, {'Content-Type': 'application/json'},
+                            JSON.stringify({ attribute: { meta: { uri: '/foo/bar/attr' } } })]
+                    );
+
+                    md.getObjectUri('myFakeProjectId', 'label.foo.bar').then(function(result) {
+                        expect(result).to.be('/foo/bar/attr');
+                        done();
+                    });
+                });
+
+                it('should return display form uri when identifier exists');
+
+                it.only('should reject promise when identifier does not exist', function(done) {
+                    this.server.respondWith(
+                        'POST',
+                        '/gdc/md/myFakeProjectId/identifiers',
+                        [200, {'Content-Type': 'application/json'},
+                            JSON.stringify({ identifiers: []})]
+                    );
+                    md.getObjectUri('myFakeProjectId', '/foo/bar').then(null, done);
+                });
+            });
+
         });
     });
 });
