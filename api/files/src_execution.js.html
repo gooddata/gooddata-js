@@ -68,7 +68,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.10</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.11</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
 
 <div class="file">
@@ -110,7 +110,7 @@ define([&#x27;xhr&#x27;], function(xhr) {
         // enrich configuration with supported properties such as
         // where clause with query-like filters or execution context filters
         executionConfiguration = executionConfiguration || {};
-        [&#x27;filters&#x27;, &#x27;where&#x27;, &#x27;orderBy&#x27;].forEach(function(property) {
+        [&#x27;filters&#x27;, &#x27;where&#x27;, &#x27;orderBy&#x27;, &#x27;definitions&#x27;].forEach(function(property) {
             if (executionConfiguration[property]) {
                 request.execution[property] = executionConfiguration[property];
             }
