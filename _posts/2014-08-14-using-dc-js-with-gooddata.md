@@ -4,7 +4,7 @@ title:  "Dynamic dc.js Visualization"
 date:   2014-08-14 11:00:00
 categories: example
 highlighter: true
-prev_section: /example/chord-chart-to-analyze-sales
+next_section: example/2014/08/13/chord-chart-to-analyze-sales.html
 perex: Learn how to pull data from GoodData and visualize it in D3.js Chord chart
 ---
 

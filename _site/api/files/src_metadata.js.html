@@ -134,7 +134,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.8</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.11</span>
                         <h1 class="file-heading">File: src/metadata.js</h1>
 
 <div class="file">
@@ -576,14 +576,14 @@ define([&#x27;xhr&#x27;, &#x27;util&#x27;], function(xhr, util) {
                 return getObjectDetails(found[0].uri);
             }
 
-            d.reject(&#x27;identifier not found&#x27;);
+            return $.Deferred().reject(&#x27;identifier not found&#x27;);
         }, d.reject).then(function(objData) {
             if (!objData.attributeDisplayForm) {
                 return d.resolve(uriFinder(objData));
             } else {
                 return getObjectDetails(objData.attributeDisplayForm.content.formOf).then(function(objData) {
-                            d.resolve(uriFinder(objData));
-                        }, d.reject);
+                    d.resolve(uriFinder(objData));
+                }, d.reject);
             }
         }, d.reject);
 

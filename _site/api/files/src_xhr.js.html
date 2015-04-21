@@ -134,7 +134,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.8</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.11</span>
                         <h1 class="file-heading">File: src/xhr.js</h1>
 
 <div class="file">
@@ -200,7 +200,7 @@ define([&#x27;_jquery&#x27;, &#x27;config&#x27;], function($, config) { &#x27;us
             }).fail(function(xhr, textStatus, err) {
                 //unauthorized when retrieving token -&gt; not logged
                 if ((xhr.status === 401) &amp;&amp; ($.isFunction(req.unauthorized))) {
-                    req.unauthorized(xhr);
+                    req.unauthorized(xhr, textStatus, err, deferred);
                     return;
                 }
                 // unauthorized handler is not defined or not http 401
@@ -247,7 +247,10 @@ define([&#x27;_jquery&#x27;, &#x27;config&#x27;], function($, config) { &#x27;us
         xhrSettings = $.extend({
             contentType: &#x27;application/json&#x27;,
             dataType: &#x27;json&#x27;,
-            pollDelay: 1000
+            pollDelay: 1000,
+            headers : {
+                &#x27;Accept&#x27; : &#x27;application/json; charset=utf-8&#x27;
+            }
         }, settings);
     };
 

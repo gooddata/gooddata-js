@@ -4,8 +4,8 @@ title:  "Visualize Sales Data using a Chord Chart"
 date:   2014-08-13 11:00:00
 categories: example
 highlighter: true
-prev_section: example/building-parallel-coordinates
-next_section: example/using-dc-js-with-gooddata
+prev_section: example/2014/08/15/building-parallel-coordinates.html
+next_section: example/2014/08/14/using-dc-js-with-gooddata.html
 perex: Learn how to pull data from GoodData and visualize them in D3.js Chord chart
 ---
 
@@ -59,7 +59,7 @@ The key part is the `getData()` method that calls the GoodData APIs and gives yo
 
 ### 2. Transform data
 
-In our [first tutorial](/tutorial/Your-First-Visualization), we didn't need any kind of data transformation because the data was ready to send to the D3. We need to do this now. This part always depends on what data you are extracting and what type of visualization you want to create. It is a fully custom javascript code.
+In our [first tutorial]({{ site.url }}/tutorial/2014/08/04/get-the-data-from-gooddata-platform.html), we didn't need any kind of data transformation because the data was ready to send to the D3. We need to do this now. This part always depends on what data you are extracting and what type of visualization you want to create. It is a fully custom javascript code.
 
 ![Workflow]({{ site.url }}/images/posts/transform-data.png)
 
@@ -208,5 +208,5 @@ This part really depends on the visualization type you use. We are using chord c
     });
 {% endhighlight %}
 
-That's it. You are ready to embed your new visualization to the GoodData Dashboard. If you are not sure how to do it read the [embedding tutorial](/tutorial/embedding-custom-visualization-into-dashboard).
+That's it. You are ready to embed your new visualization to the GoodData Dashboard. If you are not sure how to do it read the [embedding tutorial]({{ site.url }}/tutorial/2014/08/02/embedding-custom-visualization-into-dashboard.html).
 

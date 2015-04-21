@@ -147,7 +147,7 @@ a.topics {margin-top: 7px; font-size: 16px;}
 
 <div class="container-narrow" style="margin-top: 40px;">
   <h2 class="title">Building Parallel Coordinates</h2>
-  <p>Let’s learn how to create a custom visualization with our Javascript Visualization SDK and embed it to your dashboard. The tutorial is divided into several logical parts based on steps that you have to accomplish. You can also <a href="https://github.com/gooddata/gooddata-js/tree/develop/examples/parallel-coordinates">explore the complete example</a> that is also available in your forked repository (<em>examples</em> folder)   </p>
+  <p>Let’s learn how to create a custom visualization with our Javascript Visualization SDK and embed it to your dashboard. The tutorial is divided into several logical parts based on steps that you have to accomplish. You can also <a href="https://github.com/gooddata/gooddata-js/tree/develop/examples/parallel-coordinates">explore the complete example</a> that is also available in your forked repository (<em>examples</em> folder)</p>
 
 <p>What we are going to build is the visualization that is called Parallel Coordinates. It shows one attribute measured by multiple metrics. Imagine a following use case:</p>
 
@@ -155,24 +155,24 @@ a.topics {margin-top: 7px; font-size: 16px;}
 
 <p>The result might looks like this:</p>
 
-<p><img src="/images/posts/parallel-coordinates.png" alt="Parallel Coordinates graph" /></p>
+<p><img src="http://sdk.gooddata.com/gooddata-js/images/posts/parallel-coordinates.png" alt="Parallel Coordinates graph" /></p>
 
 <p>Remember that each line shows individual sales rep and each axis shows one metric that is used to measure sales representatives. We have a use case, so let’s build it!</p>
 
 <p>We need following metrics (remember to check identifiers in your project):</p>
 
-<p><strong>Won Amount</strong>: atX3I1GYg85J<br />
-<strong># Activities</strong> : acKjadJIgZUN<br />
-<strong># Opportunities</strong>: afdV48ABh8CN<br />
-<strong># Won Opportunities</strong>: abf0d42yaIkL  </p>
+<p><strong>Won Amount</strong>: atX3I1GYg85J
+<strong># Activities</strong> : acKjadJIgZUN
+<strong># Opportunities</strong>: afdV48ABh8CN
+<strong># Won Opportunities</strong>: abf0d42yaIkL</p>
 
 <p>Select the sales rep attribute identifier from the project:</p>
 
-<p><strong>Opportunity Owner</strong>: label.opp_owner.id.name  </p>
+<p><strong>Opportunity Owner</strong>: label.opp_owner.id.name</p>
 
 <p>Let’s log in and download the data. I already have those metrics ready in the GoodData. Now I need to select them and use them in the visualization.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">projectId</span> <span class="o">=</span> <span class="s1">&#39;project-id&#39;</span><span class="p">,</span> 
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">projectId</span> <span class="o">=</span> <span class="s1">&#39;project-id&#39;</span><span class="p">,</span>
     <span class="nx">user</span> <span class="o">=</span> <span class="s1">&#39;username@company.com&#39;</span><span class="p">,</span>
 	<span class="nx">passwd</span> <span class="o">=</span> <span class="s1">&#39;password&#39;</span><span class="p">;</span>
 
@@ -182,7 +182,7 @@ a.topics {margin-top: 7px; font-size: 16px;}
     <span class="nx">metric3</span> <span class="o">=</span> <span class="s1">&#39;afdV48ABh8CN&#39;</span><span class="p">,</span>
     <span class="nx">metric4</span> <span class="o">=</span> <span class="s1">&#39;abf0d42yaIkL&#39;</span><span class="p">,</span>
     <span class="nx">attr1</span> <span class="o">=</span> <span class="s1">&#39;label.opp_owner.id.name&#39;</span><span class="p">;</span>
-    
+
 <span class="kd">var</span> <span class="nx">elements</span> <span class="o">=</span> <span class="p">[</span><span class="nx">attr1</span><span class="p">,</span> <span class="nx">metric1</span><span class="p">,</span> <span class="nx">metric2</span><span class="p">,</span> <span class="nx">metric3</span><span class="p">,</span> <span class="nx">metric4</span><span class="p">];</span>
 
 <span class="c1">// Insert info label</span>
@@ -200,7 +200,7 @@ a.topics {margin-top: 7px; font-size: 16px;}
         <span class="c1">// Remove loading labels</span>
         <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;div.loading&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span></code></pre></div>
 
-<p>Now, it’s time to start building the D3 visualization itself. If you are an expert in building the D3 custom visualization, this article will be super easy for you! We are going to draw the Parallel Coordinates chart to compare one attribute across four different metrics. </p>
+<p>Now, it’s time to start building the D3 visualization itself. If you are an expert in building the D3 custom visualization, this article will be super easy for you! We are going to draw the Parallel Coordinates chart to compare one attribute across four different metrics.</p>
 
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
 	<span class="nx">w</span> <span class="o">=</span> <span class="mi">960</span> <span class="o">-</span> <span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nx">m</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
@@ -226,15 +226,15 @@ a.topics {margin-top: 7px; font-size: 16px;}
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// the main method that extract data and draw the visualization</span>
 <span class="kd">var</span> <span class="nx">parallel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dataResult</span><span class="p">)</span> <span class="p">{</span>
 
-		<span class="c1">// extract header titles for axis description    </span>
+		<span class="c1">// extract header titles for axis description</span>
         <span class="kd">var</span> <span class="nx">headers</span> <span class="o">=</span> <span class="nx">dataResult</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">h</span><span class="p">.</span><span class="nx">title</span><span class="p">;</span>
             <span class="p">});</span>
-    		    
+
     		    <span class="c1">// delete the attribute (first in returned array) description from header array - you need just metrics description</span>
                 <span class="nx">headers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
-        
-    	<span class="c1">// Extract the list of dimensions and create a scale for each.  </span>
+
+    	<span class="c1">// Extract the list of dimensions and create a scale for each.</span>
     	<span class="nx">x</span><span class="p">.</span><span class="nx">domain</span><span class="p">(</span><span class="nx">dimensions</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">dataResult</span><span class="p">.</span><span class="nx">rawData</span><span class="p">[</span><span class="mi">0</span><span class="p">]).</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
     	 	<span class="k">return</span> <span class="nx">d</span> <span class="o">!=</span> <span class="s2">&quot;0&quot;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">y</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">()</span>
     	 <span class="p">.</span><span class="nx">domain</span><span class="p">(</span><span class="nx">d3</span><span class="p">.</span><span class="nx">extent</span><span class="p">(</span><span class="nx">dataResult</span><span class="p">.</span><span class="nx">rawData</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="o">+</span><span class="nx">p</span><span class="p">[</span><span class="nx">d</span><span class="p">];</span> <span class="p">}))</span>
@@ -248,7 +248,7 @@ a.topics {margin-top: 7px; font-size: 16px;}
     	      <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">dataResult</span><span class="p">.</span><span class="nx">rawData</span><span class="p">)</span>
     	    <span class="p">.</span><span class="nx">enter</span><span class="p">().</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;svg:path&quot;</span><span class="p">)</span>
     	      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="nx">path</span><span class="p">);</span>
-    	 
+
     	  <span class="c1">// Add blue foreground lines for focus.</span>
     	  <span class="nx">foreground</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;svg:g&quot;</span><span class="p">)</span>
     	      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;foreground&quot;</span><span class="p">)</span>
@@ -256,7 +256,7 @@ a.topics {margin-top: 7px; font-size: 16px;}
     	      <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">dataResult</span><span class="p">.</span><span class="nx">rawData</span><span class="p">)</span>
     	    <span class="p">.</span><span class="nx">enter</span><span class="p">().</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;svg:path&quot;</span><span class="p">)</span>
     	      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="nx">path</span><span class="p">);</span>
-    	 
+
     	  <span class="c1">// Add a group element for each dimension.</span>
     	  <span class="kd">var</span> <span class="nx">g</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">&quot;.dimension&quot;</span><span class="p">)</span>
     	      <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">dimensions</span><span class="p">)</span>
@@ -288,7 +288,7 @@ a.topics {margin-top: 7px; font-size: 16px;}
     	              <span class="p">.</span><span class="nx">duration</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     	              <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;visibility&quot;</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
     	        <span class="p">}));</span>
-    	 
+
     	  <span class="c1">// Add an axis and title.</span>
     	  <span class="nx">g</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;svg:g&quot;</span><span class="p">)</span>
     	      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;axis&quot;</span><span class="p">)</span>
@@ -298,7 +298,7 @@ a.topics {margin-top: 7px; font-size: 16px;}
     	      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;text-anchor&quot;</span><span class="p">,</span> <span class="s2">&quot;middle&quot;</span><span class="p">)</span>
     	      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">9</span><span class="p">)</span>
     	      <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="nb">String</span><span class="p">);</span>
-    	 
+
     	  <span class="c1">// Add and store a brush for each axis.</span>
     	  <span class="nx">g</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;svg:g&quot;</span><span class="p">)</span>
     	      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;brush&quot;</span><span class="p">)</span>
@@ -313,22 +313,22 @@ a.topics {margin-top: 7px; font-size: 16px;}
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// calling the main method</span>
 		<span class="nx">parallel</span><span class="p">(</span><span class="nx">dataResult</span><span class="p">);</span></code></pre></div>
 
-<p>Finalize the dragging and transition effects. </p>
+<p>Finalize the dragging and transition effects.</p>
 
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">position</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
 			<span class="kd">var</span> <span class="nx">v</span> <span class="o">=</span> <span class="nx">dragging</span><span class="p">[</span><span class="nx">d</span><span class="p">];</span>
 			<span class="k">return</span> <span class="nx">v</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="nx">x</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="o">:</span> <span class="nx">v</span><span class="p">;</span>
 			<span class="p">}</span>
- 
+
 			<span class="kd">function</span> <span class="nx">transition</span><span class="p">(</span><span class="nx">g</span><span class="p">)</span> <span class="p">{</span>
 				<span class="k">return</span> <span class="nx">g</span><span class="p">.</span><span class="nx">transition</span><span class="p">().</span><span class="nx">duration</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
 			<span class="p">}</span>
- 
+
 			<span class="c1">// Returns the path for a given data point.</span>
 			<span class="kd">function</span> <span class="nx">path</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
 			  <span class="k">return</span> <span class="nx">line</span><span class="p">(</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="p">[</span><span class="nx">position</span><span class="p">(</span><span class="nx">p</span><span class="p">),</span> <span class="nx">y</span><span class="p">[</span><span class="nx">p</span><span class="p">](</span><span class="nx">d</span><span class="p">[</span><span class="nx">p</span><span class="p">])];</span> <span class="p">}));</span>
 			<span class="p">}</span>
-			
+
 			<span class="c1">// Handles a brush event, toggling the display of foreground lines.</span>
 			<span class="kd">function</span> <span class="nx">brush</span><span class="p">()</span> <span class="p">{</span>
 			  <span class="kd">var</span> <span class="nx">actives</span> <span class="o">=</span> <span class="nx">dimensions</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="o">!</span><span class="nx">y</span><span class="p">[</span><span class="nx">p</span><span class="p">].</span><span class="nx">brush</span><span class="p">.</span><span class="nx">empty</span><span class="p">();</span> <span class="p">}),</span>
@@ -357,7 +357,7 @@ a.topics {margin-top: 7px; font-size: 16px;}
   </div>
   <div class="right align-left">
     
-      <a href="http://localhost:4000/example/chord-chart-to-analyze-sales" class="next">
+      <a href="http://localhost:4000/example/2014/08/13/chord-chart-to-analyze-sales.html" class="next">
         Next
       </a>
     
