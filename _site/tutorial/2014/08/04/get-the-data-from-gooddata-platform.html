@@ -155,7 +155,7 @@ a.topics {margin-top: 7px; font-size: 16px;}
 
 <h3 id="gooddata-project">GoodData Project</h3>
 
-<p><em>If you don’t have a GoodData project, you can create one using this one page project creation template - <a href="link-to-script">Ruby SDK Script</a></em></p>
+<p><em>If you don’t have a GoodData project, you can create one using our <a href="http://sdk.gooddata.com/gooddata-ruby/get-started/">Ruby SDK</a>.</em></p>
 
 <p>We want to see open and close quote of Nasdaq during the time. Let’s use following metrics:</p>
 
@@ -167,6 +167,8 @@ a.topics {margin-top: 7px; font-size: 16px;}
 <p><strong>Year (Date)</strong>: date.aag81lMifn6q  </p>
 
 <p>The first lines of the code specify the project id, user credentials and report elements. By report elements we mean metrics and attributes.</p>
+
+<p><strong>NOTE:</strong> Credentials are just for your <strong>local developer environment</strong>. If you want to embed custom visualization to your dashboard, you don’t need them. Learn more about embedding custom visualization.</p>
 
 <pre>
 <code class="js">
@@ -210,9 +212,9 @@ a.topics {margin-top: 7px; font-size: 16px;}
 
 <p>The rawData array returns the data in in the same column order as you specified in the element variable on the top of your script. </p>
 
-<p><img src="/images/posts/data-object.png" alt="Data Object Structure" /></p>
+<p><img src="http://sdk.gooddata.com/gooddata-js/images/posts/data-object.png" alt="Data Object Structure" /></p>
 
-<p>Perfect. Your data is extracted from the GoodData Platform with the SDK, and now it’s up to you how you transform it. We have created <a href="/build-visualization/#examples">multiple examples</a> to inspire you.</p>
+<p>Perfect. Your data is extracted from the GoodData Platform with the SDK, and now it’s up to you how you transform it. We have created <a href="http://sdk.gooddata.com/gooddata-js/build-visualization/#examples">multiple examples</a> to inspire you.</p>
 
 
 
