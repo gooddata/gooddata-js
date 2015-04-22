@@ -59,7 +59,7 @@ The key part is the `getData()` method that calls the GoodData APIs and gives yo
 
 ### 2. Transform data
 
-In our [first tutorial]({% post_url 2014-08-04-get-the-data-from-gooddata-platform %}), we didn't need any kind of data transformation because the data was ready to send to the D3. We need to do this now. This part always depends on what data you are extracting and what type of visualization you want to create. It is a fully custom javascript code.
+In our [first tutorial]({{ site.url }}{% post_url 2014-08-04-get-the-data-from-gooddata-platform %}), we didn't need any kind of data transformation because the data was ready to send to the D3. We need to do this now. This part always depends on what data you are extracting and what type of visualization you want to create. It is a fully custom javascript code.
 
 ![Workflow]({{ site.url }}/images/posts/transform-data.png)
 
@@ -208,5 +208,5 @@ This part really depends on the visualization type you use. We are using chord c
     });
 {% endhighlight %}
 
-That's it. You are ready to embed your new visualization to the GoodData Dashboard. If you are not sure how to do it read the [embedding tutorial]({% post_url 2014-08-02-embedding-custom-visualization-into-dashboard %}).
+That's it. You are ready to embed your new visualization to the GoodData Dashboard. If you are not sure how to do it read the [embedding tutorial]({{ site.url }}{% post_url 2014-08-02-embedding-custom-visualization-into-dashboard %}).
 
