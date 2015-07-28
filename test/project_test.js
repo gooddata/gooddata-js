@@ -152,7 +152,7 @@ define(['project'], function(project) {
 
             describe('getTimezone', function() {
                 it('should return timezone using bootstrap', function(done) {
-                    var bootstrapUrl = '/gdc/app/account/bootstrap?projectId=prjId';
+                    var bootstrapUrl = '/gdc/app/account/bootstrap?projectUri=/gdc/projects/prjId';
                     var timezoneMock = {
                         id: 'Europe/Prague',
                         displayName: 'Central European Time',

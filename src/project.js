@@ -9,6 +9,15 @@ define(['jquery', './xhr', './util'], function($, xhr, util) {
      * @module project
      */
 
+    /**
+     *
+     * @method getProjectUrl
+     * @param {String} projectId
+     * @return {String} project url
+     */
+    var getProjectUrl = function(projectId) {
+        return '/gdc/projects/'+ projectId;
+    };
 
     /**
      * Get current project id
@@ -83,9 +92,10 @@ define(['jquery', './xhr', './util'], function($, xhr, util) {
      * color palette
      */
     var getColorPalette = function(projectId) {
-        var d = $.Deferred();
+        var d = $.Deferred(),
+            projectUrl = getProjectUrl(projectId);
 
-        xhr.get('/gdc/projects/'+ projectId +'/styleSettings').then(function(result) {
+        xhr.get(projectUrl + '/styleSettings').then(function(result) {
             d.resolve(result.styleSettings.chartPalette.map(function(c) {
                 return {
                     r: c.fill.r,
@@ -112,9 +122,10 @@ define(['jquery', './xhr', './util'], function($, xhr, util) {
      * Each color should be an object with r, g, b fields.
      */
     var setColorPalette = function(projectId, colors) {
-        var d = $.Deferred();
+        var d = $.Deferred(),
+            projectUrl = getProjectUrl(projectId);
 
-        xhr.put('/gdc/projects/'+ projectId +'/styleSettings', {
+        xhr.put(projectUrl + '/styleSettings', {
             data:  {
                 styleSettings: {
                     chartPalette: colors.map(function(c, idx) {
@@ -140,11 +151,12 @@ define(['jquery', './xhr', './util'], function($, xhr, util) {
      *     }
      *
      * @method getTimezone
-     * @param {String} projectId - GD project identifier
+     * @param {String} projectId - GD project URL
      */
     var getTimezone = function(projectId) {
         var d = $.Deferred(),
-            bootstrapUrl = '/gdc/app/account/bootstrap?projectId=' + projectId;
+            projectUrl = getProjectUrl(projectId);
+            bootstrapUrl = '/gdc/app/account/bootstrap?projectUri=' + projectUrl;
 
         xhr.get(bootstrapUrl).then(function(result) {
             var timezone = result.bootstrapResource.current.timezone;
