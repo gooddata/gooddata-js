@@ -68,13 +68,13 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.11</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.20</span>
                         <h1 class="file-heading">File: src/user.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
-define([&#x27;xhr&#x27;], function(xhr) {
+define([&#x27;jquery&#x27;, &#x27;./xhr&#x27;], function($, xhr) {
     &#x27;use strict&#x27;;
 
     /**
@@ -155,7 +155,8 @@ define([&#x27;xhr&#x27;], function(xhr) {
                 loginMD5: br.current.loginMD5,
                 firstName: br.accountSetting.firstName,
                 lastName: br.accountSetting.lastName,
-                organizationName: br.settings.organizationName
+                organizationName: br.settings.organizationName,
+                profileUri: br.accountSetting.links.self
             };
 
             d.resolve(accountInfo);

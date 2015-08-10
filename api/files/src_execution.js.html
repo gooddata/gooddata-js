@@ -68,13 +68,13 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.11</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.20</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
-define([&#x27;xhr&#x27;], function(xhr) {
+define([&#x27;jquery&#x27;, &#x27;./xhr&#x27;], function($, xhr) {
     &#x27;use strict&#x27;;
 
     /**
@@ -126,24 +126,30 @@ define([&#x27;xhr&#x27;], function(xhr) {
         xhr.post(&#x27;/gdc/internal/projects/&#x27;+projectId+&#x27;/experimental/executions&#x27;, {
             data: JSON.stringify(request)
         }, d.reject).then(function(result) {
-            // Populate result&#x27;s header section
-            executedReport.headers = result.executionResult.columns.map(function(col) {
-                if (col.attributeDisplayForm) {
-                    return {
-                        type: &#x27;attrLabel&#x27;,
-                        id: col.attributeDisplayForm.meta.identifier,
-                        uri: col.attributeDisplayForm.meta.uri,
-                        title: col.attributeDisplayForm.meta.title
-                    };
-                } else {
-                    return {
-                        type: &#x27;metric&#x27;,
-                        id: col.metric.meta.identifier,
-                        title: col.metric.meta.title,
-                        format: col.metric.content.format
-                    };
-                }
-            });
+            // TODO: when executionResult.headers will be globaly available columns map code should be removed
+            if (result.executionResult.headers) {
+                executedReport.headers = result.executionResult.headers;
+            } else {
+                // Populate result&#x27;s header section if is not available
+                executedReport.headers = result.executionResult.columns.map(function(col) {
+                    if (col.attributeDisplayForm) {
+                        return {
+                            type: &#x27;attrLabel&#x27;,
+                            id: col.attributeDisplayForm.meta.identifier,
+                            uri: col.attributeDisplayForm.meta.uri,
+                            title: col.attributeDisplayForm.meta.title
+                        };
+                    } else {
+                        return {
+                            type: &#x27;metric&#x27;,
+                            id: col.metric.meta.identifier,
+                            uri: col.metric.meta.uri,
+                            title: col.metric.meta.title,
+                            format: col.metric.content.format
+                        };
+                    }
+                });
+            }
             // Start polling on url returned in the executionResult for tabularData
             return xhr.ajax(result.executionResult.tabularDataResult);
         }, d.reject).then(function(result) {

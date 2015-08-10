@@ -68,13 +68,13 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.11</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.20</span>
                         <h1 class="file-heading">File: src/xhr.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 // Copyright (C) 2007-2013, GoodData(R) Corporation. All rights reserved.
-define([&#x27;_jquery&#x27;, &#x27;config&#x27;], function($, config) { &#x27;use strict&#x27;;
+define([&#x27;jquery&#x27;, &#x27;./config&#x27;], function($, config) { &#x27;use strict&#x27;;
 
     /**
      * Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.
@@ -231,12 +231,13 @@ define([&#x27;_jquery&#x27;, &#x27;config&#x27;], function($, config) { &#x27;us
                 d.reject(xhr, textStatus, err);
             }
         }).done(function(data, textStatus, xhr) {
-            if (xhr.status === 202) {
+            if (xhr.status === 202 &amp;&amp; !settings.dontPollOnResult) {
                 // if the response is 202 and Location header is not empty, let&#x27;s poll on the new Location
                 var location = xhr.getResponseHeader(&#x27;Location&#x27;);
                 if (location){
                     settings.url = location;
                 }
+                settings.method = &quot;GET&quot;;
                 handlePolling(settings, d);
             } else {
                 d.resolve(data, textStatus, xhr);

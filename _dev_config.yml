@@ -1,5 +1,4 @@
-name: GoodData Javascript SDK
-highlighter: pygments
+name: GoodData Ruby SDK
+pygments: true
 safe: true
 url: "http://localhost:4000"
-permalink: /:categories/:title

@@ -68,13 +68,13 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.11</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.20</span>
                         <h1 class="file-heading">File: src/metadata.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
-define([&#x27;xhr&#x27;, &#x27;util&#x27;], function(xhr, util) {
+define([&#x27;jquery&#x27;, &#x27;./xhr&#x27;, &#x27;./util&#x27;], function($, xhr, util) {
     &#x27;use strict&#x27;;
 
     /**
@@ -372,6 +372,17 @@ define([&#x27;xhr&#x27;, &#x27;util&#x27;], function(xhr, util) {
     };
 
     /**
+     * Returns all facts in a project specified by the given projectId
+     *
+     * @method getFacts
+     * @param projectId Project identifier
+     * @return {Array} An array of fact objects
+     */
+    var getFacts = function(projectId) {
+        return xhr.get(&#x27;/gdc/md/&#x27; + projectId + &#x27;/query/facts&#x27;).then(util.getIn(&#x27;query.entries&#x27;));
+    };
+
+    /**
      * Returns all metrics in a project specified by the given projectId
      *
      * @method getMetrics
@@ -392,11 +403,12 @@ define([&#x27;xhr&#x27;, &#x27;util&#x27;], function(xhr, util) {
      * availabale metrics
      * @return {Array} An array of reachable metrics for the given attrs
      * @see getAvailableAttributes
+     * @see getAvailableFacts
      */
     var getAvailableMetrics = function(projectId, attrs) {
         var d = $.Deferred();
 
-        xhr.post(&#x27;/gdc/md/&#x27;+ projectId +&#x27;/availablemetrics&#x27;, {
+        xhr.post(&#x27;/gdc/md/&#x27; + projectId + &#x27;/availablemetrics&#x27;, {
             data: JSON.stringify(attrs)
         }).then(function(result) {
             d.resolve(result.entries);
@@ -415,14 +427,39 @@ define([&#x27;xhr&#x27;, &#x27;util&#x27;], function(xhr, util) {
      * availabale attributes
      * @return {Array} An array of reachable attributes for the given metrics
      * @see getAvailableMetrics
+     * @see getAvailableFacts
      */
     var getAvailableAttributes = function(projectId, metrics) {
         var d = $.Deferred();
 
-        xhr.post(&#x27;/gdc/md/&#x27;+ projectId +&#x27;/drillcrosspaths&#x27;, {
+        xhr.post(&#x27;/gdc/md/&#x27; + projectId + &#x27;/drillcrosspaths&#x27;, {
             data: JSON.stringify(metrics)
         }).then(function(result) {
             d.resolve(result.drillcrosspath.links);
+        }, d.reject);
+
+        return d.promise();
+    };
+
+    /**
+     * Returns all attributes that are reachable (with respect to ldm of the project
+     * specified by the given projectId) for given metrics (also called as drillCrossPath)
+     *
+     * @method getAvailableFacts
+     * @param {String} projectId - Project identifier
+     * @param {Array} items - An array of metric or attribute uris for which we want to get
+     * availabale facts
+     * @return {Array} An array of reachable facts for the given items
+     * @see getAvailableAttributes
+     * @see getAvailableMetrics
+     */
+    var getAvailableFacts = function(projectId, items) {
+        var d = $.Deferred();
+
+        xhr.post(&#x27;/gdc/md/&#x27; + projectId + &#x27;/availablefacts&#x27;, {
+            data: JSON.stringify(items)
+        }).then(function(result) {
+            d.resolve(result.entries);
         }, d.reject);
 
         return d.promise();
@@ -499,7 +536,7 @@ define([&#x27;xhr&#x27;, &#x27;util&#x27;], function(xhr, util) {
             type: &#x27;POST&#x27;,
             headers: { Accept: &#x27;application/json&#x27; },
             data: {
-                &quot;identifierToUri&quot;: [identifier]
+                identifierToUri: [identifier]
             }
         }).then(function(data) {
             var found = data.identifiers.filter(function(i) {
@@ -530,9 +567,11 @@ define([&#x27;xhr&#x27;, &#x27;util&#x27;], function(xhr, util) {
         getDimensions: getDimensions,
         getFolders: getFolders,
         getFoldersWithItems: getFoldersWithItems,
+        getFacts: getFacts,
         getMetrics: getMetrics,
         getAvailableMetrics: getAvailableMetrics,
         getAvailableAttributes: getAvailableAttributes,
+        getAvailableFacts: getAvailableFacts,
         getObjectDetails: getObjectDetails,
         getObjectIdentifier: getObjectIdentifier,
         getObjectUri: getObjectUri

@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.11",
+        "version": "0.1.20",
         "url": ""
     },
     "files": {
@@ -460,6 +460,25 @@
         {
             "file": "src/metadata.js",
             "line": 299,
+            "description": "Returns all facts in a project specified by the given projectId",
+            "itemtype": "method",
+            "name": "getFacts",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "Project identifier"
+                }
+            ],
+            "return": {
+                "description": "An array of fact objects",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.js",
+            "line": 310,
             "description": "Returns all metrics in a project specified by the given projectId",
             "itemtype": "method",
             "name": "getMetrics",
@@ -478,7 +497,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 310,
+            "line": 321,
             "description": "Returns all metrics that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given attributes",
             "itemtype": "method",
             "name": "getAvailableMetrics",
@@ -499,14 +518,15 @@
                 "type": "Array"
             },
             "see": [
-                "getAvailableAttributes"
+                "getAvailableAttributes",
+                "getAvailableFacts"
             ],
             "class": "metadata",
             "module": "metadata"
         },
         {
             "file": "src/metadata.js",
-            "line": 333,
+            "line": 345,
             "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
             "itemtype": "method",
             "name": "getAvailableAttributes",
@@ -527,6 +547,36 @@
                 "type": "Array"
             },
             "see": [
+                "getAvailableMetrics",
+                "getAvailableFacts"
+            ],
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.js",
+            "line": 369,
+            "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
+            "itemtype": "method",
+            "name": "getAvailableFacts",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- Project identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "items",
+                    "description": "- An array of metric or attribute uris for which we want to get\navailabale facts",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "An array of reachable facts for the given items",
+                "type": "Array"
+            },
+            "see": [
+                "getAvailableAttributes",
                 "getAvailableMetrics"
             ],
             "class": "metadata",
@@ -534,7 +584,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 356,
+            "line": 393,
             "description": "Get details of a metadata object specified by its uri",
             "itemtype": "method",
             "name": "getObjectDetails",
@@ -553,7 +603,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 377,
+            "line": 414,
             "description": "Get identifier of a metadata object identified by its uri",
             "itemtype": "method",
             "name": "getObjectIdentifier",
@@ -572,7 +622,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 408,
+            "line": 445,
             "description": "Get uri of an metadata object, specified by its identifier and project id it belongs to",
             "itemtype": "method",
             "name": "getObjectUri",
@@ -682,6 +732,22 @@
                     "name": "colors",
                     "description": "- An array of colors that we want to use within the project.\nEach color should be an object with r, g, b fields.",
                     "type": "Array"
+                }
+            ],
+            "class": "project",
+            "module": "project"
+        },
+        {
+            "file": "src/project.js",
+            "line": 133,
+            "description": "Gets current timezone and its offset. Example output:\n\n    {\n        id: 'Europe/Prague',\n        displayName: 'Central European Time',\n        currentOffsetMs: 3600000\n    }",
+            "itemtype": "method",
+            "name": "getTimezone",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- GD project identifier",
+                    "type": "String"
                 }
             ],
             "class": "project",
@@ -809,7 +875,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 183,
+            "line": 184,
             "description": "Wrapper for xhr.ajax method GET",
             "itemtype": "method",
             "name": "get",
@@ -818,7 +884,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 189,
+            "line": 190,
             "description": "Wrapper for xhr.ajax method POST",
             "itemtype": "method",
             "name": "post",
@@ -827,7 +893,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 196,
+            "line": 197,
             "description": "Wrapper for xhr.ajax method PUT",
             "itemtype": "method",
             "name": "put",
