@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GoodData Javascript SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://developer.gooddata.com/favicon.ico" rel="shortcut icon">
+    <!-- Le styles -->
+    <link href="http://localhost:4000/css/bootstrap.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/syntax.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://localhost:4000/css/highlight-default.min.css">
+	<script src="http://localhost:4000/js/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+
+<style>
+body {
+    padding-top: 20px;
+    padding-bottom: 40px;
+    background: url(http://sdk.gooddata.com/gooddata-js/images/background.png) left top no-repeat;
+    background-size: 111px 245px;
+
+  }
+
+a.topics {margin-top: 7px; font-size: 16px;}
+
+  /* Custom container */
+  .container-narrow {
+    margin: 45px auto;
+    max-width: 700px;
+  }
+  .container-narrow > hr {
+    margin: 45px 0;
+  }
+
+  /* Main marketing message and sign up button */
+  .jumbotron {
+    padding: 70px 0;
+    text-align: center;
+  }
+  .jumbotron h1 {
+    font-size: 48px;
+    line-height: 1;
+  }
+  .jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+  }
+
+  /* Supporting marketing content */
+  .marketing {
+    margin: 60px 0;
+  }
+  .marketing p + h4 {
+    margin-top: 28px;
+  }
+
+  img.centered {
+    margin: 30px auto;
+    display: block;
+/*        border: 1px solid red;*/
+  }
+
+
+</style>
+
+</head>
+  <body>
+    <div>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div style="margin-left: 100px;">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="http://localhost:4000">
+                <img src="http://localhost:4000/images/header-logo.png" alt="GoodData JS SDK" width="24" height="24" style="margin-bottom: 5px;" />
+            GoodData<span style="color: #F0E040;">JS
+            </a>
+            <div class="nav-collapse collapse container">
+                <ul class="nav">
+                    
+                    
+                    <li>
+                        <a href="http://localhost:4000/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//getting-started">Get Started</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//build-visualization">Build Visualization</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000//api">API</a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://developer.gooddata.com/forum" target="_blank">Forum</a>
+                    </li>
+                </ul>
+            </div>
+            </div>
+        </div>
+        </div>
+      <div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div style="margin-left: 100px;">
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="brand" href="http://localhost:4000">
+          <img src="http://localhost:4000/images/header-logo.png" alt="GoodData Labs" width="24" height="24">
+      GoodData<span style="color: #F0E040;">JS
+</a>
+      <div class="nav-collapse collapse container">
+        <ul class="nav">
+          <li class="">
+            <a href="http://localhost:4000/">Home</a>
+          </li>
+          <li class="">
+            <a href="http://localhost:4000/getting-started">Get Started</a>
+          </li>
+          <li class="">
+            <a href="http://localhost:4000/build-visualization">Build Visualization</a>
+          </li>
+          <li class="">
+            <a href="http://localhost:4000/api">API</a>
+          </li>
+		<li class="">
+            <a href="https://developer.gooddata.com/forum" target="_blank">Forum</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-narrow" style="margin-top: 40px;">
+  <h2 class="title">Get the Data from GoodData Project</h2>
+  <p>Open your GoodData Project and create the metrics that you want to visualize. You will need identifiers (not URIs!) to specify the objects to export. The easiest way to get the metric identifier is to use our grey pages here: </p>
+
+<p><code>https://secure.gooddata.com/gdc/md/{project-id}/query/metrics</code> </p>
+
+<p>navigate to your metric, open it and locate its identifier key and copy its value. You can also use API directly to get metric identifiers.</p>
+
+<h3 id="gooddata-project">GoodData Project</h3>
+
+<p><em>If you don’t have a GoodData project, you can create one using this one page project creation template - <a href="link-to-script">Ruby SDK Script</a></em></p>
+
+<p>We want to see open and close quote of Nasdaq during the time. Let’s use following metrics:</p>
+
+<p><strong>open</strong>: aiAY9GSReqiT<br />
+<strong>close</strong> : aHZY9nzNeg3f    </p>
+
+<p>Select the sales rep attribute identifier from the project:</p>
+
+<p><strong>Year (Date)</strong>: date.aag81lMifn6q  </p>
+
+<p>The first lines of the code specify the project id, user credentials and report elements. By report elements we mean metrics and attributes.</p>
+
+<pre>
+<code class="js">
+	var projectId = 'project-id', 
+		user = 'username@company.com',
+		passwd = 'password';
+
+	// Report elements identifiers from which we execute a GD report
+	var open = 'aiAY9GSReqiT',
+		close = 'aHZY9nzNeg3f',
+		year = 'date.aag81lMifn6q';
+
+</code>
+</pre>
+
+<p>The next step is all about the Javascript methods that call the GoodData APIs to authenticate and extract the data based on the metrics and attributes from the code above. </p>
+
+<p>See the following script, particularly the <code>gooddata.user.login</code> and <code>gooddata.execution.getData</code> methods.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">elements</span> <span class="o">=</span> <span class="p">[</span><span class="nx">year</span><span class="p">,</span> <span class="nx">open</span><span class="p">,</span> <span class="nx">close</span><span class="p">];</span>
+
+<span class="c1">// Insert info label</span>
+<span class="nx">$</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;login-loader&quot;&gt;Logging in...&lt;/div&gt;&#39;</span><span class="p">);</span>
+
+<span class="nx">gooddata</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">login</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">passwd</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;div.login-loader&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;loading&quot;&gt;Loading data...&lt;/div&gt;&#39;</span><span class="p">);</span></code></pre></div>
+
+<p>Here we go. This is <strong>the key</strong> part. The <code>gooddata.execution.getData</code> method executes report and gives you data. </p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">gooddata</span><span class="p">.</span><span class="nx">execution</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">projectId</span><span class="p">,</span> <span class="nx">elements</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">dataResult</span><span class="p">)</span> <span class="p">{</span></code></pre></div>
+
+<p>You have successfully extracted the data from GoodData Platform and now have all data that you have specified in the browser. You can now use the D3.js (or any other viz framework) to create the custom visualization. The structure that the <code>getData()</code> method returns to you is an object. This object contains of two arrays:</p>
+
+<ul>
+  <li>headers: array of objects with header information and data  </li>
+  <li>rawData: array with the data for each row  </li>
+  <li>isLoaded: parameter that you can check for better handling (true/false)  </li>
+</ul>
+
+<p>The rawData array returns the data in in the same column order as you specified in the element variable on the top of your script. </p>
+
+<p><img src="/images/posts/data-object.png" alt="Data Object Structure" /></p>
+
+<p>Perfect. Your data is extracted from the GoodData Platform with the SDK, and now it’s up to you how you transform it. We have created <a href="/build-visualization/#examples">multiple examples</a> to inspire you.</p>
+
+
+
+  <div class="section-nav">
+  <div class="left align-right">
+    
+      <a href="http://localhost:4000/build-visualization" class="prev">
+        Back
+      </a>
+    
+  </div>
+  <div class="right align-left">
+    
+      <a href="http://localhost:4000/build-visualization/#set-up-viz" class="next">
+        Next
+      </a>
+    
+  </div>
+  <div class="clear"></div>
+</div>
+
+</div>
+
+
+      <hr>
+
+<div class="footer" style="text-align: center;">
+<p>&copy; GoodData 2014</p>
+      </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+     <script src="https://developer.gooddata.com/themes/site_themes/developer2012/js/jquery.js?v=1"></script>
+    <script src="http://localhost:4000/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+
+                     var _gaq = _gaq || [];
+                     _gaq.push(['_setAccount', 'UA-3766725-7']);
+                     _gaq.push(['_trackPageview']);
+
+                    (function() {
+                      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                       })();
+
+    </script>
+  </body>
+</html>

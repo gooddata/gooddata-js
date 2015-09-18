@@ -68,7 +68,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.20</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.21</span>
                         <h1 class="file-heading">File: src/xhr.js</h1>
 
 <div class="file">
@@ -238,6 +238,7 @@ define([&#x27;jquery&#x27;, &#x27;./config&#x27;], function($, config) { &#x27;u
                     settings.url = location;
                 }
                 settings.method = &quot;GET&quot;;
+                delete settings.data;
                 handlePolling(settings, d);
             } else {
                 d.resolve(data, textStatus, xhr);
