@@ -1,0 +1,7 @@
+## Tests
+test:
+  pre:
+    - npm install grunt-cli -g
+    - bower install
+  override:
+    - grunt test --ci
