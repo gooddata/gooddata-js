@@ -27,5 +27,5 @@ import * as config from './config';
  * @module sdk
  * @class sdk
  */
-export default { config, xhr, user, md, execution, project };
+export { config, xhr, user, md, execution, project };
 
