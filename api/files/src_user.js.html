@@ -8,175 +8,149 @@ title: foobar
         <div class="yui3-u-1-4">
             <div id="docs-sidebar" class="sidebar apidocs">
                 <div id="api-list">
-    <div id="api-tabview" class="tabview">
-        <div id="api-tabview-filter">
-            <input type="search" id="api-filter" placeholder="Type to filter APIs">
-        </div>
-
-        <div id="api-tabview-panel">
-            <ul class="tabs">
-                <li><a href="#api-modules" class="category">Modules</a>
-                    <ul id="api-modules" class="apis modules">
-                    
-                        <li><a href="../modules/config.html">config</a></li>
-                    
-                        <li><a href="../modules/execution.html">execution</a></li>
-                    
-                        <li><a href="../modules/metadata.html">metadata</a></li>
-                    
-                        <li><a href="../modules/project.html">project</a></li>
-                    
-                        <li><a href="../modules/sdk.html">sdk</a></li>
-                    
-                        <li><a href="../modules/user.html">user</a></li>
-                    
-                        <li><a href="../modules/util.html">util</a></li>
-                    
-                        <li><a href="../modules/xhr.html">xhr</a></li>
-                    
-                    </ul>
-                </li>
-                <li><a href="#api-classes" class="category">Classes</a>
-                    <ul id="api-classes" class="apis classes">
-                    
-                        <li><a href="../classes/config.html">config</a></li>
-                    
-                        <li><a href="../classes/execution.html">execution</a></li>
-                    
-                        <li><a href="../classes/metadata.html">metadata</a></li>
-                    
-                        <li><a href="../classes/project.html">project</a></li>
-                    
-                        <li><a href="../classes/sdk.html">sdk</a></li>
-                    
-                        <li><a href="../classes/user.html">user</a></li>
-                    
-                        <li><a href="../classes/util.html">util</a></li>
-                    
-                        <li><a href="../classes/xhr.html">xhr</a></li>
-                    
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/user.html">user</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/user.html">user</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="yui3-u-3-4">
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.21</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.24</span>
                         <h1 class="file-heading">File: src/user.js</h1>
-
-<div class="file">
-    <pre class="code prettyprint linenums">
-// Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
-define([&#x27;jquery&#x27;, &#x27;./xhr&#x27;], function($, xhr) {
-    &#x27;use strict&#x27;;
-
-    /**
-     * @module user
-     * @class user
-     */
-
-    /**
-     * Find out whether a user is logged in
-     *
-     * Returns a promise which either:
-     * **resolves** - which means user is logged in or
-     * **rejects** - meaning is not logged in
-     * @method isLoggedIn
-     */
-    var isLoggedIn = function() {
-        return $.getJSON(&#x27;/gdc/account/token&#x27;);
-    };
-
-
-    /**
-     * This function provides an authentication entry point to the GD API. It is needed to authenticate
-     * by calling this function prior any other API calls. After providing valid credentials
-     * every subsequent API call in a current session will be authenticated.
-     *
-     * @method login
-     * @param {String} username
-     * @param {String} password
-     */
-    var login = function(username, password) {
-        return xhr.post(&quot;/gdc/account/login&quot;, {
-            data: JSON.stringify({
-                postUserLogin: {
-                    login: username,
-                    password: password,
-                    remember: 1,
-                    captcha: &quot;&quot;,
-                    verifyCaptcha: &quot;&quot;
-                }
-            })
-        });
-    };
-
-    /**
-     * Logs out current user
-     * @method logout
-     */
-    var logout = function() {
-        var d = $.Deferred();
-
-        isLoggedIn().then(function() {
-            return xhr.get(&#x27;/gdc/app/account/bootstrap&#x27;).then(function(result) {
-                var userUri = result.bootstrapResource.accountSetting.links.self;
-                var userId = userUri.match(/([^\/]+)\/?$/)[1];
-
-                return userId;
-            }, d.reject);
-        }, d.resolve).then(function(userId) {
-            return xhr.ajax(&#x27;/gdc/account/login/&#x27; + userId, {
-                method: &#x27;delete&#x27;
-            });
-        }).then(d.resolve, d.reject);
-
-        return d.promise();
-    };
-
-    /**
-     * Returns info about currently logged in user from bootstrap resource
-     * @method getAccountInfo
-     */
-    var getAccountInfo = function() {
-        var d = $.Deferred();
-
-        xhr.get(&#x27;/gdc/app/account/bootstrap&#x27;).then(function(result) {
-            var br = result.bootstrapResource;
-            var accountInfo = {
-                login: br.accountSetting.login,
-                loginMD5: br.current.loginMD5,
-                firstName: br.accountSetting.firstName,
-                lastName: br.accountSetting.lastName,
-                organizationName: br.settings.organizationName,
-                profileUri: br.accountSetting.links.self
-            };
-
-            d.resolve(accountInfo);
-        }, d.reject);
-
-        return d.promise();
-    };
-
-
-    return {
-        isLoggedIn: isLoggedIn,
-        login: login,
-        logout: logout,
-        getAccountInfo: getAccountInfo
-    };
-});
-
-    </pre>
-</div>
-
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
+                        import $ from &#x27;jquery&#x27;;
+                        import { ajax, get, post } from &#x27;./xhr&#x27;;
+                        
+                        /**
+                         * @module user
+                         * @class user
+                         */
+                        
+                        /**
+                         * Find out whether a user is logged in
+                         *
+                         * Returns a promise which either:
+                         * **resolves** - which means user is logged in or
+                         * **rejects** - meaning is not logged in
+                         * @method isLoggedIn
+                         */
+                        export function isLoggedIn() {
+                            return $.getJSON(&#x27;/gdc/account/token&#x27;);
+                        }
+                        
+                        
+                        /**
+                         * This function provides an authentication entry point to the GD API. It is needed to authenticate
+                         * by calling this function prior any other API calls. After providing valid credentials
+                         * every subsequent API call in a current session will be authenticated.
+                         *
+                         * @method login
+                         * @param {String} username
+                         * @param {String} password
+                         */
+                        export function login(username, password) {
+                            return post(&#x27;/gdc/account/login&#x27;, {
+                                data: JSON.stringify({
+                                    postUserLogin: {
+                                        login: username,
+                                        password: password,
+                                        remember: 1,
+                                        captcha: &#x27;&#x27;,
+                                        verifyCaptcha: &#x27;&#x27;
+                                    }
+                                })
+                            });
+                        }
+                        
+                        /**
+                         * Logs out current user
+                         * @method logout
+                         */
+                        export function logout() {
+                            /* eslint new-cap: 0 */
+                            const d = $.Deferred();
+                        
+                            isLoggedIn().then(function resolve() {
+                                return get(&#x27;/gdc/app/account/bootstrap&#x27;).then(function resolveGet(result) {
+                                    const userUri = result.bootstrapResource.accountSetting.links.self;
+                                    const userId = userUri.match(/([^\/]+)\/?$/)[1];
+                        
+                                    return userId;
+                                }, d.reject);
+                            }, d.resolve).then(function resolveAll(userId) {
+                                return ajax(&#x27;/gdc/account/login/&#x27; + userId, {
+                                    method: &#x27;delete&#x27;
+                                });
+                            }).then(d.resolve, d.reject);
+                        
+                            return d.promise();
+                        }
+                        
+                        /**
+                         * Returns info about currently logged in user from bootstrap resource
+                         * @method getAccountInfo
+                         */
+                        export function getAccountInfo() {
+                            /* eslint new-cap: 0 */
+                            const d = $.Deferred();
+                        
+                            get(&#x27;/gdc/app/account/bootstrap&#x27;).then(function resolveBootstrap(result) {
+                                const br = result.bootstrapResource;
+                                const accountInfo = {
+                                    login: br.accountSetting.login,
+                                    loginMD5: br.current.loginMD5,
+                                    firstName: br.accountSetting.firstName,
+                                    lastName: br.accountSetting.lastName,
+                                    organizationName: br.settings.organizationName,
+                                    profileUri: br.accountSetting.links.self
+                                };
+                        
+                                d.resolve(accountInfo);
+                            }, d.reject);
+                        
+                            return d.promise();
+                        }
+                        
+                        
+                            </pre>
+                        </div>
                     </div>
                 </div>
             </div>

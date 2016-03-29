@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.21",
+        "version": "0.1.24",
         "url": ""
     },
     "files": {
@@ -99,6 +99,7 @@
         "config": {
             "name": "config",
             "submodules": {},
+            "elements": {},
             "classes": {
                 "config": 1
             },
@@ -106,12 +107,13 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/config.js",
-            "line": 6,
+            "line": 2,
             "description": "Config module holds SDK configuration variables\n\nCurrently its only custom domain - which enabled using\nsdk from different domain (using CORS)\n\nNever set properties directly - always use setter methods"
         },
         "execution": {
             "name": "execution",
             "submodules": {},
+            "elements": {},
             "classes": {
                 "execution": 1
             },
@@ -119,12 +121,13 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/execution.js",
-            "line": 5,
+            "line": 14,
             "description": "Module for execution on experimental execution resource"
         },
         "sdk": {
             "name": "sdk",
             "submodules": {},
+            "elements": {},
             "classes": {
                 "sdk": 1
             },
@@ -132,12 +135,13 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/gooddata.js",
-            "line": 21,
+            "line": 9,
             "description": "# JS SDK\nHere is a set of functions that mostly are a thin wraper over the [GoodData API](https://developer.gooddata.com/api).\nBefore calling any of those functions, you need to authenticate with a valid GoodData\nuser credentials. After that, every subsequent call in the current session is authenticated.\nYou can find more about the GD authentication mechanism here.\n\n## Conventions and Dependencies\n* Depends on [jQuery JavaScript library](http://jquery.com/) javascript library\n* Each SDK function returns [jQuery Deferred promise](http://api.jquery.com/deferred.promise/)\n\n## GD Authentication Mechansim\nIn this JS SDK library we provide you with a simple `login(username, passwd)` function\nthat does the magic for you.\nTo fully understand the authentication mechansim, please read\n[Authentication via API article](http://developer.gooddata.com/article/authentication-via-api)\non [GoodData Developer Portal](http://developer.gooddata.com/)"
         },
         "metadata": {
             "name": "metadata",
             "submodules": {},
+            "elements": {},
             "classes": {
                 "metadata": 1
             },
@@ -145,12 +149,13 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/metadata.js",
-            "line": 5,
+            "line": 6,
             "description": "Functions for working with metadata objects"
         },
         "project": {
             "name": "project",
             "submodules": {},
+            "elements": {},
             "classes": {
                 "project": 1
             },
@@ -158,12 +163,13 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/project.js",
-            "line": 5,
+            "line": 6,
             "description": "Functions for working with projects"
         },
         "user": {
             "name": "user",
             "submodules": {},
+            "elements": {},
             "classes": {
                 "user": 1
             },
@@ -176,6 +182,7 @@
         "util": {
             "name": "util",
             "submodules": {},
+            "elements": {},
             "classes": {
                 "util": 1
             },
@@ -189,6 +196,7 @@
         "xhr": {
             "name": "xhr",
             "submodules": {},
+            "elements": {},
             "classes": {
                 "xhr": 1
             },
@@ -196,7 +204,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/xhr.js",
-            "line": 4,
+            "line": 10,
             "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
         }
     },
@@ -212,7 +220,7 @@
             "module": "config",
             "namespace": "",
             "file": "src/config.js",
-            "line": 6,
+            "line": 2,
             "description": "Config module holds SDK configuration variables\n\nCurrently its only custom domain - which enabled using\nsdk from different domain (using CORS)\n\nNever set properties directly - always use setter methods"
         },
         "execution": {
@@ -226,7 +234,7 @@
             "module": "execution",
             "namespace": "",
             "file": "src/execution.js",
-            "line": 5,
+            "line": 14,
             "description": "Module for execution on experimental execution resource"
         },
         "sdk": {
@@ -240,7 +248,7 @@
             "module": "sdk",
             "namespace": "",
             "file": "src/gooddata.js",
-            "line": 21,
+            "line": 9,
             "description": "# JS SDK\nHere is a set of functions that mostly are a thin wraper over the [GoodData API](https://developer.gooddata.com/api).\nBefore calling any of those functions, you need to authenticate with a valid GoodData\nuser credentials. After that, every subsequent call in the current session is authenticated.\nYou can find more about the GD authentication mechanism here.\n\n## Conventions and Dependencies\n* Depends on [jQuery JavaScript library](http://jquery.com/) javascript library\n* Each SDK function returns [jQuery Deferred promise](http://api.jquery.com/deferred.promise/)\n\n## GD Authentication Mechansim\nIn this JS SDK library we provide you with a simple `login(username, passwd)` function\nthat does the magic for you.\nTo fully understand the authentication mechansim, please read\n[Authentication via API article](http://developer.gooddata.com/article/authentication-via-api)\non [GoodData Developer Portal](http://developer.gooddata.com/)"
         },
         "metadata": {
@@ -254,7 +262,7 @@
             "module": "metadata",
             "namespace": "",
             "file": "src/metadata.js",
-            "line": 5,
+            "line": 6,
             "description": "Functions for working with metadata objects"
         },
         "project": {
@@ -268,7 +276,7 @@
             "module": "project",
             "namespace": "",
             "file": "src/project.js",
-            "line": 5,
+            "line": 6,
             "description": "Functions for working with projects"
         },
         "user": {
@@ -309,14 +317,15 @@
             "module": "xhr",
             "namespace": "",
             "file": "src/xhr.js",
-            "line": 4,
+            "line": 10,
             "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
         }
     },
+    "elements": {},
     "classitems": [
         {
             "file": "src/config.js",
-            "line": 21,
+            "line": 18,
             "description": "Sets custom domain. Parameter is url which has always to be https://\n(if you don't provide it, we will do it for you).\n\nRegExp inspired taken from\nhttps://github.com/jarib/google-closure-library/blob/master/closure/goog/string/linkify.js",
             "itemtype": "method",
             "name": "setCustomDomain",
@@ -325,7 +334,7 @@
         },
         {
             "file": "src/execution.js",
-            "line": 12,
+            "line": 21,
             "description": "For the given projectId it returns table structure with the given\nelements in column headers.",
             "itemtype": "method",
             "name": "getData",
@@ -355,7 +364,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 13,
+            "line": 14,
             "description": "Get additional information about elements specified by their uris\n`elementUris` is the array of uris of elements to be look-up\nCurrently makes a request for each object, should be encapsulated\nto one call",
             "itemtype": "method",
             "name": "getElementDetails",
@@ -373,7 +382,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 87,
+            "line": 88,
             "description": "Reutrns all attributes in a project specified by projectId param",
             "itemtype": "method",
             "name": "getAttributes",
@@ -392,7 +401,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 98,
+            "line": 99,
             "description": "Returns all dimensions in a project specified by projectId param",
             "itemtype": "method",
             "name": "getDimensions",
@@ -414,7 +423,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 110,
+            "line": 111,
             "description": "Returns project folders. Folders can be of specific types and you can specify\nthe type you need by passing and optional `type` parameter",
             "itemtype": "method",
             "name": "getFolders",
@@ -439,7 +448,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 143,
+            "line": 146,
             "description": "Get folders with items.\nReturns array of folders, each having a title and items property which is an array of\ncorresponding items. Each item is either a metric or attribute, keeping its original\nverbose structure.",
             "itemtype": "method",
             "name": "getFoldersWithItems",
@@ -459,7 +468,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 299,
+            "line": 309,
             "description": "Returns all facts in a project specified by the given projectId",
             "itemtype": "method",
             "name": "getFacts",
@@ -478,7 +487,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 310,
+            "line": 320,
             "description": "Returns all metrics in a project specified by the given projectId",
             "itemtype": "method",
             "name": "getMetrics",
@@ -497,7 +506,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 321,
+            "line": 331,
             "description": "Returns all metrics that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given attributes",
             "itemtype": "method",
             "name": "getAvailableMetrics",
@@ -526,7 +535,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 345,
+            "line": 357,
             "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
             "itemtype": "method",
             "name": "getAvailableAttributes",
@@ -555,7 +564,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 369,
+            "line": 383,
             "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
             "itemtype": "method",
             "name": "getAvailableFacts",
@@ -584,7 +593,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 393,
+            "line": 409,
             "description": "Get details of a metadata object specified by its uri",
             "itemtype": "method",
             "name": "getObjectDetails",
@@ -603,7 +612,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 414,
+            "line": 432,
             "description": "Get identifier of a metadata object identified by its uri",
             "itemtype": "method",
             "name": "getObjectIdentifier",
@@ -622,7 +631,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 445,
+            "line": 464,
             "description": "Get uri of an metadata object, specified by its identifier and project id it belongs to",
             "itemtype": "method",
             "name": "getObjectUri",
@@ -645,7 +654,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 13,
+            "line": 14,
             "description": "Get current project id",
             "itemtype": "method",
             "name": "getCurrentProjectId",
@@ -658,7 +667,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 31,
+            "line": 32,
             "description": "Fetches projects available for the user represented by the given profileId",
             "itemtype": "method",
             "name": "getProjects",
@@ -678,7 +687,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 44,
+            "line": 45,
             "description": "Fetches all datasets for the given project",
             "itemtype": "method",
             "name": "getDatasets",
@@ -698,7 +707,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 76,
+            "line": 77,
             "description": "Fetches a chart color palette for a project represented by the given\nprojectId parameter.",
             "itemtype": "method",
             "name": "getColorPalette",
@@ -718,7 +727,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 106,
+            "line": 109,
             "description": "Sets given colors as a color palette for a given project.",
             "itemtype": "method",
             "name": "setColorPalette",
@@ -739,7 +748,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 133,
+            "line": 138,
             "description": "Gets current timezone and its offset. Example output:\n\n    {\n        id: 'Europe/Prague',\n        displayName: 'Central European Time',\n        currentOffsetMs: 3600000\n    }",
             "itemtype": "method",
             "name": "getTimezone",
@@ -794,7 +803,7 @@
         },
         {
             "file": "src/user.js",
-            "line": 69,
+            "line": 70,
             "description": "Returns info about currently logged in user from bootstrap resource",
             "itemtype": "method",
             "name": "getAccountInfo",
@@ -804,32 +813,6 @@
         {
             "file": "src/util.js",
             "line": 13,
-            "description": "Simple get path helper method",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "method",
-            "name": "getPath",
-            "params": [
-                {
-                    "name": "obj",
-                    "description": "object to start getting path from",
-                    "type": "Object"
-                },
-                {
-                    "name": "path",
-                    "description": "path identifier",
-                    "type": "String"
-                }
-            ],
-            "return": {
-                "description": "object at given path"
-            },
-            "class": "util",
-            "module": "util"
-        },
-        {
-            "file": "src/util.js",
-            "line": 37,
             "description": "Create getter function for accessing nested objects",
             "params": [
                 {
@@ -847,7 +830,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 94,
+            "line": 100,
             "description": "additional ajax configuration specific for xhr module, keys\n  unauthorized: function(xhr) - called when user is unathorized and token renewal failed\n  pollDelay: int - polling interval in milisecodns, default 1000\n\nmethod also accepts any option from original $.ajaxSetup. Options will be applied to all call of xhr.ajax().\n\nxhrSetup behave similar tp $.ajaxSetup, each call replaces settings completely.\nOptions can be also passed to particular xhr.ajax calls (same as optios for $.ajax and $.ajaxSetup)",
             "itemtype": "method",
             "name": "ajaxSetup",
@@ -856,7 +839,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 116,
+            "line": 122,
             "description": "Same api as jQuery.ajax - arguments (url, settings) or (settings) with url inside\nAdditionally content type is automatically json, and object in settings.data is converted to string\nto be consumed by GDC backend.\n\nsettings additionally accepts keys: unathorized, pollDelay  (see xhrSetup for more details)",
             "itemtype": "method",
             "name": "ajax",
@@ -875,7 +858,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 185,
+            "line": 196,
             "description": "Wrapper for xhr.ajax method GET",
             "itemtype": "method",
             "name": "get",
@@ -884,7 +867,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 191,
+            "line": 202,
             "description": "Wrapper for xhr.ajax method POST",
             "itemtype": "method",
             "name": "post",
@@ -893,7 +876,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 198,
+            "line": 208,
             "description": "Wrapper for xhr.ajax method PUT",
             "itemtype": "method",
             "name": "put",

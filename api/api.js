@@ -60,6 +60,7 @@ YUI.add("yuidoc-meta", function(Y) {
             "name": "xhr",
             "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
         }
-    ]
+    ],
+    "elements": []
 } };
 });

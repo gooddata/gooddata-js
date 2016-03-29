@@ -8,283 +8,271 @@ title: foobar
         <div class="yui3-u-1-4">
             <div id="docs-sidebar" class="sidebar apidocs">
                 <div id="api-list">
-    <div id="api-tabview" class="tabview">
-        <div id="api-tabview-filter">
-            <input type="search" id="api-filter" placeholder="Type to filter APIs">
-        </div>
-
-        <div id="api-tabview-panel">
-            <ul class="tabs">
-                <li><a href="#api-modules" class="category">Modules</a>
-                    <ul id="api-modules" class="apis modules">
-                    
-                        <li><a href="../modules/config.html">config</a></li>
-                    
-                        <li><a href="../modules/execution.html">execution</a></li>
-                    
-                        <li><a href="../modules/metadata.html">metadata</a></li>
-                    
-                        <li><a href="../modules/project.html">project</a></li>
-                    
-                        <li><a href="../modules/sdk.html">sdk</a></li>
-                    
-                        <li><a href="../modules/user.html">user</a></li>
-                    
-                        <li><a href="../modules/util.html">util</a></li>
-                    
-                        <li><a href="../modules/xhr.html">xhr</a></li>
-                    
-                    </ul>
-                </li>
-                <li><a href="#api-classes" class="category">Classes</a>
-                    <ul id="api-classes" class="apis classes">
-                    
-                        <li><a href="../classes/config.html">config</a></li>
-                    
-                        <li><a href="../classes/execution.html">execution</a></li>
-                    
-                        <li><a href="../classes/metadata.html">metadata</a></li>
-                    
-                        <li><a href="../classes/project.html">project</a></li>
-                    
-                        <li><a href="../classes/sdk.html">sdk</a></li>
-                    
-                        <li><a href="../classes/user.html">user</a></li>
-                    
-                        <li><a href="../classes/util.html">util</a></li>
-                    
-                        <li><a href="../classes/xhr.html">xhr</a></li>
-                    
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/user.html">user</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/user.html">user</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="yui3-u-3-4">
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.21</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.24</span>
                         <h1 class="file-heading">File: src/xhr.js</h1>
-
-<div class="file">
-    <pre class="code prettyprint linenums">
-// Copyright (C) 2007-2013, GoodData(R) Corporation. All rights reserved.
-define([&#x27;jquery&#x27;, &#x27;./config&#x27;], function($, config) { &#x27;use strict&#x27;;
-
-    /**
-     * Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.
-     * Inteface is same as original jQuery.ajax.
-
-     * If token is expired, current request is &quot;paused&quot;, token is refreshed and request is retried and result.
-     * is transparently returned to original call.
-
-     * Additionally polling is handled. Only final result of polling returned.
-     * @module xhr
-     * @class xhr
-     */
-
-    var tokenRequest,
-        xhrSettings,
-        xhr = {}; // returned module
-
-    xhr.enrichSettingWithCustomDomain = function(settings, domain) {
-        if (domain) {
-            // protect url to be prepended with domain on retry
-            if (settings.url.indexOf(domain) === -1) {
-                settings.url = domain + settings.url;
-            }
-            settings.xhrFields = settings.xhrFields || {};
-            settings.xhrFields.withCredentials = true;
-        }
-
-        return settings;
-    };
-
-    var retryAjaxRequest = function(req, deferred) {
-        // still use our extended ajax, because is still possible to fail recoverably in again
-        // e.g. request -&gt; 401 -&gt; token renewal -&gt; retry request -&gt; 202 (polling) -&gt; retry again after delay
-        xhr.ajax(req).done(function(data, textStatus, xhr) {
-            deferred.resolve(data, textStatus, xhr);
-        }).fail(function(xhr, textStatus, err) {
-            deferred.reject(xhr, textStatus, err);
-        });
-    };
-
-    var continueAfterTokenRequest = function(req, deferred) {
-        tokenRequest.done(function() {
-            retryAjaxRequest(req, deferred);
-        }).fail(function(xhr, textStatus, err) {
-            if (xhr.status !== 401) {
-                deferred.reject(xhr, textStatus, err);
-            }
-        });
-    };
-
-    var handleUnauthorized = function(req, deferred) {
-        if (!tokenRequest) {
-            // Create only single token request for any number of waiting request.
-            // If token request exist, just listen for it&#x27;s end.
-            tokenRequest = $.ajax(xhr.enrichSettingWithCustomDomain({ url: &#x27;/gdc/account/token/&#x27; }, config.domain)).always(function() {
-                tokenRequest = null;
-            }).fail(function(xhr, textStatus, err) {
-                //unauthorized when retrieving token -&gt; not logged
-                if ((xhr.status === 401) &amp;&amp; ($.isFunction(req.unauthorized))) {
-                    req.unauthorized(xhr, textStatus, err, deferred);
-                    return;
-                }
-                // unauthorized handler is not defined or not http 401
-                deferred.reject(xhr, textStatus, err);
-            });
-        }
-        continueAfterTokenRequest(req, deferred);
-    };
-
-    var handlePolling = function(req, deferred) {
-        setTimeout(function() {
-            retryAjaxRequest(req, deferred);
-        }, req.pollDelay);
-    };
-
-    // helper to coverts traditional ajax callbacks to deferred
-    var reattachCallbackOnDeferred = function(settings, property, defferAttach) {
-        var callback = settings[property];
-        delete settings[property];
-        if ($.isFunction(callback)) {
-            defferAttach(callback);
-        }
-        if ($.isArray(callback)) {
-            callback.forEach(function(fn) {
-                if ($.isFunction(callback)) {
-                    defferAttach(fn);
-                }
-            });
-        }
-    };
-
-    /**
-     * additional ajax configuration specific for xhr module, keys
-     *   unauthorized: function(xhr) - called when user is unathorized and token renewal failed
-     *   pollDelay: int - polling interval in milisecodns, default 1000
-
-     * method also accepts any option from original $.ajaxSetup. Options will be applied to all call of xhr.ajax().
-
-     * xhrSetup behave similar tp $.ajaxSetup, each call replaces settings completely.
-     * Options can be also passed to particular xhr.ajax calls (same as optios for $.ajax and $.ajaxSetup)
-     * @method ajaxSetup
-     */
-    xhr.ajaxSetup = function(settings) {
-        xhrSettings = $.extend({
-            contentType: &#x27;application/json&#x27;,
-            dataType: &#x27;json&#x27;,
-            pollDelay: 1000,
-            headers : {
-                &#x27;Accept&#x27; : &#x27;application/json; charset=utf-8&#x27;
-            }
-        }, settings);
-    };
-
-    /**
-     * Same api as jQuery.ajax - arguments (url, settings) or (settings) with url inside
-     * Additionally content type is automatically json, and object in settings.data is converted to string
-     * to be consumed by GDC backend.
-
-     * settings additionally accepts keys: unathorized, pollDelay  (see xhrSetup for more details)
-     * @method ajax
-     * @param url request url
-     * @param settings settings object
-     */
-    xhr.ajax = function(url, settings) {
-        if ($.isPlainObject(url)) {
-            settings = url;
-            url = undefined;
-        }
-        // copy settings to not modify passed object
-        // settings can be undefined, doesn&#x27;t matter, $.extend handle it
-        settings = $.extend({}, xhrSettings, settings);
-        if (url) {
-            settings.url = url;
-        }
-
-        if ($.isPlainObject(settings.data)) {
-            settings.data = JSON.stringify(settings.data);
-        }
-
-        var d = $.Deferred();
-        reattachCallbackOnDeferred(settings, &#x27;success&#x27;, d.done);
-        reattachCallbackOnDeferred(settings, &#x27;error&#x27;, d.fail);
-        reattachCallbackOnDeferred(settings, &#x27;complete&#x27;, d.always);
-
-        if (tokenRequest) {
-            continueAfterTokenRequest(settings, d);
-            return d;
-        }
-
-        $.ajax(xhr.enrichSettingWithCustomDomain(settings, config.domain)).fail(function(xhr, textStatus, err) {
-            if (xhr.status === 401) {
-                handleUnauthorized(settings, d);
-            } else {
-                d.reject(xhr, textStatus, err);
-            }
-        }).done(function(data, textStatus, xhr) {
-            if (xhr.status === 202 &amp;&amp; !settings.dontPollOnResult) {
-                // if the response is 202 and Location header is not empty, let&#x27;s poll on the new Location
-                var location = xhr.getResponseHeader(&#x27;Location&#x27;);
-                if (location){
-                    settings.url = location;
-                }
-                settings.method = &quot;GET&quot;;
-                delete settings.data;
-                handlePolling(settings, d);
-            } else {
-                d.resolve(data, textStatus, xhr);
-            }
-        });
-        return d;
-    };
-
-    var xhrMethod = function xhrMethod(method) {
-        return function(url, settings) {
-            var opts = $.extend(true, {
-                method: method
-            }, settings);
-
-            return xhr.ajax(url, opts);
-        };
-    };
-
-    /**
-     * Wrapper for xhr.ajax method GET
-     * @method get
-     */
-    xhr.get = xhrMethod(&#x27;GET&#x27;);
-
-    /**
-     * Wrapper for xhr.ajax method POST
-     * @method post
-     */
-
-    xhr.post = xhrMethod(&#x27;POST&#x27;);
-
-    /**
-     * Wrapper for xhr.ajax method PUT
-     * @method put
-     */
-    xhr.put = xhrMethod(&#x27;PUT&#x27;);
-
-    // setup default settings
-    xhr.ajaxSetup({});
-    return xhr;
-
-});
-
-    </pre>
-</div>
-
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // Copyright (C) 2007-2013, GoodData(R) Corporation. All rights reserved.
+                        /*eslint no-use-before-define: [2, &quot;nofunc&quot;]*/
+                        import $ from &#x27;jquery&#x27;;
+                        import * as config from &#x27;./config&#x27;;
+                        import isPlainObject from &#x27;lodash/lang/isPlainObject&#x27;;
+                        import isFunction from &#x27;lodash/lang/isFunction&#x27;;
+                        import isArray from &#x27;lodash/lang/isArray&#x27;;
+                        import merge from &#x27;lodash/object/merge&#x27;;
+                        
+                        /**
+                         * Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.
+                         * Inteface is same as original jQuery.ajax.
+                        
+                         * If token is expired, current request is &quot;paused&quot;, token is refreshed and request is retried and result.
+                         * is transparently returned to original call.
+                        
+                         * Additionally polling is handled. Only final result of polling returned.
+                         * @module xhr
+                         * @class xhr
+                         */
+                        let tokenRequest;
+                        let xhrSettings; // TODO rename xhrSettings - &quot;defaultXhrSettings?&quot;
+                        
+                        function enrichSettingWithCustomDomain(settings, domain) {
+                            if (domain) {
+                                // protect url to be prepended with domain on retry
+                                if (settings.url.indexOf(domain) === -1) {
+                                    settings.url = domain + settings.url;
+                                }
+                                settings.xhrFields = settings.xhrFields || {};
+                                settings.xhrFields.withCredentials = true;
+                            }
+                        
+                            return settings;
+                        }
+                        
+                        function retryAjaxRequest(req, deferred) {
+                            // still use our extended ajax, because is still possible to fail recoverably in again
+                            // e.g. request -&gt; 401 -&gt; token renewal -&gt; retry request -&gt; 202 (polling) -&gt; retry again after delay
+                            /*eslint-disable block-scoped-var*/ // we don&#x27;t want to declare all functions inside ajax&#x27;s fn scope
+                            ajax(req).done(function ajaxDone(data, textStatus, xhrObj) {
+                                deferred.resolve(data, textStatus, xhrObj);
+                            }).fail(function ajaxFail(xhrObj, textStatus, err) {
+                                deferred.reject(xhrObj, textStatus, err);
+                            });
+                            /*eslint-enable block-scoped-var*/
+                        }
+                        
+                        function continueAfterTokenRequest(req, deferred) {
+                            tokenRequest.done(function tokenRequestDone() {
+                                retryAjaxRequest(req, deferred);
+                            }).fail(function tokenRequestFail(xhrObj, textStatus, err) {
+                                if (xhrObj.status !== 401) {
+                                    deferred.reject(xhrObj, textStatus, err);
+                                }
+                            });
+                        }
+                        
+                        function handleUnauthorized(req, deferred) {
+                            if (!tokenRequest) {
+                                // Create only single token request for any number of waiting request.
+                                // If token request exist, just listen for it&#x27;s end.
+                                tokenRequest = $.ajax(enrichSettingWithCustomDomain({ url: &#x27;/gdc/account/token/&#x27; }, config.domain)).always(function alwayCb() {
+                                    tokenRequest = null;
+                                }).fail(function failTokenRequest(xhrObj, textStatus, err) {
+                                    // unauthorized when retrieving token -&gt; not logged
+                                    if ((xhrObj.status === 401) &amp;&amp; (isFunction(req.unauthorized))) {
+                                        req.unauthorized(xhrObj, textStatus, err, deferred);
+                                        return;
+                                    }
+                                    // unauthorized handler is not defined or not http 401
+                                    deferred.reject(xhrObj, textStatus, err);
+                                });
+                            }
+                            continueAfterTokenRequest(req, deferred);
+                        }
+                        
+                        function handlePolling(req, deferred) {
+                            setTimeout(function poller() {
+                                retryAjaxRequest(req, deferred);
+                            }, req.pollDelay);
+                        }
+                        
+                        // helper to coverts traditional ajax callbacks to deferred
+                        function reattachCallbackOnDeferred(settings, property, defferAttach) {
+                            const callback = settings[property];
+                            delete settings[property];
+                            if (isFunction(callback)) {
+                                defferAttach(callback);
+                            }
+                            if (isArray(callback)) {
+                                callback.forEach(function loopCallbacks(fn) {
+                                    if (isFunction(callback)) {
+                                        defferAttach(fn);
+                                    }
+                                });
+                            }
+                        }
+                        
+                        /**
+                         * additional ajax configuration specific for xhr module, keys
+                         *   unauthorized: function(xhr) - called when user is unathorized and token renewal failed
+                         *   pollDelay: int - polling interval in milisecodns, default 1000
+                        
+                         * method also accepts any option from original $.ajaxSetup. Options will be applied to all call of xhr.ajax().
+                        
+                         * xhrSetup behave similar tp $.ajaxSetup, each call replaces settings completely.
+                         * Options can be also passed to particular xhr.ajax calls (same as optios for $.ajax and $.ajaxSetup)
+                         * @method ajaxSetup
+                         */
+                        export function ajaxSetup(settings) {
+                            xhrSettings = merge({
+                                contentType: &#x27;application/json&#x27;,
+                                dataType: &#x27;json&#x27;,
+                                pollDelay: 1000,
+                                headers: {
+                                    &#x27;Accept&#x27;: &#x27;application/json; charset=utf-8&#x27;
+                                }
+                            }, settings);
+                        }
+                        
+                        /**
+                         * Same api as jQuery.ajax - arguments (url, settings) or (settings) with url inside
+                         * Additionally content type is automatically json, and object in settings.data is converted to string
+                         * to be consumed by GDC backend.
+                        
+                         * settings additionally accepts keys: unathorized, pollDelay  (see xhrSetup for more details)
+                         * @method ajax
+                         * @param url request url
+                         * @param settings settings object
+                         */
+                        export function ajax(url, settings) {
+                            let finalSettings;
+                            let finalUrl;
+                            if (isPlainObject(url)) {
+                                finalSettings = url;
+                                finalUrl = undefined;
+                            } else {
+                                finalUrl = url;
+                                finalSettings = settings;
+                            }
+                            // copy settings to not modify passed object
+                            // settings can be undefined, doesn&#x27;t matter, $.extend handle it
+                            finalSettings = merge({}, xhrSettings, finalSettings);
+                            if (finalUrl) {
+                                finalSettings.url = finalUrl;
+                            }
+                        
+                            if (isPlainObject(finalSettings.data)) {
+                                finalSettings.data = JSON.stringify(finalSettings.data);
+                            }
+                        
+                            /*eslint-disable new-cap*/
+                            const d = $.Deferred();
+                            /*eslint-enable new-cap*/
+                            reattachCallbackOnDeferred(finalSettings, &#x27;success&#x27;, d.done);
+                            reattachCallbackOnDeferred(finalSettings, &#x27;error&#x27;, d.fail);
+                            reattachCallbackOnDeferred(finalSettings, &#x27;complete&#x27;, d.always);
+                        
+                            if (tokenRequest) {
+                                continueAfterTokenRequest(finalSettings, d);
+                                return d;
+                            }
+                        
+                            $.ajax(enrichSettingWithCustomDomain(finalSettings, config.domain)).fail(function jqAjaxFail(xhrObj, textStatus, err) {
+                                if (xhrObj.status === 401) {
+                                    handleUnauthorized(finalSettings, d);
+                                } else {
+                                    d.reject(xhrObj, textStatus, err);
+                                }
+                            }).done(function jqAjaxDone(data, textStatus, xhrObj) {
+                                if (xhrObj.status === 202 &amp;&amp; !finalSettings.dontPollOnResult) {
+                                    // if the response is 202 and Location header is not empty, let&#x27;s poll on the new Location
+                                    const location = xhrObj.getResponseHeader(&#x27;Location&#x27;);
+                                    if (location) {
+                                        finalSettings.url = location;
+                                    }
+                                    finalSettings.method = &#x27;GET&#x27;;
+                                    delete finalSettings.data;
+                                    handlePolling(finalSettings, d);
+                                } else {
+                                    d.resolve(data, textStatus, xhrObj);
+                                }
+                            });
+                            return d;
+                        }
+                        
+                        function xhrMethod(method) {
+                            return function methodFn(url, settings) {
+                                const opts = merge({ method }, settings);
+                        
+                                return ajax(url, opts);
+                            };
+                        }
+                        
+                        /**
+                         * Wrapper for xhr.ajax method GET
+                         * @method get
+                         */
+                        export const get = xhrMethod(&#x27;GET&#x27;);
+                        
+                        /**
+                         * Wrapper for xhr.ajax method POST
+                         * @method post
+                         */
+                        export const post = xhrMethod(&#x27;POST&#x27;);
+                        
+                        /**
+                         * Wrapper for xhr.ajax method PUT
+                         * @method put
+                         */
+                        export const put = xhrMethod(&#x27;PUT&#x27;);
+                        
+                        // setup default settings
+                        ajaxSetup({});
+                        
+                        
+                            </pre>
+                        </div>
                     </div>
                 </div>
             </div>

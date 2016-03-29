@@ -8,169 +8,266 @@ title: foobar
         <div class="yui3-u-1-4">
             <div id="docs-sidebar" class="sidebar apidocs">
                 <div id="api-list">
-    <div id="api-tabview" class="tabview">
-        <div id="api-tabview-filter">
-            <input type="search" id="api-filter" placeholder="Type to filter APIs">
-        </div>
-
-        <div id="api-tabview-panel">
-            <ul class="tabs">
-                <li><a href="#api-modules" class="category">Modules</a>
-                    <ul id="api-modules" class="apis modules">
-                    
-                        <li><a href="../modules/config.html">config</a></li>
-                    
-                        <li><a href="../modules/execution.html">execution</a></li>
-                    
-                        <li><a href="../modules/metadata.html">metadata</a></li>
-                    
-                        <li><a href="../modules/project.html">project</a></li>
-                    
-                        <li><a href="../modules/sdk.html">sdk</a></li>
-                    
-                        <li><a href="../modules/user.html">user</a></li>
-                    
-                        <li><a href="../modules/util.html">util</a></li>
-                    
-                        <li><a href="../modules/xhr.html">xhr</a></li>
-                    
-                    </ul>
-                </li>
-                <li><a href="#api-classes" class="category">Classes</a>
-                    <ul id="api-classes" class="apis classes">
-                    
-                        <li><a href="../classes/config.html">config</a></li>
-                    
-                        <li><a href="../classes/execution.html">execution</a></li>
-                    
-                        <li><a href="../classes/metadata.html">metadata</a></li>
-                    
-                        <li><a href="../classes/project.html">project</a></li>
-                    
-                        <li><a href="../classes/sdk.html">sdk</a></li>
-                    
-                        <li><a href="../classes/user.html">user</a></li>
-                    
-                        <li><a href="../classes/util.html">util</a></li>
-                    
-                        <li><a href="../classes/xhr.html">xhr</a></li>
-                    
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/user.html">user</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/user.html">user</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="yui3-u-3-4">
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.21</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.24</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
-
-<div class="file">
-    <pre class="code prettyprint linenums">
-// Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
-define([&#x27;jquery&#x27;, &#x27;./xhr&#x27;], function($, xhr) {
-    &#x27;use strict&#x27;;
-
-    /**
-     * Module for execution on experimental execution resource
-     *
-     * @class execution
-     * @module execution
-     */
-
-    /**
-     * For the given projectId it returns table structure with the given
-     * elements in column headers.
-     *
-     * @method getData
-     * @param {String} projectId - GD project identifier
-     * @param {Array} elements - An array of attribute or metric identifiers.
-     * @param {Object} executionConfiguration - Execution configuration - can contain for example
-     *                 property &quot;filters&quot; containing execution context filters
-     *                 property &quot;where&quot; containing query-like filters
-     *                 property &quot;orderBy&quot; contains array of sorted properties to order in form
-     *                      [{column: &#x27;identifier&#x27;, direction: &#x27;asc|desc&#x27;}]
-     *
-     * @return {Object} Structure with &#x60;headers&#x60; and &#x60;rawData&#x60; keys filled with values from execution.
-     */
-    var getData = function(projectId, elements, executionConfiguration) {
-        // Create request and result structures
-        var request = {
-            execution: {
-                columns: elements
-            }
-        };
-
-        // enrich configuration with supported properties such as
-        // where clause with query-like filters or execution context filters
-        executionConfiguration = executionConfiguration || {};
-        [&#x27;filters&#x27;, &#x27;where&#x27;, &#x27;orderBy&#x27;, &#x27;definitions&#x27;].forEach(function(property) {
-            if (executionConfiguration[property]) {
-                request.execution[property] = executionConfiguration[property];
-            }
-        });
-
-        var executedReport = {
-            isLoaded: false
-        };
-        // create empty promise-like Ember.Object
-        var d = $.Deferred();
-
-        // Execute request
-        xhr.post(&#x27;/gdc/internal/projects/&#x27;+projectId+&#x27;/experimental/executions&#x27;, {
-            data: JSON.stringify(request)
-        }, d.reject).then(function(result) {
-            // TODO: when executionResult.headers will be globaly available columns map code should be removed
-            if (result.executionResult.headers) {
-                executedReport.headers = result.executionResult.headers;
-            } else {
-                // Populate result&#x27;s header section if is not available
-                executedReport.headers = result.executionResult.columns.map(function(col) {
-                    if (col.attributeDisplayForm) {
-                        return {
-                            type: &#x27;attrLabel&#x27;,
-                            id: col.attributeDisplayForm.meta.identifier,
-                            uri: col.attributeDisplayForm.meta.uri,
-                            title: col.attributeDisplayForm.meta.title
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
+                        import $ from &#x27;jquery&#x27;;
+                        import { ajax, post } from &#x27;./xhr&#x27;;
+                        import md5 from &#x27;md5&#x27;;
+                        import filter from &#x27;lodash/collection/filter&#x27;;
+                        import map from &#x27;lodash/collection/map&#x27;;
+                        import every from &#x27;lodash/collection/every&#x27;;
+                        import get from &#x27;lodash/object/get&#x27;;
+                        import isEmpty from &#x27;lodash/lang/isEmpty&#x27;;
+                        import negate from &#x27;lodash/function/negate&#x27;;
+                        import last from &#x27;lodash/array/last&#x27;;
+                        import assign from &#x27;lodash/object/assign&#x27;;
+                        const notEmpty = negate(isEmpty);
+                        /**
+                         * Module for execution on experimental execution resource
+                         *
+                         * @class execution
+                         * @module execution
+                         */
+                        
+                        /**
+                         * For the given projectId it returns table structure with the given
+                         * elements in column headers.
+                         *
+                         * @method getData
+                         * @param {String} projectId - GD project identifier
+                         * @param {Array} elements - An array of attribute or metric identifiers.
+                         * @param {Object} executionConfiguration - Execution configuration - can contain for example
+                         *                 property &quot;filters&quot; containing execution context filters
+                         *                 property &quot;where&quot; containing query-like filters
+                         *                 property &quot;orderBy&quot; contains array of sorted properties to order in form
+                         *                      [{column: &#x27;identifier&#x27;, direction: &#x27;asc|desc&#x27;}]
+                         *
+                         * @return {Object} Structure with &#x60;headers&#x60; and &#x60;rawData&#x60; keys filled with values from execution.
+                         */
+                        export function getData(projectId, elements, executionConfiguration = {}) {
+                            const executedReport = {
+                                isLoaded: false
+                            };
+                        
+                            // Create request and result structures
+                            const request = {
+                                execution: {
+                                    columns: elements
+                                }
+                            };
+                            // enrich configuration with supported properties such as
+                            // where clause with query-like filters or execution context filters
+                            [&#x27;filters&#x27;, &#x27;where&#x27;, &#x27;orderBy&#x27;, &#x27;definitions&#x27;].forEach(property =&gt; {
+                                if (executionConfiguration[property]) {
+                                    request.execution[property] = executionConfiguration[property];
+                                }
+                            });
+                        
+                            /*eslint-disable new-cap*/
+                            const d = $.Deferred();
+                            /*eslint-enable new-cap*/
+                        
+                            // Execute request
+                            post(&#x27;/gdc/internal/projects/&#x27; + projectId + &#x27;/experimental/executions&#x27;, {
+                                data: JSON.stringify(request)
+                            }, d.reject).then(function resolveSimpleExecution(result) {
+                                // TODO: when executionResult.headers will be globaly available columns map code should be removed
+                                if (result.executionResult.headers) {
+                                    executedReport.headers = result.executionResult.headers;
+                                } else {
+                                    // Populate result&#x27;s header section if is not available
+                                    executedReport.headers = result.executionResult.columns.map(function mapColsToHeaders(col) {
+                                        if (col.attributeDisplayForm) {
+                                            return {
+                                                type: &#x27;attrLabel&#x27;,
+                                                id: col.attributeDisplayForm.meta.identifier,
+                                                uri: col.attributeDisplayForm.meta.uri,
+                                                title: col.attributeDisplayForm.meta.title
+                                            };
+                                        }
+                                        return {
+                                            type: &#x27;metric&#x27;,
+                                            id: col.metric.meta.identifier,
+                                            uri: col.metric.meta.uri,
+                                            title: col.metric.meta.title,
+                                            format: col.metric.content.format
+                                        };
+                                    });
+                                }
+                                // Start polling on url returned in the executionResult for tabularData
+                                return ajax(result.executionResult.tabularDataResult);
+                            }, d.reject).then(function resolveDataResultPolling(result, message, response) {
+                                // After the retrieving computed tabularData, resolve the promise
+                                executedReport.rawData = (result &amp;&amp; result.tabularDataResult) ? result.tabularDataResult.values : [];
+                                executedReport.isLoaded = true;
+                                executedReport.isEmpty = (response.status === 204);
+                                d.resolve(executedReport);
+                            }, d.reject);
+                        
+                            return d.promise();
+                        }
+                        
+                        const getFilterExpression = listAttributeFilter =&gt; {
+                            const attributeUri = get(listAttributeFilter, &#x27;listAttributeFilter.attribute&#x27;);
+                            const elements = get(listAttributeFilter, &#x27;listAttributeFilter.default.attributeElements&#x27;, []);
+                            if (isEmpty(elements)) {
+                                return null;
+                            }
+                            const elementsForQuery = map(elements, e =&gt; &#x60;[${e}]&#x60;);
+                            const negative = get(listAttributeFilter, &#x27;listAttributeFilter.default.negativeSelection&#x27;) ? &#x27;NOT &#x27; : &#x27;&#x27;;
+                        
+                            return &#x60;[${attributeUri}] ${negative}IN (${elementsForQuery.join(&#x27;,&#x27;)})&#x60;;
                         };
-                    } else {
-                        return {
-                            type: &#x27;metric&#x27;,
-                            id: col.metric.meta.identifier,
-                            uri: col.metric.meta.uri,
-                            title: col.metric.meta.title,
-                            format: col.metric.content.format
+                        
+                        const getGeneratedMetricExpression = item =&gt; {
+                            const aggregation = get(item, &#x27;aggregation&#x27;, &#x27;&#x27;).toUpperCase();
+                            const objectUri = get(item, &#x27;objectUri&#x27;);
+                            const where = filter(map(get(item, &#x27;metricAttributeFilters&#x27;), getFilterExpression), e =&gt; !!e);
+                        
+                            return &#x27;SELECT &#x27; + (aggregation ? &#x60;${aggregation}([${objectUri}])&#x60; : &#x60;[${objectUri}]&#x60;) +
+                                (notEmpty(where) ? &#x60; WHERE ${where.join(&#x27; AND &#x27;)}&#x60; : &#x27;&#x27;);
                         };
-                    }
-                });
-            }
-            // Start polling on url returned in the executionResult for tabularData
-            return xhr.ajax(result.executionResult.tabularDataResult);
-        }, d.reject).then(function(result) {
-            // After the retrieving computed tabularData, resolve the promise
-            executedReport.rawData = (result &amp;&amp; result.tabularDataResult) ? result.tabularDataResult.values : [];
-            executedReport.isLoaded = true;
-            d.resolve(executedReport);
-        }, d.reject);
-
-        return d.promise();
-    };
-
-    return {
-        getData: getData
-    };
-});
-
-
-    </pre>
-</div>
-
+                        
+                        const getGeneratedMetricHash = expression =&gt; md5(expression);
+                        
+                        const getGeneratedMetricIdentifier = item =&gt; {
+                            const aggregation = get(item, &#x27;aggregation&#x27;, &#x27;base&#x27;);
+                            const [, , , prjId, , id] = get(item, &#x27;objectUri&#x27;).split(&#x27;/&#x27;);
+                            const identifier = &#x60;${prjId}_${id}&#x60;;
+                            const hash = getGeneratedMetricHash(getGeneratedMetricExpression(item));
+                            const hasNoFilters = isEmpty(get(item, &#x27;metricAttributeFilters&#x27;, []));
+                            const allFiltersEmpty = every(map(
+                                get(item, &#x27;metricAttributeFilters&#x27;, []),
+                                f =&gt; isEmpty(get(f, &#x27;listAttributeFilter.default.attributeElements&#x27;, []))
+                            ));
+                            const type = get(item, &#x27;type&#x27;);
+                        
+                            const prefix = (hasNoFilters || allFiltersEmpty) ? &#x27;&#x27; : &#x27;filtered_&#x27;;
+                        
+                            return &#x60;${type}_${identifier}.generated.${prefix}${aggregation.toLowerCase()}.${hash}&#x60;;
+                        };
+                        
+                        const generatedMetricDefinition = item =&gt; {
+                            const element = getGeneratedMetricIdentifier(item);
+                            const definition = {
+                                metricDefinition: {
+                                    identifier: getGeneratedMetricIdentifier(item),
+                                    expression: getGeneratedMetricExpression(item),
+                                    title: get(item, &#x27;title&#x27;),
+                                    format: get(item, &#x27;format&#x27;)
+                                }
+                            };
+                        
+                            return { element, definition };
+                        };
+                        
+                        const categoryToElement = c =&gt; {
+                            return { element: get(c, &#x27;displayForm&#x27;) };
+                        };
+                        
+                        const attributeFilterToWhere = f =&gt; {
+                            const dfUri = get(f, &#x27;listAttributeFilter.displayForm&#x27;);
+                            const elements = get(f, &#x27;listAttributeFilter.default.attributeElements&#x27;, []);
+                            const elementsForQuery = map(elements, e =&gt; ({
+                                id: last(e.split(&#x27;=&#x27;))
+                            }));
+                            const negative = get(f, &#x27;listAttributeFilter.default.negativeSelection&#x27;) ? &#x27;NOT &#x27; : &#x27;&#x27;;
+                        
+                            return negative ?
+                                { [dfUri]: { &#x27;$not&#x27;: { &#x27;$in&#x27;: elementsForQuery } } } :
+                                { [dfUri]: { &#x27;$in&#x27;: elementsForQuery } };
+                        };
+                        
+                        const dateFilterToWhere = f =&gt; {
+                            const dimensionUri = get(f, &#x27;dateFilterSettings.dimension&#x27;);
+                            const granularity = get(f, &#x27;dateFilterSettings.granularity&#x27;);
+                            const between = [get(f, &#x27;dateFilterSettings.from&#x27;), get(f, &#x27;dateFilterSettings.to&#x27;)];
+                            return { [dimensionUri]: { &#x27;$between&#x27;: between, &#x27;$granularity&#x27;: granularity } };
+                        };
+                        
+                        const metricToDefinition = metric =&gt; ({ element: get(metric, &#x27;objectUri&#x27;)});
+                        
+                        export const mdToExecutionConfiguration = (mdObj) =&gt; {
+                            const { measures, categories, filters } = mdObj;
+                            const factMetrics = map(filter(measures, m =&gt; m.type === &#x27;fact&#x27;), generatedMetricDefinition);
+                            const metrics = map(filter(measures, m =&gt; m.type === &#x27;metric&#x27;), metricToDefinition);
+                            const attributeMetrics = map(filter(measures, m =&gt; m.type === &#x27;attribute&#x27;), generatedMetricDefinition);
+                            const attributes = map(filter(categories, c =&gt; c.collection === &#x27;attribute&#x27;), categoryToElement);
+                            const attributeFilters = map(filter(filters, ({listAttributeFilter}) =&gt; listAttributeFilter !== undefined), attributeFilterToWhere);
+                            const dateFilters = map(filter(filters, ({dateFilterSettings}) =&gt; dateFilterSettings !== undefined), dateFilterToWhere);
+                        
+                            const columns = [];
+                            const definitions = [];
+                            attributes.forEach(({element}) =&gt; columns.push(element));
+                            factMetrics.forEach(({element, definition}) =&gt; {
+                                columns.push(element);
+                                definitions.push(definition);
+                            });
+                            attributeMetrics.forEach(({element, definition}) =&gt; {
+                                columns.push(element);
+                                definitions.push(definition);
+                            });
+                            metrics.forEach(({element}) =&gt; columns.push(element));
+                            const where = [].concat(attributeFilters, dateFilters).reduce((acc, f) =&gt; {
+                                return assign(acc, f);
+                            }, {});
+                            return { &#x27;execution&#x27;: { columns, where, definitions } };
+                        };
+                        
+                        export const getDataForVis = (projectId, mdObj) =&gt; {
+                            const { execution } = mdToExecutionConfiguration(get(mdObj, &#x27;buckets&#x27;));
+                            const { columns, ...executionConfiguration } = execution;
+                            return getData(projectId, columns, executionConfiguration);
+                        };
+                        
+                        
+                            </pre>
+                        </div>
                     </div>
                 </div>
             </div>
