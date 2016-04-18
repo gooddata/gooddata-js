@@ -20,6 +20,32 @@ function missingColumn(column, closest) {
     fail(`Column not found '${column}', mismatch of ${closest}?`);
 }
 
+function getClosestMatch(candidates, getDistance) {
+    const table = candidates.map(candidate => {
+        const distance = getDistance(candidate);
+
+        return { distance, candidate };
+    });
+
+    const closestMatch = first(sortBy(table, row => row.distance));
+
+    return get(closestMatch, 'candidate');
+}
+
+function getClosestColumn(column, candidates) {
+    return getClosestMatch(candidates, candidate => {
+        return levenshtein.get(column, candidate);
+    });
+}
+
+function getClosestMetricDefinition(definition, candidates) {
+    return getClosestMatch(candidates, candidate => {
+        return Object.keys(candidate).reduce((sum, prop) => {
+            return sum + levenshtein.get(definition[prop], candidate[prop]);
+        }, 0);
+    });
+}
+
 export function expectColumns(expected, reportDefinition) {
     const actualColumns = get(reportDefinition, 'execution.columns');
 
@@ -48,30 +74,4 @@ export function expectWhereCondition(expected, reportDefinition) {
     const actualWhereCondition = get(reportDefinition, 'execution.where');
 
     expect(expected).to.eql(actualWhereCondition);
-}
-
-function getClosestMatch(candidates, getDistance) {
-    const table = candidates.map(candidate => {
-        const distance = getDistance(candidate);
-
-        return { distance, candidate };
-    });
-
-    const closestMatch = first(sortBy(table, row => row.distance));
-
-    return get(closestMatch, 'candidate');
-}
-
-function getClosestColumn(column, candidates) {
-    return getClosestMatch(candidates, candidate => {
-        return levenshtein.get(column, candidate);
-    });
-}
-
-function getClosestMetricDefinition(definition, candidates) {
-    return getClosestMatch(candidates, candidate => {
-        return Object.keys(candidate).reduce((sum, prop) => {
-            return sum + levenshtein.get(definition[prop], candidate[prop]);
-        }, 0);
-    });
 }
