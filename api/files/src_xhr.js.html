@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.24</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.33</span>
                         <h1 class="file-heading">File: src/xhr.js</h1>
                         
                         <div class="file">
@@ -58,10 +58,12 @@ title: foobar
                         /*eslint no-use-before-define: [2, &quot;nofunc&quot;]*/
                         import $ from &#x27;jquery&#x27;;
                         import * as config from &#x27;./config&#x27;;
-                        import isPlainObject from &#x27;lodash/lang/isPlainObject&#x27;;
-                        import isFunction from &#x27;lodash/lang/isFunction&#x27;;
-                        import isArray from &#x27;lodash/lang/isArray&#x27;;
-                        import merge from &#x27;lodash/object/merge&#x27;;
+                        import {
+                            isPlainObject,
+                            isFunction,
+                            isArray,
+                            merge
+                        } from &#x27;lodash&#x27;;
                         
                         /**
                          * Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.

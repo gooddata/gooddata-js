@@ -49,24 +49,39 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.24</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.33</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
                         // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
                         import $ from &#x27;jquery&#x27;;
-                        import { ajax, post } from &#x27;./xhr&#x27;;
                         import md5 from &#x27;md5&#x27;;
-                        import filter from &#x27;lodash/collection/filter&#x27;;
-                        import map from &#x27;lodash/collection/map&#x27;;
-                        import every from &#x27;lodash/collection/every&#x27;;
-                        import get from &#x27;lodash/object/get&#x27;;
-                        import isEmpty from &#x27;lodash/lang/isEmpty&#x27;;
-                        import negate from &#x27;lodash/function/negate&#x27;;
-                        import last from &#x27;lodash/array/last&#x27;;
-                        import assign from &#x27;lodash/object/assign&#x27;;
+                        
+                        import {
+                            ajax,
+                            post
+                        } from &#x27;./xhr&#x27;;
+                        
+                        import {
+                            filter,
+                            map,
+                            every,
+                            get,
+                            isEmpty,
+                            negate,
+                            last,
+                            assign,
+                            find,
+                            partial,
+                            identity,
+                            flatten,
+                            values,
+                            isString
+                        } from &#x27;lodash&#x27;;
+                        
                         const notEmpty = negate(isEmpty);
+                        
                         /**
                          * Module for execution on experimental execution resource
                          *
@@ -152,6 +167,10 @@ title: foobar
                             return d.promise();
                         }
                         
+                        const CONTRIBUTION_METRIC_FORMAT = &#x27;#,##0.00%&#x27;;
+                        
+                        const hashItem = item =&gt; md5(&#x60;${filter(values(item), isString).join(&#x27;#&#x27;)}&#x60;);
+                        
                         const getFilterExpression = listAttributeFilter =&gt; {
                             const attributeUri = get(listAttributeFilter, &#x27;listAttributeFilter.attribute&#x27;);
                             const elements = get(listAttributeFilter, &#x27;listAttributeFilter.default.attributeElements&#x27;, []);
@@ -167,48 +186,165 @@ title: foobar
                         const getGeneratedMetricExpression = item =&gt; {
                             const aggregation = get(item, &#x27;aggregation&#x27;, &#x27;&#x27;).toUpperCase();
                             const objectUri = get(item, &#x27;objectUri&#x27;);
-                            const where = filter(map(get(item, &#x27;metricAttributeFilters&#x27;), getFilterExpression), e =&gt; !!e);
+                            const where = filter(map(get(item, &#x27;measureFilters&#x27;), getFilterExpression), e =&gt; !!e);
                         
                             return &#x27;SELECT &#x27; + (aggregation ? &#x60;${aggregation}([${objectUri}])&#x60; : &#x60;[${objectUri}]&#x60;) +
                                 (notEmpty(where) ? &#x60; WHERE ${where.join(&#x27; AND &#x27;)}&#x60; : &#x27;&#x27;);
                         };
                         
-                        const getGeneratedMetricHash = expression =&gt; md5(expression);
+                        const getPercentMetricExpression = (attribute, metricId) =&gt; {
+                            const attributeUri = get(attribute, &#x27;attribute&#x27;);
                         
-                        const getGeneratedMetricIdentifier = item =&gt; {
-                            const aggregation = get(item, &#x27;aggregation&#x27;, &#x27;base&#x27;);
+                            return &#x60;SELECT (SELECT ${metricId}) / (SELECT ${metricId} BY ALL [${attributeUri}])&#x60;;
+                        };
+                        
+                        const getPoPExpression = (attribute, metricId) =&gt; {
+                            const attributeUri = get(attribute, &#x27;attribute&#x27;);
+                        
+                            return &#x60;SELECT (SELECT ${metricId}) FOR PREVIOUS ([${attributeUri}])&#x60;;
+                        };
+                        
+                        const getGeneratedMetricHash = (title, format, expression) =&gt; md5(&#x60;${expression}#${title}#${format}&#x60;);
+                        
+                        const allFiltersEmpty = item =&gt; every(map(
+                            get(item, &#x27;measureFilters&#x27;, []),
+                            f =&gt; isEmpty(get(f, &#x27;listAttributeFilter.default.attributeElements&#x27;, []))
+                        ));
+                        
+                        const getGeneratedMetricIdentifier = (item, aggregation, expressionCreator, hasher) =&gt; {
                             const [, , , prjId, , id] = get(item, &#x27;objectUri&#x27;).split(&#x27;/&#x27;);
                             const identifier = &#x60;${prjId}_${id}&#x60;;
-                            const hash = getGeneratedMetricHash(getGeneratedMetricExpression(item));
-                            const hasNoFilters = isEmpty(get(item, &#x27;metricAttributeFilters&#x27;, []));
-                            const allFiltersEmpty = every(map(
-                                get(item, &#x27;metricAttributeFilters&#x27;, []),
-                                f =&gt; isEmpty(get(f, &#x27;listAttributeFilter.default.attributeElements&#x27;, []))
-                            ));
+                            const hash = hasher(expressionCreator(item));
+                            const hasNoFilters = isEmpty(get(item, &#x27;measureFilters&#x27;, []));
                             const type = get(item, &#x27;type&#x27;);
                         
-                            const prefix = (hasNoFilters || allFiltersEmpty) ? &#x27;&#x27; : &#x27;filtered_&#x27;;
+                            const prefix = (hasNoFilters || allFiltersEmpty(item)) ? &#x27;&#x27; : &#x27;filtered_&#x27;;
                         
-                            return &#x60;${type}_${identifier}.generated.${prefix}${aggregation.toLowerCase()}.${hash}&#x60;;
+                            return &#x60;${type}_${identifier}.generated.${prefix}${aggregation}.${hash}&#x60;;
                         };
                         
                         const generatedMetricDefinition = item =&gt; {
-                            const element = getGeneratedMetricIdentifier(item);
+                            const { title, format, sort } = item;
+                        
+                            const hasher = partial(getGeneratedMetricHash, title, format);
+                            const aggregation = get(item, &#x27;aggregation&#x27;, &#x27;base&#x27;).toLowerCase();
+                            const element = getGeneratedMetricIdentifier(item, aggregation, getGeneratedMetricExpression, hasher);
                             const definition = {
                                 metricDefinition: {
-                                    identifier: getGeneratedMetricIdentifier(item),
+                                    identifier: element,
                                     expression: getGeneratedMetricExpression(item),
-                                    title: get(item, &#x27;title&#x27;),
-                                    format: get(item, &#x27;format&#x27;)
+                                    title,
+                                    format
                                 }
                             };
                         
-                            return { element, definition };
+                            return { element, hash: hashItem(item), definition, sort };
                         };
                         
-                        const categoryToElement = c =&gt; {
-                            return { element: get(c, &#x27;displayForm&#x27;) };
+                        const isDerivedMetric = (item) =&gt; {
+                            const type = get(item, &#x27;type&#x27;);
+                            return (type === &#x27;fact&#x27; || type === &#x27;attribute&#x27; || !allFiltersEmpty(item));
                         };
+                        
+                        const contributionMetricDefinition = (attribute, item) =&gt; {
+                            let generated;
+                            let getMetricExpression = partial(getPercentMetricExpression, attribute, &#x60;[${get(item, &#x27;objectUri&#x27;)}]&#x60;);
+                            if (isDerivedMetric(item)) {
+                                generated = generatedMetricDefinition(item);
+                                getMetricExpression = partial(getPercentMetricExpression, attribute, &#x60;{${get(generated, &#x27;definition.metricDefinition.identifier&#x27;)}}&#x60;);
+                            }
+                            const title = &#x60;% ${get(item, &#x27;title&#x27;)}&#x60;.replace(/^(% )+/, &#x27;% &#x27;);
+                            const hasher = partial(getGeneratedMetricHash, title, CONTRIBUTION_METRIC_FORMAT);
+                            const result = [{
+                                element: getGeneratedMetricIdentifier(item, &#x27;percent&#x27;, getMetricExpression, hasher),
+                                hash: hashItem(item),
+                                definition: {
+                                    metricDefinition: {
+                                        identifier: getGeneratedMetricIdentifier(item, &#x27;percent&#x27;, getMetricExpression, hasher),
+                                        expression: getMetricExpression(item),
+                                        title,
+                                        format: CONTRIBUTION_METRIC_FORMAT
+                                    }
+                                }
+                            }];
+                        
+                            if (generated) {
+                                result.unshift({ hash: hashItem(item), definition: generated.definition });
+                            }
+                        
+                            return result;
+                        };
+                        
+                        const getDate = date =&gt; get(date, &#x27;dateFilter&#x27;, date);
+                        
+                        const popMetricDefinition = (attribute, item) =&gt; {
+                            const title = &#x60;${get(item, &#x27;title&#x27;)} - previous year&#x60;;
+                            const format = get(item, &#x27;format&#x27;);
+                            const hasher = partial(getGeneratedMetricHash, title, format);
+                        
+                            const date = getDate(attribute);
+                        
+                            let generated;
+                            let getMetricExpression = partial(getPoPExpression, date, &#x60;[${get(item, &#x27;objectUri&#x27;)}]&#x60;);
+                        
+                            if (isDerivedMetric(item)) {
+                                generated = generatedMetricDefinition(item);
+                                getMetricExpression = partial(getPoPExpression, date, &#x60;{${get(generated, &#x27;definition.metricDefinition.identifier&#x27;)}}&#x60;);
+                            }
+                        
+                            const identifier = getGeneratedMetricIdentifier(item, &#x27;pop&#x27;, getMetricExpression, hasher);
+                        
+                            const result = [{
+                                element: identifier,
+                                hash: hashItem(item),
+                                definition: {
+                                    metricDefinition: {
+                                        identifier,
+                                        expression: getMetricExpression(),
+                                        title,
+                                        format
+                                    }
+                                },
+                                sort: get(item, &#x27;sort&#x27;)
+                            }];
+                        
+                            if (generated) {
+                                result.push(generated);
+                            }
+                        
+                            return result;
+                        };
+                        
+                        const contributionPoPMetricDefinition = (date, attribute, item) =&gt; {
+                            const generated = contributionMetricDefinition(attribute ? attribute : date, item);
+                        
+                            const title = &#x60;% ${get(item, &#x27;title&#x27;)} - previous year&#x60;.replace(/^(% )+/, &#x27;% &#x27;);
+                            const format = CONTRIBUTION_METRIC_FORMAT;
+                            const hasher = partial(getGeneratedMetricHash, title, format);
+                        
+                            const getMetricExpression = partial(getPoPExpression, getDate(date), &#x60;{${last(generated).element}}&#x60;);
+                        
+                            const identifier = getGeneratedMetricIdentifier(item, &#x27;pop&#x27;, getMetricExpression, hasher);
+                        
+                            const result = [{
+                                element: identifier,
+                                hash: hashItem(item),
+                                definition: {
+                                    metricDefinition: {
+                                        identifier,
+                                        expression: getMetricExpression(),
+                                        title,
+                                        format
+                                    }
+                                }
+                            }];
+                        
+                            result.push(generated);
+                        
+                            return flatten(result);
+                        };
+                        
+                        const categoryToElement = c =&gt; ({ element: get(c, &#x27;displayForm&#x27;), hash: hashItem(c), sort: get(c, &#x27;sort&#x27;) });
                         
                         const attributeFilterToWhere = f =&gt; {
                             const dfUri = get(f, &#x27;listAttributeFilter.displayForm&#x27;);
@@ -224,39 +360,89 @@ title: foobar
                         };
                         
                         const dateFilterToWhere = f =&gt; {
-                            const dimensionUri = get(f, &#x27;dateFilterSettings.dimension&#x27;);
-                            const granularity = get(f, &#x27;dateFilterSettings.granularity&#x27;);
-                            const between = [get(f, &#x27;dateFilterSettings.from&#x27;), get(f, &#x27;dateFilterSettings.to&#x27;)];
+                            const dimensionUri = get(f, &#x27;dateFilter.dimension&#x27;);
+                            const granularity = get(f, &#x27;dateFilter.granularity&#x27;);
+                            const between = [get(f, &#x27;dateFilter.from&#x27;), get(f, &#x27;dateFilter.to&#x27;)];
                             return { [dimensionUri]: { &#x27;$between&#x27;: between, &#x27;$granularity&#x27;: granularity } };
                         };
                         
-                        const metricToDefinition = metric =&gt; ({ element: get(metric, &#x27;objectUri&#x27;)});
+                        const metricToDefinition = metric =&gt; ({
+                            element: get(metric, &#x27;objectUri&#x27;),
+                            hash: hashItem(metric),
+                            sort: !metric.showPoP ? get(metric, &#x27;sort&#x27;) : null
+                        });
+                        
+                        const isDateFilterExecutable = dateFilter =&gt;
+                            get(dateFilter, &#x27;from&#x27;) !== undefined &amp;&amp;
+                            get(dateFilter, &#x27;to&#x27;) !== undefined;
+                        
+                        const isAttributeFilterExecutable = listAttributeFilter =&gt;
+                            notEmpty(get(listAttributeFilter, [&#x27;default&#x27;, &#x27;attributeElements&#x27;]));
+                        
+                        const sortToOrderBy = item =&gt; ({ column: get(item, &#x27;element&#x27;), direction: get(item, &#x27;sort&#x27;) });
                         
                         export const mdToExecutionConfiguration = (mdObj) =&gt; {
-                            const { measures, categories, filters } = mdObj;
-                            const factMetrics = map(filter(measures, m =&gt; m.type === &#x27;fact&#x27;), generatedMetricDefinition);
-                            const metrics = map(filter(measures, m =&gt; m.type === &#x27;metric&#x27;), metricToDefinition);
-                            const attributeMetrics = map(filter(measures, m =&gt; m.type === &#x27;attribute&#x27;), generatedMetricDefinition);
-                            const attributes = map(filter(categories, c =&gt; c.collection === &#x27;attribute&#x27;), categoryToElement);
-                            const attributeFilters = map(filter(filters, ({listAttributeFilter}) =&gt; listAttributeFilter !== undefined), attributeFilterToWhere);
-                            const dateFilters = map(filter(filters, ({dateFilterSettings}) =&gt; dateFilterSettings !== undefined), dateFilterToWhere);
+                            const { filters } = mdObj;
+                            const measures = map(mdObj.measures, ({ measure }) =&gt; measure);
+                            const measureSort = map(measures, hashItem);
+                            const categories = map(mdObj.categories, ({ category }) =&gt; category);
+                            const attributes = map(categories, categoryToElement);
+                            const contributionMetrics = map(
+                                filter(measures, m =&gt; m.showInPercent &amp;&amp; !m.showPoP),
+                                partial(contributionMetricDefinition, find(categories, c =&gt; c.type === &#x27;attribute&#x27; || c.type === &#x27;date&#x27;))
+                            );
                         
-                            const columns = [];
-                            const definitions = [];
-                            attributes.forEach(({element}) =&gt; columns.push(element));
-                            factMetrics.forEach(({element, definition}) =&gt; {
-                                columns.push(element);
-                                definitions.push(definition);
+                            const date = find([].concat(categories, filters), c =&gt; (c.type === &#x27;date&#x27; || c.dateFilter));
+                        
+                            const popMetrics = map(
+                                filter(measures, m =&gt; m.showPoP &amp;&amp; !m.showInPercent),
+                                partial(popMetricDefinition, date)
+                            );
+                            const contributionPoPMetrics = map(
+                                filter(measures, m =&gt; m.showPoP &amp;&amp; m.showInPercent),
+                                partial(contributionPoPMetricDefinition, date, find(categories, c =&gt; c.type === &#x27;attribute&#x27; || c.type === &#x27;date&#x27;))
+                            );
+                            const factMetrics = map(filter(measures, m =&gt; m.type === &#x27;fact&#x27; &amp;&amp; !m.showInPercent &amp;&amp; !m.showPoP), generatedMetricDefinition);
+                            const metrics = map(filter(measures, m =&gt; m.type === &#x27;metric&#x27; &amp;&amp; !m.showInPercent), metric =&gt; {
+                                if (isEmpty(metric.measureFilters)) {
+                                    return metricToDefinition(metric);
+                                }
+                        
+                                return generatedMetricDefinition(metric);
                             });
-                            attributeMetrics.forEach(({element, definition}) =&gt; {
-                                columns.push(element);
-                                definitions.push(definition);
+                            const attributeMetrics = map(filter(measures, m =&gt; m.type === &#x27;attribute&#x27; &amp;&amp; !m.showInPercent &amp;&amp; !m.showPoP), generatedMetricDefinition);
+                            const attributeFilters = map(filter(filters, ({ listAttributeFilter }) =&gt; isAttributeFilterExecutable(listAttributeFilter)), attributeFilterToWhere);
+                            const dateFilters = map(filter(filters, ({ dateFilter }) =&gt; isDateFilterExecutable(dateFilter)), dateFilterToWhere);
+                        
+                            const allMetrics = [].concat(
+                                factMetrics,
+                                attributeMetrics,
+                                popMetrics,
+                                metrics,
+                                contributionMetrics,
+                                contributionPoPMetrics
+                            );
+                        
+                            const allMetricsSorted = map(measureSort, (hash) =&gt; {
+                                return filter(flatten(allMetrics), metric =&gt; {
+                                    return metric.hash === hash;
+                                });
                             });
-                            metrics.forEach(({element}) =&gt; columns.push(element));
-                            const where = [].concat(attributeFilters, dateFilters).reduce((acc, f) =&gt; {
-                                return assign(acc, f);
-                            }, {});
-                            return { &#x27;execution&#x27;: { columns, where, definitions } };
+                        
+                            const allItems = [].concat(
+                                attributes,
+                                flatten(allMetricsSorted)
+                            );
+                        
+                            const orderBy = map(filter(allItems, item =&gt; !!item.sort), sortToOrderBy);
+                            const where = [].concat(attributeFilters, dateFilters).reduce(assign, {});
+                        
+                            return { execution: {
+                                columns: filter(map(allItems, &#x27;element&#x27;), identity),
+                                orderBy,
+                                where,
+                                definitions: filter(map(allItems, &#x27;definition&#x27;), identity)
+                            } };
                         };
                         
                         export const getDataForVis = (projectId, mdObj) =&gt; {
@@ -264,7 +450,6 @@ title: foobar
                             const { columns, ...executionConfiguration } = execution;
                             return getData(projectId, columns, executionConfiguration);
                         };
-                        
                         
                             </pre>
                         </div>

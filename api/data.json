@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.24",
+        "version": "0.1.33",
         "url": ""
     },
     "files": {
@@ -121,7 +121,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/execution.js",
-            "line": 14,
+            "line": 29,
             "description": "Module for execution on experimental execution resource"
         },
         "sdk": {
@@ -204,7 +204,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/xhr.js",
-            "line": 10,
+            "line": 12,
             "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
         }
     },
@@ -234,7 +234,7 @@
             "module": "execution",
             "namespace": "",
             "file": "src/execution.js",
-            "line": 14,
+            "line": 29,
             "description": "Module for execution on experimental execution resource"
         },
         "sdk": {
@@ -317,7 +317,7 @@
             "module": "xhr",
             "namespace": "",
             "file": "src/xhr.js",
-            "line": 10,
+            "line": 12,
             "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
         }
     },
@@ -334,7 +334,7 @@
         },
         {
             "file": "src/execution.js",
-            "line": 21,
+            "line": 36,
             "description": "For the given projectId it returns table structure with the given\nelements in column headers.",
             "itemtype": "method",
             "name": "getData",
@@ -830,7 +830,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 100,
+            "line": 102,
             "description": "additional ajax configuration specific for xhr module, keys\n  unauthorized: function(xhr) - called when user is unathorized and token renewal failed\n  pollDelay: int - polling interval in milisecodns, default 1000\n\nmethod also accepts any option from original $.ajaxSetup. Options will be applied to all call of xhr.ajax().\n\nxhrSetup behave similar tp $.ajaxSetup, each call replaces settings completely.\nOptions can be also passed to particular xhr.ajax calls (same as optios for $.ajax and $.ajaxSetup)",
             "itemtype": "method",
             "name": "ajaxSetup",
@@ -839,7 +839,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 122,
+            "line": 124,
             "description": "Same api as jQuery.ajax - arguments (url, settings) or (settings) with url inside\nAdditionally content type is automatically json, and object in settings.data is converted to string\nto be consumed by GDC backend.\n\nsettings additionally accepts keys: unathorized, pollDelay  (see xhrSetup for more details)",
             "itemtype": "method",
             "name": "ajax",
@@ -858,7 +858,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 196,
+            "line": 198,
             "description": "Wrapper for xhr.ajax method GET",
             "itemtype": "method",
             "name": "get",
@@ -867,7 +867,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 202,
+            "line": 204,
             "description": "Wrapper for xhr.ajax method POST",
             "itemtype": "method",
             "name": "post",
@@ -876,7 +876,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 208,
+            "line": 210,
             "description": "Wrapper for xhr.ajax method PUT",
             "itemtype": "method",
             "name": "put",
