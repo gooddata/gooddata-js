@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.33</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.35</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -265,7 +265,8 @@ title: foobar
                                         title,
                                         format: CONTRIBUTION_METRIC_FORMAT
                                     }
-                                }
+                                },
+                                sort: get(item, &#x27;sort&#x27;)
                             }];
                         
                             if (generated) {
@@ -336,7 +337,8 @@ title: foobar
                                         title,
                                         format
                                     }
-                                }
+                                },
+                                sort: get(item, &#x27;sort&#x27;)
                             }];
                         
                             result.push(generated);

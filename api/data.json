@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.33",
+        "version": "0.1.35",
         "url": ""
     },
     "files": {
@@ -135,7 +135,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/gooddata.js",
-            "line": 9,
+            "line": 10,
             "description": "# JS SDK\nHere is a set of functions that mostly are a thin wraper over the [GoodData API](https://developer.gooddata.com/api).\nBefore calling any of those functions, you need to authenticate with a valid GoodData\nuser credentials. After that, every subsequent call in the current session is authenticated.\nYou can find more about the GD authentication mechanism here.\n\n## Conventions and Dependencies\n* Depends on [jQuery JavaScript library](http://jquery.com/) javascript library\n* Each SDK function returns [jQuery Deferred promise](http://api.jquery.com/deferred.promise/)\n\n## GD Authentication Mechansim\nIn this JS SDK library we provide you with a simple `login(username, passwd)` function\nthat does the magic for you.\nTo fully understand the authentication mechansim, please read\n[Authentication via API article](http://developer.gooddata.com/article/authentication-via-api)\non [GoodData Developer Portal](http://developer.gooddata.com/)"
         },
         "metadata": {
@@ -248,7 +248,7 @@
             "module": "sdk",
             "namespace": "",
             "file": "src/gooddata.js",
-            "line": 9,
+            "line": 10,
             "description": "# JS SDK\nHere is a set of functions that mostly are a thin wraper over the [GoodData API](https://developer.gooddata.com/api).\nBefore calling any of those functions, you need to authenticate with a valid GoodData\nuser credentials. After that, every subsequent call in the current session is authenticated.\nYou can find more about the GD authentication mechanism here.\n\n## Conventions and Dependencies\n* Depends on [jQuery JavaScript library](http://jquery.com/) javascript library\n* Each SDK function returns [jQuery Deferred promise](http://api.jquery.com/deferred.promise/)\n\n## GD Authentication Mechansim\nIn this JS SDK library we provide you with a simple `login(username, passwd)` function\nthat does the magic for you.\nTo fully understand the authentication mechansim, please read\n[Authentication via API article](http://developer.gooddata.com/article/authentication-via-api)\non [GoodData Developer Portal](http://developer.gooddata.com/)"
         },
         "metadata": {
