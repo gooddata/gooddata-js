@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.35",
+        "version": "0.1.36",
         "url": ""
     },
     "files": {
@@ -121,7 +121,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/execution.js",
-            "line": 29,
+            "line": 31,
             "description": "Module for execution on experimental execution resource"
         },
         "sdk": {
@@ -234,7 +234,7 @@
             "module": "execution",
             "namespace": "",
             "file": "src/execution.js",
-            "line": 29,
+            "line": 31,
             "description": "Module for execution on experimental execution resource"
         },
         "sdk": {
@@ -334,7 +334,7 @@
         },
         {
             "file": "src/execution.js",
-            "line": 36,
+            "line": 38,
             "description": "For the given projectId it returns table structure with the given\nelements in column headers.",
             "itemtype": "method",
             "name": "getData",
