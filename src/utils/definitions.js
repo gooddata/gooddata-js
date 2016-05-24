@@ -17,16 +17,27 @@ function resolvedDependencies(resolved, { dependencies }) {
     return difference(dependencies, identifiers).length === 0;
 }
 
-function sort(unresolved) {
-    const resolved = [];
-
-    while (unresolved.length !== 0) {
-        const tested = unresolved.shift();
+function scan(resolved, unresolved) {
+    for (let i = 0; i < unresolved.length; i++) {
+        const tested = unresolved[i];
 
         if (resolvedDependencies(resolved, tested)) {
             resolved.push(tested);
-        } else {
-            unresolved.push(tested);
+            unresolved.splice(i--, 1);
+        }
+    }
+}
+
+function sort(unresolved) {
+    const resolved = [];
+    let lastLength;
+
+    while (unresolved.length > 0) {
+        lastLength = unresolved.length;
+        scan(resolved, unresolved);
+
+        if (unresolved.length === lastLength) {
+            throw new Error('Metric defintions cannot be sorted due to missing dependencies.');
         }
     }
 
