@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.36</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.39</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -64,6 +64,7 @@ title: foobar
                         } from &#x27;./xhr&#x27;;
                         
                         import Rules from &#x27;./utils/rules&#x27;;
+                        import { sortDefinitions } from &#x27;./utils/definitions&#x27;;
                         
                         import invariant from &#x27;invariant&#x27;;
                         import {
@@ -250,7 +251,7 @@ title: foobar
                         
                         const createPureMetric = measure =&gt; ({
                             element: get(measure, &#x27;objectUri&#x27;),
-                            sort: !measure.showPoP ? get(measure, &#x27;sort&#x27;) : null
+                            sort: get(measure, &#x27;sort&#x27;)
                         });
                         
                         const createDerivedMetric = measure =&gt; {
@@ -328,8 +329,7 @@ title: foobar
                                         title,
                                         format
                                     }
-                                },
-                                sort: get(measure, &#x27;sort&#x27;)
+                                }
                             }];
                         
                             if (generated) {
@@ -363,8 +363,7 @@ title: foobar
                                         title,
                                         format
                                     }
-                                },
-                                sort: get(measure, &#x27;sort&#x27;)
+                                }
                             }];
                         
                             result.push(generated);
@@ -461,7 +460,7 @@ title: foobar
                             return { execution: {
                                 columns: compact(map(allItems, &#x27;element&#x27;)),
                                 orderBy: map(filter(allItems, item =&gt; item.sort), sortToOrderBy),
-                                definitions: compact(map(metrics, &#x27;definition&#x27;)),
+                                definitions: sortDefinitions(compact(map(metrics, &#x27;definition&#x27;))),
                                 where: getWhere(mdObj)
                             } };
                         };
