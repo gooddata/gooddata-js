@@ -106,4 +106,40 @@ describe('Catalogue', () => {
             });
         });
     });
+
+    describe('loadDateDataSets', () => {
+        const loadDateDataSetsUri = `/gdc/internal/projects/${projectId}/loadDateDataSets`;
+
+        beforeEach(() => {
+            ajax = sinon.stub(xhr, 'ajax', () => Promise.resolve(fixtures.loadDateDataSetsResponse));
+        });
+
+        afterEach(() => {
+            xhr.ajax.restore();
+        });
+
+        it('should generate basic request structure', () => {
+            return catalogue.loadDateDataSets(projectId, {}).then(() => {
+                const ajaxCall = ajax.getCall(0);
+                expect(ajaxCall.args[0]).to.be(loadDateDataSetsUri);
+
+                const dateDataSetsRequest = ajaxCall.args[1].data.dateDataSetsRequest;
+                expect(dateDataSetsRequest).to.be.eql({
+                    includeUnavailableDateDataSetsCount: true,
+                    includeAvailableDateAttributes: true,
+                    bucketItems: undefined,
+                    csvDataSetIdentifier: undefined
+                });
+            });
+        });
+
+        it('should send convert dataSetIdentifier to csvDataSetIdentifier', () => {
+            const dataSetIdentifier = 'my_identidier';
+            return catalogue.loadDateDataSets(projectId, { dataSetIdentifier }).then(() => {
+                const ajaxCall = ajax.getCall(0);
+                const { csvDataSetIdentifier } = ajaxCall.args[1].data.dateDataSetsRequest;
+                expect(csvDataSetIdentifier).to.be(dataSetIdentifier);
+            });
+        });
+    });
 });
