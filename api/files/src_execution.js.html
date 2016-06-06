@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.40</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.41</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -450,23 +450,34 @@ title: foobar
                         
                         const sortToOrderBy = item =&gt; ({ column: get(item, &#x27;element&#x27;), direction: get(item, &#x27;sort&#x27;) });
                         
-                        export const mdToExecutionConfiguration = (mdObj) =&gt; {
-                            const measures = map(mdObj.measures, ({ measure }) =&gt; measure);
-                            const metrics = flatten(map(measures, measure =&gt; getMetricFactory(measure)(measure, mdObj)));
+                        const getOrderBy = (metrics, categories, type) =&gt; {
+                            // For bar chart we always override sorting to sort by values (first metric)
+                            if (type === &#x27;bar&#x27; &amp;&amp; notEmpty(metrics)) {
+                                return [{
+                                    column: first(compact(map(metrics, &#x27;element&#x27;))),
+                                    direction: &#x27;desc&#x27;
+                                }];
+                            }
                         
-                            const categories = map(getCategories(mdObj), categoryToElement);
-                            const allItems = [...categories, ...metrics];
+                            return map(filter([...categories, ...metrics], item =&gt; item.sort), sortToOrderBy);
+                        };
+                        
+                        export const mdToExecutionConfiguration = (mdObj) =&gt; {
+                            const buckets = get(mdObj, &#x27;buckets&#x27;);
+                            const measures = map(buckets.measures, ({ measure }) =&gt; measure);
+                            const metrics = flatten(map(measures, measure =&gt; getMetricFactory(measure)(measure, buckets)));
+                            const categories = map(getCategories(buckets), categoryToElement);
                         
                             return { execution: {
-                                columns: compact(map(allItems, &#x27;element&#x27;)),
-                                orderBy: map(filter(allItems, item =&gt; item.sort), sortToOrderBy),
+                                columns: compact(map([...categories, ...metrics], &#x27;element&#x27;)),
+                                orderBy: getOrderBy(metrics, categories, get(mdObj, &#x27;type&#x27;)),
                                 definitions: sortDefinitions(compact(map(metrics, &#x27;definition&#x27;))),
-                                where: getWhere(mdObj)
+                                where: getWhere(buckets)
                             } };
                         };
                         
                         export const getDataForVis = (projectId, mdObj) =&gt; {
-                            const { execution } = mdToExecutionConfiguration(get(mdObj, &#x27;buckets&#x27;));
+                            const { execution } = mdToExecutionConfiguration(mdObj);
                             const { columns, ...executionConfiguration } = execution;
                             return getData(projectId, columns, executionConfiguration);
                         };
