@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.41</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.42</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -170,6 +170,23 @@ title: foobar
                             return d.promise();
                         }
                         
+                        const MAX_TITLE_LENGTH = 255;
+                        const getMetricTitle = (suffix, title) =&gt; {
+                            const maxLength = MAX_TITLE_LENGTH - suffix.length;
+                            if (title &amp;&amp; title.length &gt; maxLength) {
+                                if (title[title.length - 1] === &#x27;)&#x27;) {
+                                    return &#x60;${title.substring(0, maxLength - 2)}…)${suffix}&#x60;;
+                                }
+                                return &#x60;${title.substring(0, maxLength - 1)}…${suffix}&#x60;;
+                            }
+                            return &#x60;${title}${suffix}&#x60;;
+                        };
+                        
+                        const getBaseMetricTitle = partial(getMetricTitle, &#x27;&#x27;);
+                        
+                        const POP_SUFFIX = &#x27; - previous year&#x27;;
+                        const getPoPMetricTitle = partial(getMetricTitle, POP_SUFFIX);
+                        
                         const CONTRIBUTION_METRIC_FORMAT = &#x27;#,##0.00%&#x27;;
                         
                         const getFilterExpression = listAttributeFilter =&gt; {
@@ -255,7 +272,8 @@ title: foobar
                         });
                         
                         const createDerivedMetric = measure =&gt; {
-                            const { title, format, sort } = measure;
+                            const { format, sort } = measure;
+                            const title = getBaseMetricTitle(measure.title);
                         
                             const hasher = partial(getGeneratedMetricHash, title, format);
                             const aggregation = get(measure, &#x27;aggregation&#x27;, &#x27;base&#x27;).toLowerCase();
@@ -281,7 +299,7 @@ title: foobar
                                 generated = createDerivedMetric(measure);
                                 getMetricExpression = partial(getPercentMetricExpression, category, &#x60;{${get(generated, &#x27;definition.metricDefinition.identifier&#x27;)}}&#x60;);
                             }
-                            const title = &#x60;% ${get(measure, &#x27;title&#x27;)}&#x60;.replace(/^(% )+/, &#x27;% &#x27;);
+                            const title = getBaseMetricTitle(&#x60;% ${get(measure, &#x27;title&#x27;)}&#x60;.replace(/^(% )+/, &#x27;% &#x27;));
                             const hasher = partial(getGeneratedMetricHash, title, CONTRIBUTION_METRIC_FORMAT);
                             const result = [{
                                 element: getGeneratedMetricIdentifier(measure, &#x27;percent&#x27;, getMetricExpression, hasher),
@@ -304,7 +322,7 @@ title: foobar
                         };
                         
                         const createPoPMetric = (measure, mdObj) =&gt; {
-                            const title = &#x60;${get(measure, &#x27;title&#x27;)} - previous year&#x60;;
+                            const title = getPoPMetricTitle(get(measure, &#x27;title&#x27;));
                             const format = get(measure, &#x27;format&#x27;);
                             const hasher = partial(getGeneratedMetricHash, title, format);
                         
@@ -345,8 +363,8 @@ title: foobar
                             const date = getDate(mdObj);
                         
                             const generated = createContributionMetric(measure, mdObj);
+                            const title = getPoPMetricTitle(&#x60;% ${get(measure, &#x27;title&#x27;)}&#x60;.replace(/^(% )+/, &#x27;% &#x27;));
                         
-                            const title = &#x60;% ${get(measure, &#x27;title&#x27;)} - previous year&#x60;.replace(/^(% )+/, &#x27;% &#x27;);
                             const format = CONTRIBUTION_METRIC_FORMAT;
                             const hasher = partial(getGeneratedMetricHash, title, format);
                         
