@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.43</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.44</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -485,12 +485,13 @@ title: foobar
                             const measures = map(buckets.measures, ({ measure }) =&gt; measure);
                             const metrics = flatten(map(measures, measure =&gt; getMetricFactory(measure)(measure, buckets)));
                             const categories = map(getCategories(buckets), categoryToElement);
+                            const columns = compact(map([...categories, ...metrics], &#x27;element&#x27;));
                         
                             return { execution: {
-                                columns: compact(map([...categories, ...metrics], &#x27;element&#x27;)),
+                                columns,
                                 orderBy: getOrderBy(metrics, categories, get(mdObj, &#x27;type&#x27;)),
                                 definitions: sortDefinitions(compact(map(metrics, &#x27;definition&#x27;))),
-                                where: getWhere(buckets)
+                                where: columns.length ? getWhere(buckets) : {}
                             } };
                         };
                         
