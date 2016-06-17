@@ -49,14 +49,14 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.45</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.46</span>
                         <h1 class="file-heading">File: src/user.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
                         // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
                         import $ from &#x27;jquery&#x27;;
-                        import { ajax, get, post } from &#x27;./xhr&#x27;;
+                        import { ajax, get, post, put } from &#x27;./xhr&#x27;;
                         
                         /**
                          * @module user
@@ -124,6 +124,24 @@ title: foobar
                         }
                         
                         /**
+                         * Updates user&#x27;s profile settings
+                         * @method updateProfileSettings
+                         * @param {String} profileId - User profile identifier
+                         * @param {Object} profileSetting
+                        */
+                        export function updateProfileSettings(profileId, profileSetting) {
+                            /*eslint-disable new-cap*/
+                            const d = $.Deferred();
+                            /*eslint-enable new-cap*/
+                        
+                            put(&#x27;/gdc/account/profile/&#x27; + profileId + &#x27;/settings&#x27;, {
+                                data: profileSetting
+                            }).then(d.resolve, d.reject);
+                        
+                            return d.promise();
+                        }
+                        
+                        /**
                          * Returns info about currently logged in user from bootstrap resource
                          * @method getAccountInfo
                          */
@@ -147,7 +165,6 @@ title: foobar
                         
                             return d.promise();
                         }
-                        
                         
                             </pre>
                         </div>
