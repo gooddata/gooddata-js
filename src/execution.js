@@ -408,16 +408,15 @@ export const mdToExecutionConfiguration = (mdObj) => {
     const categories = map(getCategories(buckets), categoryToElement);
     const columns = compact(map([...categories, ...metrics], 'element'));
 
-    return { execution: {
+    return {
         columns,
         orderBy: getOrderBy(metrics, categories, get(mdObj, 'type')),
         definitions: sortDefinitions(compact(map(metrics, 'definition'))),
         where: columns.length ? getWhere(buckets) : {}
-    } };
+    };
 };
 
 export const getDataForVis = (projectId, mdObj) => {
-    const { execution } = mdToExecutionConfiguration(mdObj);
-    const { columns, ...executionConfiguration } = execution;
+    const { columns, ...executionConfiguration } = mdToExecutionConfiguration(mdObj);
     return getData(projectId, columns, executionConfiguration);
 };

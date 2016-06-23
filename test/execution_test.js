@@ -468,7 +468,7 @@ describe('execution', () => {
 
             it('does not execute all-time date filter', () => {
                 const mdWithAllTime = cloneDeep(mdObj);
-                mdWithAllTime.filters = [{
+                mdWithAllTime.buckets.filters = [{
                     'dateFilter': {
                         'dimension': '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/16561',
                         'granularity': 'GDC.time.year'
@@ -476,12 +476,12 @@ describe('execution', () => {
                 }];
 
                 const executionConfiguration = ex.mdToExecutionConfiguration(mdWithAllTime);
-                expect(executionConfiguration.where).to.be(undefined);
+                expect(executionConfiguration.where).to.eql({});
             });
 
             it('does not execute attribute filter with all selected', () => {
                 const mdWithSelectAll = cloneDeep(mdObj);
-                mdWithSelectAll.filters = [{
+                mdWithSelectAll.buckets.filters = [{
                     'listAttributeFilter': {
                         'attribute': '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1025',
                         'displayForm': '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1028',
@@ -493,7 +493,7 @@ describe('execution', () => {
                 }];
 
                 const executionConfiguration = ex.mdToExecutionConfiguration(mdWithSelectAll);
-                expect(executionConfiguration.where).to.be(undefined);
+                expect(executionConfiguration.where).to.eql({});
             });
 
             it('propagates sort data from mertics and categories', () => {
@@ -590,7 +590,7 @@ describe('execution', () => {
 
                 const execConfig = ex.mdToExecutionConfiguration(mdObj);
 
-                execConfig.execution.definitions.forEach(definition => {
+                execConfig.definitions.forEach(definition => {
                     expect(definition.metricDefinition.title).to.have.length(255);
                 });
             });
