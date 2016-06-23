@@ -42,7 +42,7 @@ const notEmpty = negate(isEmpty);
  *
  * @method getData
  * @param {String} projectId - GD project identifier
- * @param {Array} elements - An array of attribute or metric identifiers.
+ * @param {Array} columns - An array of attribute or metric identifiers.
  * @param {Object} executionConfiguration - Execution configuration - can contain for example
  *                 property "filters" containing execution context filters
  *                 property "where" containing query-like filters
@@ -51,16 +51,14 @@ const notEmpty = negate(isEmpty);
  *
  * @return {Object} Structure with `headers` and `rawData` keys filled with values from execution.
  */
-export function getData(projectId, elements, executionConfiguration = {}) {
+export function getData(projectId, columns, executionConfiguration = {}) {
     const executedReport = {
         isLoaded: false
     };
 
     // Create request and result structures
     const request = {
-        execution: {
-            columns: elements
-        }
+        execution: { columns }
     };
     // enrich configuration with supported properties such as
     // where clause with query-like filters or execution context filters
@@ -75,35 +73,14 @@ export function getData(projectId, elements, executionConfiguration = {}) {
     /*eslint-enable new-cap*/
 
     // Execute request
-    post('/gdc/internal/projects/' + projectId + '/experimental/executions', {
+    post(`/gdc/internal/projects/${projectId}/experimental/executions`, {
         data: JSON.stringify(request)
-    }, d.reject).then(function resolveSimpleExecution(result) {
-        // TODO: when executionResult.headers will be globaly available columns map code should be removed
-        if (result.executionResult.headers) {
-            executedReport.headers = result.executionResult.headers;
-        } else {
-            // Populate result's header section if is not available
-            executedReport.headers = result.executionResult.columns.map(function mapColsToHeaders(col) {
-                if (col.attributeDisplayForm) {
-                    return {
-                        type: 'attrLabel',
-                        id: col.attributeDisplayForm.meta.identifier,
-                        uri: col.attributeDisplayForm.meta.uri,
-                        title: col.attributeDisplayForm.meta.title
-                    };
-                }
-                return {
-                    type: 'metric',
-                    id: col.metric.meta.identifier,
-                    uri: col.metric.meta.uri,
-                    title: col.metric.meta.title,
-                    format: col.metric.content.format
-                };
-            });
-        }
+    }, d.reject).then((result) => {
+        executedReport.headers = result.executionResult.headers;
+
         // Start polling on url returned in the executionResult for tabularData
         return ajax(result.executionResult.tabularDataResult);
-    }, d.reject).then(function resolveDataResultPolling(result, message, response) {
+    }, d.reject).then((result, message, response) => {
         // After the retrieving computed tabularData, resolve the promise
         executedReport.rawData = (result && result.tabularDataResult) ? result.tabularDataResult.values : [];
         executedReport.isLoaded = true;

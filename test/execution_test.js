@@ -46,59 +46,28 @@ describe('execution', () => {
                                 }
                             }
                         ],
+                        headers: [
+                            {
+                                id: 'attrId',
+                                title: 'Atribute Title',
+                                type: 'attrLabel',
+                                uri: 'attrUri'
+                            },
+                            {
+                                id: 'metricId',
+                                title: 'Metric Title',
+                                type: 'metric',
+                                uri: 'metricUri'
+                            }
+                        ],
                         tabularDataResult: '/gdc/internal/projects/myFakeProjectId/experimental/executions/23452345'
                     }
                 };
             });
 
             describe('getData', () => {
-                it('should resolve with JSON with correct data without headers', done => {
-                    server.respondWith(
-                        '/gdc/internal/projects/myFakeProjectId/experimental/executions',
-                        [200, {'Content-Type': 'application/json'},
-                        JSON.stringify(serverResponseMock)]
-                    );
-                    server.respondWith(
-                        /\/gdc\/internal\/projects\/myFakeProjectId\/experimental\/executions\/(\w+)/,
-                        [201, {'Content-Type': 'application/json'},
-                        JSON.stringify({'tabularDataResult': {values: ['a', 1]}})]
-                    );
-
-                    ex.getData('myFakeProjectId', ['attrId', 'metricId']).then(function(result) {
-                        expect(result.headers[0].id).to.be('attrId');
-                        expect(result.headers[0].uri).to.be('attrUri');
-                        expect(result.headers[0].type).to.be('attrLabel');
-                        expect(result.headers[0].title).to.be('Df Title');
-                        expect(result.headers[1].id).to.be('metricId');
-                        expect(result.headers[1].uri).to.be('metricUri');
-                        expect(result.headers[1].type).to.be('metric');
-                        expect(result.headers[1].title).to.be('Metric Title');
-                        expect(result.rawData[0]).to.be('a');
-                        expect(result.rawData[1]).to.be(1);
-                        done();
-                    }, function() {
-                        expect().fail('Should resolve with CSV data');
-                        done();
-                    });
-                });
-
                 it('should resolve with JSON with correct data including headers', done => {
                     const responseMock = JSON.parse(JSON.stringify(serverResponseMock));
-
-                    responseMock.executionResult.headers = [
-                        {
-                            id: 'attrId',
-                            title: 'Atribute Title',
-                            type: 'attrLabel',
-                            uri: 'attrUri'
-                        },
-                        {
-                            id: 'metricId',
-                            title: 'Metric Title',
-                            type: 'metric',
-                            uri: 'metricUri'
-                        }
-                    ];
 
                     server.respondWith(
                         '/gdc/internal/projects/myFakeProjectId/experimental/executions',
