@@ -496,7 +496,94 @@ describe('execution', () => {
                 expect(executionConfiguration.where).to.eql({});
             });
 
-            it('propagates sort data from mertics and categories', () => {
+            it('generates right metricMappings', () => {
+                const mdObjCloned = cloneDeep(mdObj);
+                const executionConfiguration = ex.mdToExecutionConfiguration(mdObjCloned);
+                expect(executionConfiguration.metricMappings).to.eql([
+                    {
+                        element: 'fact_qamfsd9cw85e53mcqs74k8a0mwbf5gc2_1144.generated.filtered_sum.b9f95d95adbeac03870b764f8b2c3402',
+                        measureIndex: 0
+                    }, {
+                        element: 'attribute_qamfsd9cw85e53mcqs74k8a0mwbf5gc2_1244.generated.count.a865b88e507b9390e2175b79e1d6252f',
+                        measureIndex: 1
+                    }, {
+                        element: '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1556',
+                        measureIndex: 2
+                    }, {
+                        element: 'metric_qamfsd9cw85e53mcqs74k8a0mwbf5gc2_2825.generated.filtered_base.3812d81c1c1609700e47fc800e85bfac',
+                        measureIndex: 3
+                    }
+                ]);
+            });
+
+            it('generates right metricMappings for PoP metric', () => {
+                const mdObjPoP = cloneDeep(mdObj);
+                mdObjPoP.buckets.measures = [{
+                    measure: {
+                        type: 'metric',
+                        objectUri: '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1556',
+                        title: 'Probability BOP',
+                        format: '#,##0.00',
+                        measureFilters: [],
+                        showPoP: true,
+                        sort: {
+                            direction: 'asc',
+                            sortByPoP: true
+                        }
+                    }
+                }];
+
+                const executionConfiguration = ex.mdToExecutionConfiguration(mdObjPoP);
+                expect(executionConfiguration.metricMappings).to.eql([
+                    {
+                        element: 'metric_qamfsd9cw85e53mcqs74k8a0mwbf5gc2_1556.generated.pop.79eb21e7d5161a174a84acdd10371e2d',
+                        measureIndex: 0,
+                        isPoP: true
+                    },
+                    {
+                        element: '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1556',
+                        measureIndex: 0
+                    }
+                ]);
+            });
+
+
+            it('generates metricMappings for two identical metrics', () => {
+                const mdObjPoP = cloneDeep(mdObj);
+                mdObjPoP.buckets.measures = [{
+                        measure: {
+                            type: 'metric',
+                            objectUri: '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1556',
+                            title: 'Probability BOP #1',
+                            format: '#,##0.00',
+                            measureFilters: []
+                        }
+                    },
+                    {
+                        measure: {
+                            type: 'metric',
+                            objectUri: '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1556',
+                            title: 'Probability BOP #2',
+                            format: '#,##0.00',
+                            measureFilters: []
+                        }
+                    }
+                ];
+
+                const executionConfiguration = ex.mdToExecutionConfiguration(mdObjPoP);
+                expect(executionConfiguration.metricMappings).to.eql([
+                    {
+                        element: '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1556',
+                        measureIndex: 0
+                    },
+                    {
+                        element: '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1556',
+                        measureIndex: 1
+                    }
+                ]);
+            });
+
+            it('propagates sort data from metrics and categories', () => {
                 const executionConfiguration = ex.mdToExecutionConfiguration(mdObj);
                 expectOrderBy(
                     [{

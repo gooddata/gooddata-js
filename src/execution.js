@@ -20,6 +20,7 @@ import {
     every,
     get,
     isEmpty,
+    isString,
     negate,
     last,
     assign,
@@ -187,12 +188,26 @@ const getDateFilter = mdObj => {
 
 const getDate = mdObj => (getDateCategory(mdObj) || getDateFilter(mdObj));
 
-const createPureMetric = measure => ({
+const getMetricSort = (sort, isPoPMetric) => {
+    if (isString(sort)) {
+        // TODO: backward compatibility, remove when not used plain "sort: asc | desc" in measures
+        return sort;
+    }
+
+    const sortByPoP = get(sort, 'sortByPoP');
+    if ((isPoPMetric && sortByPoP) || (!isPoPMetric && !sortByPoP)) {
+        return get(sort, 'direction');
+    }
+    return null;
+};
+
+const createPureMetric = (measure, mdObj, measureIndex) => ({
     element: get(measure, 'objectUri'),
-    sort: get(measure, 'sort')
+    sort: getMetricSort(get(measure, 'sort')),
+    meta: { measureIndex }
 });
 
-const createDerivedMetric = measure => {
+const createDerivedMetric = (measure, mdObj, measureIndex) => {
     const { format, sort } = measure;
     const title = getBaseMetricTitle(measure.title);
 
@@ -208,16 +223,23 @@ const createDerivedMetric = measure => {
         }
     };
 
-    return { element, definition, sort };
+    return {
+        element,
+        definition,
+        sort: getMetricSort(sort),
+        meta: {
+            measureIndex
+        }
+    };
 };
 
-const createContributionMetric = (measure, mdObj) => {
+const createContributionMetric = (measure, mdObj, measureIndex) => {
     const category = first(getCategories(mdObj));
 
     let generated;
     let getMetricExpression = partial(getPercentMetricExpression, category, `[${get(measure, 'objectUri')}]`);
     if (isDerived(measure)) {
-        generated = createDerivedMetric(measure);
+        generated = createDerivedMetric(measure, mdObj, measureIndex);
         getMetricExpression = partial(getPercentMetricExpression, category, `{${get(generated, 'definition.metricDefinition.identifier')}}`);
     }
     const title = getBaseMetricTitle(`% ${get(measure, 'title')}`.replace(/^(% )+/, '% '));
@@ -232,7 +254,10 @@ const createContributionMetric = (measure, mdObj) => {
                 format: CONTRIBUTION_METRIC_FORMAT
             }
         },
-        sort: get(measure, 'sort')
+        sort: getMetricSort(get(measure, 'sort')),
+        meta: {
+            measureIndex
+        }
     }];
 
     if (generated) {
@@ -242,7 +267,7 @@ const createContributionMetric = (measure, mdObj) => {
     return result;
 };
 
-const createPoPMetric = (measure, mdObj) => {
+const createPoPMetric = (measure, mdObj, measureIndex) => {
     const title = getPoPMetricTitle(get(measure, 'title'));
     const format = get(measure, 'format');
     const hasher = partial(getGeneratedMetricHash, title, format);
@@ -253,7 +278,7 @@ const createPoPMetric = (measure, mdObj) => {
     let getMetricExpression = partial(getPoPExpression, date, `[${get(measure, 'objectUri')}]`);
 
     if (isDerived(measure)) {
-        generated = createDerivedMetric(measure);
+        generated = createDerivedMetric(measure, mdObj, measureIndex);
         getMetricExpression = partial(getPoPExpression, date, `{${get(generated, 'definition.metricDefinition.identifier')}}`);
     }
 
@@ -268,22 +293,27 @@ const createPoPMetric = (measure, mdObj) => {
                 title,
                 format
             }
+        },
+        sort: getMetricSort(get(measure, 'sort'), true),
+        meta: {
+            measureIndex,
+            isPoP: true
         }
     }];
 
     if (generated) {
         result.push(generated);
     } else {
-        result.push(createPureMetric(measure));
+        result.push(createPureMetric(measure, mdObj, measureIndex));
     }
 
     return result;
 };
 
-const createContributionPoPMetric = (measure, mdObj) => {
+const createContributionPoPMetric = (measure, mdObj, measureIndex) => {
     const date = getDate(mdObj);
 
-    const generated = createContributionMetric(measure, mdObj);
+    const generated = createContributionMetric(measure, mdObj, measureIndex);
     const title = getPoPMetricTitle(`% ${get(measure, 'title')}`.replace(/^(% )+/, '% '));
 
     const format = CONTRIBUTION_METRIC_FORMAT;
@@ -302,6 +332,11 @@ const createContributionPoPMetric = (measure, mdObj) => {
                 title,
                 format
             }
+        },
+        sort: getMetricSort(get(measure, 'sort'), true),
+        meta: {
+            measureIndex,
+            isPoP: true
         }
     }];
 
@@ -404,7 +439,7 @@ const getOrderBy = (metrics, categories, type) => {
 export const mdToExecutionConfiguration = (mdObj) => {
     const buckets = get(mdObj, 'buckets');
     const measures = map(buckets.measures, ({ measure }) => measure);
-    const metrics = flatten(map(measures, measure => getMetricFactory(measure)(measure, buckets)));
+    const metrics = flatten(map(measures, (measure, index) => getMetricFactory(measure)(measure, buckets, index)));
     const categories = map(getCategories(buckets), categoryToElement);
     const columns = compact(map([...categories, ...metrics], 'element'));
 
@@ -412,7 +447,8 @@ export const mdToExecutionConfiguration = (mdObj) => {
         columns,
         orderBy: getOrderBy(metrics, categories, get(mdObj, 'type')),
         definitions: sortDefinitions(compact(map(metrics, 'definition'))),
-        where: columns.length ? getWhere(buckets) : {}
+        where: columns.length ? getWhere(buckets) : {},
+        metricMappings: map(metrics, m => ({ element: m.element, ...m.meta }))
     };
 };
 
