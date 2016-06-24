@@ -30,6 +30,23 @@ import {
 
 const notEmpty = negate(isEmpty);
 
+const findHeaderForMappingFn = (mapping, header) =>
+    ((mapping.element === header.id || mapping.element === header.uri) && header.measureIndex === undefined);
+
+
+const wrapMeasureIndexesFromMappings = (metricMappings, headers) => {
+    if (metricMappings) {
+        metricMappings.forEach((mapping) => {
+            const header = find(headers, partial(findHeaderForMappingFn, mapping));
+            if (header) {
+                header.measureIndex = mapping.measureIndex;
+                header.isPoP = mapping.isPoP;
+            }
+        });
+    }
+    return headers;
+};
+
 /**
  * Module for execution on experimental execution resource
  *
@@ -77,7 +94,8 @@ export function getData(projectId, columns, executionConfiguration = {}) {
     post(`/gdc/internal/projects/${projectId}/experimental/executions`, {
         data: JSON.stringify(request)
     }, d.reject).then((result) => {
-        executedReport.headers = result.executionResult.headers;
+        executedReport.headers = wrapMeasureIndexesFromMappings(
+            get(executionConfiguration, 'metricMappings'), result.executionResult.headers);
 
         // Start polling on url returned in the executionResult for tabularData
         return ajax(result.executionResult.tabularDataResult);

@@ -154,6 +154,39 @@ describe('execution', () => {
                         done();
                     });
                 });
+
+                it('should wrap response headers with metric mappings', () => {
+                    server.respondWith(
+                        '/gdc/internal/projects/myFakeProjectId/experimental/executions',
+                        [200, {'Content-Type': 'application/json'},
+                            JSON.stringify(serverResponseMock)]
+                    );
+                    server.respondWith(
+                        /\/gdc\/internal\/projects\/myFakeProjectId\/experimental\/executions\/(\w+)/,
+                        [204, {'Content-Type': 'application/json'}, '']
+                    );
+
+                    return ex.getData(
+                        'myFakeProjectId',
+                        [{type: 'metric', uri: '/metric/uri'}],
+                        {
+                            metricMappings: [
+                                { element: 'metricUri', measureIndex: 0 }
+                            ]
+                        }
+                    ).then(function(result) {
+                        expect(result.headers[1]).to.eql({
+                            id: 'metricId',
+                            title: 'Metric Title',
+                            type: 'metric',
+                            uri: 'metricUri',
+                            measureIndex: 0,
+                            isPoP: undefined
+                        });
+                    }, function() {
+                        expect().fail('Should not fail when processing mappings');
+                    });
+                });
             });
 
             describe('getData with execution context filters', () => {
