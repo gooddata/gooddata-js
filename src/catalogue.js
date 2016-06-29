@@ -41,7 +41,7 @@ function bucketItemsToExecConfig(bucketItems) {
         ({ metricDefinition }) =>
             [metricDefinition.identifier, metricDefinition.expression] ));
 
-    return get(executionConfig, 'execution.columns').map(column => {
+    const columns = get(executionConfig, 'execution.columns').map(column => {
         const definition = find(definitions, ({ metricDefinition }) =>
             get(metricDefinition, 'identifier') === column
         );
@@ -55,6 +55,12 @@ function bucketItemsToExecConfig(bucketItems) {
         }
         return column;
     });
+
+    const filters = get(bucketItems, 'filters', []).map(filter => {
+        return get(filter, 'dateFilter.attribute') || get(filter, 'listAttributeFilter.attribute');
+    });
+
+    return [...columns, ...filters];
 }
 
 function loadCatalog(projectId, request) {
