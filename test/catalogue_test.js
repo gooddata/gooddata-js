@@ -55,7 +55,7 @@ describe('Catalogue', () => {
                     const ajaxCall = ajax.getCall(0);
                     expect(ajaxCall.args[1].data).to.eql(fixtures.requestForFilters);
                 });
-            })
+            });
 
             it('should send identifier for attribute base measure', (done) => {
                 const options = fixtures.optionsForTwoMeasuresFactAndAtrribute;
