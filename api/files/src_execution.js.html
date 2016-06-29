@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.46</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.47</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -76,6 +76,7 @@ title: foobar
                             every,
                             get,
                             isEmpty,
+                            isString,
                             negate,
                             last,
                             assign,
@@ -84,6 +85,23 @@ title: foobar
                         } from &#x27;lodash&#x27;;
                         
                         const notEmpty = negate(isEmpty);
+                        
+                        const findHeaderForMappingFn = (mapping, header) =&gt;
+                            ((mapping.element === header.id || mapping.element === header.uri) &amp;&amp; header.measureIndex === undefined);
+                        
+                        
+                        const wrapMeasureIndexesFromMappings = (metricMappings, headers) =&gt; {
+                            if (metricMappings) {
+                                metricMappings.forEach((mapping) =&gt; {
+                                    const header = find(headers, partial(findHeaderForMappingFn, mapping));
+                                    if (header) {
+                                        header.measureIndex = mapping.measureIndex;
+                                        header.isPoP = mapping.isPoP;
+                                    }
+                                });
+                            }
+                            return headers;
+                        };
                         
                         /**
                          * Module for execution on experimental execution resource
@@ -98,7 +116,7 @@ title: foobar
                          *
                          * @method getData
                          * @param {String} projectId - GD project identifier
-                         * @param {Array} elements - An array of attribute or metric identifiers.
+                         * @param {Array} columns - An array of attribute or metric identifiers.
                          * @param {Object} executionConfiguration - Execution configuration - can contain for example
                          *                 property &quot;filters&quot; containing execution context filters
                          *                 property &quot;where&quot; containing query-like filters
@@ -107,16 +125,14 @@ title: foobar
                          *
                          * @return {Object} Structure with &#x60;headers&#x60; and &#x60;rawData&#x60; keys filled with values from execution.
                          */
-                        export function getData(projectId, elements, executionConfiguration = {}) {
+                        export function getData(projectId, columns, executionConfiguration = {}) {
                             const executedReport = {
                                 isLoaded: false
                             };
                         
                             // Create request and result structures
                             const request = {
-                                execution: {
-                                    columns: elements
-                                }
+                                execution: { columns }
                             };
                             // enrich configuration with supported properties such as
                             // where clause with query-like filters or execution context filters
@@ -131,35 +147,15 @@ title: foobar
                             /*eslint-enable new-cap*/
                         
                             // Execute request
-                            post(&#x27;/gdc/internal/projects/&#x27; + projectId + &#x27;/experimental/executions&#x27;, {
+                            post(&#x60;/gdc/internal/projects/${projectId}/experimental/executions&#x60;, {
                                 data: JSON.stringify(request)
-                            }, d.reject).then(function resolveSimpleExecution(result) {
-                                // TODO: when executionResult.headers will be globaly available columns map code should be removed
-                                if (result.executionResult.headers) {
-                                    executedReport.headers = result.executionResult.headers;
-                                } else {
-                                    // Populate result&#x27;s header section if is not available
-                                    executedReport.headers = result.executionResult.columns.map(function mapColsToHeaders(col) {
-                                        if (col.attributeDisplayForm) {
-                                            return {
-                                                type: &#x27;attrLabel&#x27;,
-                                                id: col.attributeDisplayForm.meta.identifier,
-                                                uri: col.attributeDisplayForm.meta.uri,
-                                                title: col.attributeDisplayForm.meta.title
-                                            };
-                                        }
-                                        return {
-                                            type: &#x27;metric&#x27;,
-                                            id: col.metric.meta.identifier,
-                                            uri: col.metric.meta.uri,
-                                            title: col.metric.meta.title,
-                                            format: col.metric.content.format
-                                        };
-                                    });
-                                }
+                            }, d.reject).then((result) =&gt; {
+                                executedReport.headers = wrapMeasureIndexesFromMappings(
+                                    get(executionConfiguration, &#x27;metricMappings&#x27;), result.executionResult.headers);
+                        
                                 // Start polling on url returned in the executionResult for tabularData
                                 return ajax(result.executionResult.tabularDataResult);
-                            }, d.reject).then(function resolveDataResultPolling(result, message, response) {
+                            }, d.reject).then((result, message, response) =&gt; {
                                 // After the retrieving computed tabularData, resolve the promise
                                 executedReport.rawData = (result &amp;&amp; result.tabularDataResult) ? result.tabularDataResult.values : [];
                                 executedReport.isLoaded = true;
@@ -266,12 +262,26 @@ title: foobar
                         
                         const getDate = mdObj =&gt; (getDateCategory(mdObj) || getDateFilter(mdObj));
                         
-                        const createPureMetric = measure =&gt; ({
+                        const getMetricSort = (sort, isPoPMetric) =&gt; {
+                            if (isString(sort)) {
+                                // TODO: backward compatibility, remove when not used plain &quot;sort: asc | desc&quot; in measures
+                                return sort;
+                            }
+                        
+                            const sortByPoP = get(sort, &#x27;sortByPoP&#x27;);
+                            if ((isPoPMetric &amp;&amp; sortByPoP) || (!isPoPMetric &amp;&amp; !sortByPoP)) {
+                                return get(sort, &#x27;direction&#x27;);
+                            }
+                            return null;
+                        };
+                        
+                        const createPureMetric = (measure, mdObj, measureIndex) =&gt; ({
                             element: get(measure, &#x27;objectUri&#x27;),
-                            sort: get(measure, &#x27;sort&#x27;)
+                            sort: getMetricSort(get(measure, &#x27;sort&#x27;)),
+                            meta: { measureIndex }
                         });
                         
-                        const createDerivedMetric = measure =&gt; {
+                        const createDerivedMetric = (measure, mdObj, measureIndex) =&gt; {
                             const { format, sort } = measure;
                             const title = getBaseMetricTitle(measure.title);
                         
@@ -287,16 +297,23 @@ title: foobar
                                 }
                             };
                         
-                            return { element, definition, sort };
+                            return {
+                                element,
+                                definition,
+                                sort: getMetricSort(sort),
+                                meta: {
+                                    measureIndex
+                                }
+                            };
                         };
                         
-                        const createContributionMetric = (measure, mdObj) =&gt; {
+                        const createContributionMetric = (measure, mdObj, measureIndex) =&gt; {
                             const category = first(getCategories(mdObj));
                         
                             let generated;
                             let getMetricExpression = partial(getPercentMetricExpression, category, &#x60;[${get(measure, &#x27;objectUri&#x27;)}]&#x60;);
                             if (isDerived(measure)) {
-                                generated = createDerivedMetric(measure);
+                                generated = createDerivedMetric(measure, mdObj, measureIndex);
                                 getMetricExpression = partial(getPercentMetricExpression, category, &#x60;{${get(generated, &#x27;definition.metricDefinition.identifier&#x27;)}}&#x60;);
                             }
                             const title = getBaseMetricTitle(&#x60;% ${get(measure, &#x27;title&#x27;)}&#x60;.replace(/^(% )+/, &#x27;% &#x27;));
@@ -311,7 +328,10 @@ title: foobar
                                         format: CONTRIBUTION_METRIC_FORMAT
                                     }
                                 },
-                                sort: get(measure, &#x27;sort&#x27;)
+                                sort: getMetricSort(get(measure, &#x27;sort&#x27;)),
+                                meta: {
+                                    measureIndex
+                                }
                             }];
                         
                             if (generated) {
@@ -321,7 +341,7 @@ title: foobar
                             return result;
                         };
                         
-                        const createPoPMetric = (measure, mdObj) =&gt; {
+                        const createPoPMetric = (measure, mdObj, measureIndex) =&gt; {
                             const title = getPoPMetricTitle(get(measure, &#x27;title&#x27;));
                             const format = get(measure, &#x27;format&#x27;);
                             const hasher = partial(getGeneratedMetricHash, title, format);
@@ -332,7 +352,7 @@ title: foobar
                             let getMetricExpression = partial(getPoPExpression, date, &#x60;[${get(measure, &#x27;objectUri&#x27;)}]&#x60;);
                         
                             if (isDerived(measure)) {
-                                generated = createDerivedMetric(measure);
+                                generated = createDerivedMetric(measure, mdObj, measureIndex);
                                 getMetricExpression = partial(getPoPExpression, date, &#x60;{${get(generated, &#x27;definition.metricDefinition.identifier&#x27;)}}&#x60;);
                             }
                         
@@ -347,22 +367,27 @@ title: foobar
                                         title,
                                         format
                                     }
+                                },
+                                sort: getMetricSort(get(measure, &#x27;sort&#x27;), true),
+                                meta: {
+                                    measureIndex,
+                                    isPoP: true
                                 }
                             }];
                         
                             if (generated) {
                                 result.push(generated);
                             } else {
-                                result.push(createPureMetric(measure));
+                                result.push(createPureMetric(measure, mdObj, measureIndex));
                             }
                         
                             return result;
                         };
                         
-                        const createContributionPoPMetric = (measure, mdObj) =&gt; {
+                        const createContributionPoPMetric = (measure, mdObj, measureIndex) =&gt; {
                             const date = getDate(mdObj);
                         
-                            const generated = createContributionMetric(measure, mdObj);
+                            const generated = createContributionMetric(measure, mdObj, measureIndex);
                             const title = getPoPMetricTitle(&#x60;% ${get(measure, &#x27;title&#x27;)}&#x60;.replace(/^(% )+/, &#x27;% &#x27;));
                         
                             const format = CONTRIBUTION_METRIC_FORMAT;
@@ -381,6 +406,11 @@ title: foobar
                                         title,
                                         format
                                     }
+                                },
+                                sort: getMetricSort(get(measure, &#x27;sort&#x27;), true),
+                                meta: {
+                                    measureIndex,
+                                    isPoP: true
                                 }
                             }];
                         
@@ -483,21 +513,21 @@ title: foobar
                         export const mdToExecutionConfiguration = (mdObj) =&gt; {
                             const buckets = get(mdObj, &#x27;buckets&#x27;);
                             const measures = map(buckets.measures, ({ measure }) =&gt; measure);
-                            const metrics = flatten(map(measures, measure =&gt; getMetricFactory(measure)(measure, buckets)));
+                            const metrics = flatten(map(measures, (measure, index) =&gt; getMetricFactory(measure)(measure, buckets, index)));
                             const categories = map(getCategories(buckets), categoryToElement);
                             const columns = compact(map([...categories, ...metrics], &#x27;element&#x27;));
                         
-                            return { execution: {
+                            return {
                                 columns,
                                 orderBy: getOrderBy(metrics, categories, get(mdObj, &#x27;type&#x27;)),
                                 definitions: sortDefinitions(compact(map(metrics, &#x27;definition&#x27;))),
-                                where: columns.length ? getWhere(buckets) : {}
-                            } };
+                                where: columns.length ? getWhere(buckets) : {},
+                                metricMappings: map(metrics, m =&gt; ({ element: m.element, ...m.meta }))
+                            };
                         };
                         
                         export const getDataForVis = (projectId, mdObj) =&gt; {
-                            const { execution } = mdToExecutionConfiguration(mdObj);
-                            const { columns, ...executionConfiguration } = execution;
+                            const { columns, ...executionConfiguration } = mdToExecutionConfiguration(mdObj);
                             return getData(projectId, columns, executionConfiguration);
                         };
                         

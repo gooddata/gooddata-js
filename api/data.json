@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.46",
+        "version": "0.1.47",
         "url": ""
     },
     "files": {
@@ -121,7 +121,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/execution.js",
-            "line": 32,
+            "line": 50,
             "description": "Module for execution on experimental execution resource"
         },
         "sdk": {
@@ -234,7 +234,7 @@
             "module": "execution",
             "namespace": "",
             "file": "src/execution.js",
-            "line": 32,
+            "line": 50,
             "description": "Module for execution on experimental execution resource"
         },
         "sdk": {
@@ -334,7 +334,7 @@
         },
         {
             "file": "src/execution.js",
-            "line": 39,
+            "line": 57,
             "description": "For the given projectId it returns table structure with the given\nelements in column headers.",
             "itemtype": "method",
             "name": "getData",
@@ -345,7 +345,7 @@
                     "type": "String"
                 },
                 {
-                    "name": "elements",
+                    "name": "columns",
                     "description": "- An array of attribute or metric identifiers.",
                     "type": "Array"
                 },
