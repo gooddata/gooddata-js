@@ -36,6 +36,55 @@ export const requestForEmptySelection = {
     }
 };
 
+export const optionsForFilters = {
+    'types': [
+        'metric',
+        'attribute',
+        'fact'
+    ],
+    'paging': {
+        'offset': 0,
+        'limit': 100
+    },
+    'bucketItems': {
+        'type': 'column',
+        'buckets': {
+            'measures': [],
+            'categories': [],
+            'filters': [
+                {
+                    'dateFilter': {
+                        'attribute': '/gdc/md/FoodMartDemo/obj/1'
+                    }
+                },
+                {
+                    'listAttributeFilter': {
+                        'attribute': '/gdc/md/FoodMartDemo/obj/2'
+                    }
+                }
+            ]
+        }
+    }
+};
+
+export const requestForFilters = {
+    catalogRequest: {
+        'types': [
+            'metric',
+            'attribute',
+            'fact'
+        ],
+        'paging': {
+            'offset': 0,
+            'limit': 100
+        },
+        'bucketItems': [
+            '/gdc/md/FoodMartDemo/obj/1',
+            '/gdc/md/FoodMartDemo/obj/2',
+        ]
+    }
+};
+
 export const optionsForMeasureTypeFactWithFilter = {
   'types': [
     'metric',

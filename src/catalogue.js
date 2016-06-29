@@ -34,7 +34,7 @@ function bucketItemsToExecConfig(bucketItems, options = {}) {
     }, options);
     const definitions = get(executionConfig, 'definitions');
 
-    return get(executionConfig, 'columns').map(column => {
+    const columns = get(executionConfig, 'columns').map(column => {
         const definition = find(definitions, ({ metricDefinition }) =>
             get(metricDefinition, 'identifier') === column
         );
@@ -45,6 +45,12 @@ function bucketItemsToExecConfig(bucketItems, options = {}) {
         }
         return column;
     });
+
+    const filters = get(bucketItems, 'filters', []).map(filter => {
+        return get(filter, 'dateFilter.attribute') || get(filter, 'listAttributeFilter.attribute');
+    });
+
+    return [...columns, ...filters];
 }
 
 /**
