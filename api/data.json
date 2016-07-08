@@ -2,10 +2,17 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.47",
+        "version": "0.1.48",
         "url": ""
     },
     "files": {
+        "src/catalogue.js": {
+            "name": "src/catalogue.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
         "src/config.js": {
             "name": "src/config.js",
             "modules": {
@@ -323,6 +330,22 @@
     },
     "elements": {},
     "classitems": [
+        {
+            "file": "src/catalogue.js",
+            "line": 60,
+            "description": "Convert specific params in options to \"requiredDataSets\" structure. For more details look into\nres file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "Supported keys in options are:\n<ul>\n<li>dataSetIdentifier - in value is string identifier of dataSet - this leads to CUSTOM type\n<li>returnAllDateDataSets - true value means to return ALL values without dataSet differentiation\n<li>by default we get PRODUCTION dataSets\n</ul>"
+                }
+            ],
+            "return": {
+                "description": "\"requiredDataSets\" object hash.",
+                "type": "Object"
+            },
+            "class": "config"
+        },
         {
             "file": "src/config.js",
             "line": 18,
@@ -905,5 +928,14 @@
             "module": "xhr"
         }
     ],
-    "warnings": []
+    "warnings": [
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/catalogue.js:60"
+        },
+        {
+            "message": "Missing item type\nConvert specific params in options to \"requiredDataSets\" structure. For more details look into\nres file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res",
+            "line": " src/catalogue.js:60"
+        }
+    ]
 }
