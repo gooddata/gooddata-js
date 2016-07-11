@@ -29,10 +29,7 @@ export const requestForEmptySelection = {
             'offset': 0,
             'limit': 100
         },
-        'bucketItems': [],
-        'requiredDataSets': {
-            'type': 'PRODUCTION'
-        }
+        'bucketItems': []
     }
 };
 
@@ -95,10 +92,7 @@ export const requestForMeasureTypeFactWithFilter = {
         },
         'bucketItems': [
             'SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000])'
-        ],
-        'requiredDataSets': {
-            'type': 'PRODUCTION'
-        }
+        ]
     }
 };
 
@@ -171,10 +165,7 @@ export const requestForMeasureWithFilterAndCategory = {
         'bucketItems': [
             '/gdc/md/FoodMartDemo/obj/54',
             'SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000])'
-        ],
-        'requiredDataSets': {
-            'type': 'PRODUCTION'
-        }
+        ]
     }
 };
 
@@ -247,10 +238,7 @@ export const requestForMeasureWithFilterAndCategoryShowInPercent = {
         'bucketItems': [
             '/gdc/md/FoodMartDemo/obj/54',
             'SELECT (SELECT SUM([/gdc/md/FoodMartDemo/obj/1])) / (SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) BY ALL [/gdc/md/FoodMartDemo/obj/54])'
-        ],
-        'requiredDataSets': {
-            'type': 'PRODUCTION'
-        }
+        ]
     }
 };
 
@@ -323,10 +311,7 @@ export const requestForMeasureWithShowInPercent = {
         'bucketItems': [
             '/gdc/md/FoodMartDemo/obj/54',
             'SELECT (SELECT SUM([/gdc/md/FoodMartDemo/obj/1])) / (SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) BY ALL [/gdc/md/FoodMartDemo/obj/54])'
-        ],
-        'requiredDataSets': {
-            'type': 'PRODUCTION'
-        }
+        ]
     }
 };
 
@@ -402,10 +387,7 @@ export const requestForTwoMeasureFactAndAttribute = {
         'bucketItems': [
             'SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000])',
             'SELECT COUNT([/gdc/md/FoodMartDemo/obj/40])'
-        ],
-        'requiredDataSets': {
-            'type': 'PRODUCTION'
-        }
+        ]
     }
 };
 
@@ -454,10 +436,7 @@ export const requestForMetric = {
         },
         'bucketItems': [
             '/gdc/md/FoodMartDemo/obj/8349'
-        ],
-        'requiredDataSets': {
-            'type': 'PRODUCTION'
-        }
+        ]
     }
 };
 

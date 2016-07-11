@@ -174,10 +174,7 @@ describe('Catalogue', () => {
                 expect(dateDataSetsRequest).to.be.eql({
                     includeUnavailableDateDataSetsCount: true,
                     includeAvailableDateAttributes: true,
-                    bucketItems: undefined,
-                    requiredDataSets: {
-                        type: 'PRODUCTION'
-                    }
+                    bucketItems: undefined
                 });
             });
         });
