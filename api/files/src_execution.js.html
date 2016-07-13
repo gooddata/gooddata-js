@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.48</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.49</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -122,10 +122,11 @@ title: foobar
                          *                 property &quot;where&quot; containing query-like filters
                          *                 property &quot;orderBy&quot; contains array of sorted properties to order in form
                          *                      [{column: &#x27;identifier&#x27;, direction: &#x27;asc|desc&#x27;}]
+                         * @param {Object} settings - AJAX settings
                          *
                          * @return {Object} Structure with &#x60;headers&#x60; and &#x60;rawData&#x60; keys filled with values from execution.
                          */
-                        export function getData(projectId, columns, executionConfiguration = {}) {
+                        export function getData(projectId, columns, executionConfiguration = {}, settings = {}) {
                             const executedReport = {
                                 isLoaded: false
                             };
@@ -148,13 +149,14 @@ title: foobar
                         
                             // Execute request
                             post(&#x60;/gdc/internal/projects/${projectId}/experimental/executions&#x60;, {
+                                ...settings,
                                 data: JSON.stringify(request)
                             }, d.reject).then((result) =&gt; {
                                 executedReport.headers = wrapMeasureIndexesFromMappings(
                                     get(executionConfiguration, &#x27;metricMappings&#x27;), result.executionResult.headers);
                         
                                 // Start polling on url returned in the executionResult for tabularData
-                                return ajax(result.executionResult.tabularDataResult);
+                                return ajax(result.executionResult.tabularDataResult, settings);
                             }, d.reject).then((result, message, response) =&gt; {
                                 // After the retrieving computed tabularData, resolve the promise
                                 executedReport.rawData = (result &amp;&amp; result.tabularDataResult) ? result.tabularDataResult.values : [];
@@ -526,9 +528,9 @@ title: foobar
                             };
                         };
                         
-                        export const getDataForVis = (projectId, mdObj) =&gt; {
+                        export const getDataForVis = (projectId, mdObj, settings) =&gt; {
                             const { columns, ...executionConfiguration } = mdToExecutionConfiguration(mdObj);
-                            return getData(projectId, columns, executionConfiguration);
+                            return getData(projectId, columns, executionConfiguration, settings);
                         };
                         
                             </pre>

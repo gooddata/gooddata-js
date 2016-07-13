@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.48",
+        "version": "0.1.49",
         "url": ""
     },
     "files": {
@@ -211,7 +211,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/xhr.js",
-            "line": 12,
+            "line": 13,
             "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
         }
     },
@@ -324,7 +324,7 @@
             "module": "xhr",
             "namespace": "",
             "file": "src/xhr.js",
-            "line": 12,
+            "line": 13,
             "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
         }
     },
@@ -375,6 +375,11 @@
                 {
                     "name": "executionConfiguration",
                     "description": "- Execution configuration - can contain for example\n                property \"filters\" containing execution context filters\n                property \"where\" containing query-like filters\n                property \"orderBy\" contains array of sorted properties to order in form\n                     [{column: 'identifier', direction: 'asc|desc'}]",
+                    "type": "Object"
+                },
+                {
+                    "name": "settings",
+                    "description": "- AJAX settings",
                     "type": "Object"
                 }
             ],
@@ -874,8 +879,8 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 102,
-            "description": "additional ajax configuration specific for xhr module, keys\n  unauthorized: function(xhr) - called when user is unathorized and token renewal failed\n  pollDelay: int - polling interval in milisecodns, default 1000\n\nmethod also accepts any option from original $.ajaxSetup. Options will be applied to all call of xhr.ajax().\n\nxhrSetup behave similar tp $.ajaxSetup, each call replaces settings completely.\nOptions can be also passed to particular xhr.ajax calls (same as optios for $.ajax and $.ajaxSetup)",
+            "line": 105,
+            "description": "additional ajax configuration specific for xhr module, keys\n  unauthorized: function(xhr) - called when user is unauthorized and token renewal failed\n  pollDelay: int - polling interval in milliseconds, default 1000 - or generator function\n\nmethod also accepts any option from original $.ajaxSetup. Options will be applied to all call of xhr.ajax().\n\nxhrSetup behave similar tp $.ajaxSetup, each call replaces settings completely.\nOptions can be also passed to particular xhr.ajax calls (same as optios for $.ajax and $.ajaxSetup)",
             "itemtype": "method",
             "name": "ajaxSetup",
             "class": "xhr",
@@ -883,8 +888,8 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 124,
-            "description": "Same api as jQuery.ajax - arguments (url, settings) or (settings) with url inside\nAdditionally content type is automatically json, and object in settings.data is converted to string\nto be consumed by GDC backend.\n\nsettings additionally accepts keys: unathorized, pollDelay  (see xhrSetup for more details)",
+            "line": 127,
+            "description": "Same api as jQuery.ajax - arguments (url, settings) or (settings) with url inside\nAdditionally content type is automatically json, and object in settings.data is converted to string\nto be consumed by GDC backend.\n\nsettings additionally accepts keys: unauthorized, pollDelay (see xhrSetup for more details)",
             "itemtype": "method",
             "name": "ajax",
             "params": [
@@ -902,7 +907,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 198,
+            "line": 201,
             "description": "Wrapper for xhr.ajax method GET",
             "itemtype": "method",
             "name": "get",
@@ -911,7 +916,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 204,
+            "line": 207,
             "description": "Wrapper for xhr.ajax method POST",
             "itemtype": "method",
             "name": "post",
@@ -920,7 +925,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 210,
+            "line": 213,
             "description": "Wrapper for xhr.ajax method PUT",
             "itemtype": "method",
             "name": "put",
