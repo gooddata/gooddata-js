@@ -80,9 +80,8 @@ const getRequiredDataSets = options => {
             customIdentifiers: [ get(options, 'dataSetIdentifier') ]
         };
     }
-    return {
-        type: 'PRODUCTION'
-    };
+
+    return null;
 };
 
 function loadCatalog(projectId, request) {
@@ -96,9 +95,13 @@ function loadCatalog(projectId, request) {
 export function loadItems(projectId, options = {}) {
     const request = omit({
         ...REQUEST_DEFAULTS,
-        ...options,
-        requiredDataSets: getRequiredDataSets(options)
+        ...options
     }, ['dataSetIdentifier', 'returnAllDateDataSets']);
+
+    const requiredDataSets = getRequiredDataSets(options);
+    if (requiredDataSets) {
+        request.requiredDataSets = requiredDataSets;
+    }
 
     let bucketItems = get(cloneDeep(options), 'bucketItems.buckets');
     if (bucketItems) {
@@ -136,15 +139,18 @@ export function loadDateDataSets(projectId, options) {
     if (bucketItems) {
         bucketItems = bucketItemsToExecConfig(removeDateBucketItems(bucketItems));
     }
-    const requiredDataSets = getRequiredDataSets(options);
 
     const request = omit({
         ...LOAD_DATE_DATASET_DEFAULTS,
         ...REQUEST_DEFAULTS,
         ...options,
-        requiredDataSets,
         bucketItems
     }, ['filter', 'types', 'paging', 'dataSetIdentifier', 'returnAllDateDataSets']);
+
+    const requiredDataSets = getRequiredDataSets(options);
+    if (requiredDataSets) {
+        request.requiredDataSets = requiredDataSets;
+    }
 
     return requestDateDataSets(projectId, request);
 }
