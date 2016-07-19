@@ -49,12 +49,12 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.49</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.52</span>
                         <h1 class="file-heading">File: src/catalogue.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
-                        import { get, fromPairs, trim, find, omit, every, flatten, values, cloneDeep } from &#x27;lodash&#x27;;
+                        import { get, fromPairs, trim, find, omit, cloneDeep } from &#x27;lodash&#x27;;
                         import * as xhr from &#x27;./xhr&#x27;;
                         import { mdToExecutionConfiguration } from &#x27;./execution&#x27;;
                         
@@ -84,14 +84,14 @@ title: foobar
                             )
                         );
                         
-                        function bucketItemsToExecConfig(bucketItems) {
+                        function bucketItemsToExecConfig(bucketItems, options = {}) {
                             const categories = parseCategories(bucketItems);
                             const executionConfig = mdToExecutionConfiguration({
                                 buckets: {
                                     ...bucketItems,
                                     categories
                                 }
-                            });
+                            }, options);
                             const definitions = get(executionConfig, &#x27;definitions&#x27;);
                             const idToExpr = fromPairs(definitions.map(
                                 ({ metricDefinition }) =&gt;
@@ -180,19 +180,13 @@ title: foobar
                             });
                         }
                         
-                        const hasOnlyDateBucketItems = buckets =&gt; every(
-                            flatten(values(buckets)),
-                            item =&gt; (get(values(item)[0], &#x27;type&#x27;, &#x27;&#x27;) === &#x27;date&#x27; || item.dateFilter)
-                        );
-                        
                         export function loadDateDataSets(projectId, options) {
                             let bucketItems = get(cloneDeep(options), &#x27;bucketItems.buckets&#x27;);
                         
-                            if (bucketItems &amp;&amp; hasOnlyDateBucketItems(bucketItems)) {
-                                bucketItems = [];
-                            } else if (bucketItems) {
-                                bucketItems = bucketItemsToExecConfig(bucketItems);
+                            if (bucketItems) {
+                                bucketItems = bucketItemsToExecConfig(bucketItems, { removeDateItems: true });
                             }
+                        
                             const requiredDataSets = getRequiredDataSets(options);
                         
                             const request = omit({

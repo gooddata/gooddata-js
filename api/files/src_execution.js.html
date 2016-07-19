@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.49</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.52</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -318,7 +318,7 @@ title: foobar
                                 generated = createDerivedMetric(measure, mdObj, measureIndex);
                                 getMetricExpression = partial(getPercentMetricExpression, category, &#x60;{${get(generated, &#x27;definition.metricDefinition.identifier&#x27;)}}&#x60;);
                             }
-                            const title = getBaseMetricTitle(&#x60;% ${get(measure, &#x27;title&#x27;)}&#x60;.replace(/^(% )+/, &#x27;% &#x27;));
+                            const title = getBaseMetricTitle(get(measure, &#x27;title&#x27;));
                             const hasher = partial(getGeneratedMetricHash, title, CONTRIBUTION_METRIC_FORMAT);
                             const result = [{
                                 element: getGeneratedMetricIdentifier(measure, &#x27;percent&#x27;, getMetricExpression, hasher),
@@ -390,7 +390,7 @@ title: foobar
                             const date = getDate(mdObj);
                         
                             const generated = createContributionMetric(measure, mdObj, measureIndex);
-                            const title = getPoPMetricTitle(&#x60;% ${get(measure, &#x27;title&#x27;)}&#x60;.replace(/^(% )+/, &#x27;% &#x27;));
+                            const title = getPoPMetricTitle(get(measure, &#x27;title&#x27;));
                         
                             const format = CONTRIBUTION_METRIC_FORMAT;
                             const hasher = partial(getGeneratedMetricHash, title, format);
@@ -491,7 +491,7 @@ title: foobar
                             notEmpty(get(listAttributeFilter, [&#x27;default&#x27;, &#x27;attributeElements&#x27;]));
                         
                         
-                        function getWhere({ filters }) {
+                        function getWhere(filters) {
                             const attributeFilters = map(filter(filters, ({ listAttributeFilter }) =&gt; isAttributeFilterExecutable(listAttributeFilter)), attributeFilterToWhere);
                             const dateFilters = map(filter(filters, ({ dateFilter }) =&gt; isDateFilterExecutable(dateFilter)), dateFilterToWhere);
                         
@@ -512,18 +512,26 @@ title: foobar
                             return map(filter([...categories, ...metrics], item =&gt; item.sort), sortToOrderBy);
                         };
                         
-                        export const mdToExecutionConfiguration = (mdObj) =&gt; {
+                        export const mdToExecutionConfiguration = (mdObj, options = {}) =&gt; {
                             const buckets = get(mdObj, &#x27;buckets&#x27;);
                             const measures = map(buckets.measures, ({ measure }) =&gt; measure);
                             const metrics = flatten(map(measures, (measure, index) =&gt; getMetricFactory(measure)(measure, buckets, index)));
-                            const categories = map(getCategories(buckets), categoryToElement);
+                        
+                            let categories = getCategories(buckets);
+                            let filters = getFilters(buckets);
+                            if (options.removeDateItems) {
+                                categories = filter(categories, ({ category }) =&gt; category.type !== &#x27;date&#x27;);
+                                filters = filter(filters, item =&gt; !item.dateFilter);
+                            }
+                            categories = map(categories, categoryToElement);
+                        
                             const columns = compact(map([...categories, ...metrics], &#x27;element&#x27;));
                         
                             return {
                                 columns,
                                 orderBy: getOrderBy(metrics, categories, get(mdObj, &#x27;type&#x27;)),
                                 definitions: sortDefinitions(compact(map(metrics, &#x27;definition&#x27;))),
-                                where: columns.length ? getWhere(buckets) : {},
+                                where: columns.length ? getWhere(filters) : {},
                                 metricMappings: map(metrics, m =&gt; ({ element: m.element, ...m.meta }))
                             };
                         };
