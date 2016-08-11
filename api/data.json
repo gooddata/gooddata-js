@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "0.1.52",
+        "version": "0.1.53",
         "url": ""
     },
     "files": {
@@ -332,7 +332,7 @@
     "classitems": [
         {
             "file": "src/catalogue.js",
-            "line": 60,
+            "line": 68,
             "description": "Convert specific params in options to \"requiredDataSets\" structure. For more details look into\nres file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res",
             "params": [
                 {
@@ -936,11 +936,11 @@
     "warnings": [
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " src/catalogue.js:60"
+            "line": " src/catalogue.js:68"
         },
         {
             "message": "Missing item type\nConvert specific params in options to \"requiredDataSets\" structure. For more details look into\nres file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res",
-            "line": " src/catalogue.js:60"
+            "line": " src/catalogue.js:68"
         }
     ]
 }

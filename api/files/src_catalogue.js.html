@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.52</span>
+                        <strong>gooddata-js</strong> <span class="version">v0.1.53</span>
                         <h1 class="file-heading">File: src/catalogue.js</h1>
                         
                         <div class="file">
@@ -84,6 +84,14 @@ title: foobar
                             )
                         );
                         
+                        function recursiveReplace(text, regexp, replaceFn) {
+                            const replacedText = text.replace(regexp, replaceFn);
+                            if (text === replacedText) {
+                                return text;
+                            }
+                            return recursiveReplace(replacedText, regexp, replaceFn);
+                        }
+                        
                         function bucketItemsToExecConfig(bucketItems, options = {}) {
                             const categories = parseCategories(bucketItems);
                             const executionConfig = mdToExecutionConfiguration({
@@ -104,7 +112,7 @@ title: foobar
                                 const maql = get(definition, &#x27;metricDefinition.expression&#x27;);
                         
                                 if (maql) {
-                                    return maql.replace(ID_REGEXP, match =&gt; {
+                                    return recursiveReplace(maql, ID_REGEXP, match =&gt; {
                                         const expression = idToExpr[trim(match, &#x27;{}&#x27;)];
                                         return expression.substr(SELECT_LENGTH).replace(WHERE_REGEXP, &#x27;&#x27;);
                                     });
