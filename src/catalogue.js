@@ -1,4 +1,4 @@
-import { get, find, omit, cloneDeep, set } from 'lodash';
+import { get, find, omit, cloneDeep } from 'lodash';
 import * as xhr from './xhr';
 import { mdToExecutionConfiguration } from './execution';
 
@@ -8,8 +8,6 @@ const REQUEST_DEFAULTS = {
         offset: 0
     }
 };
-
-const WHERE_REGEXP = /\s+WHERE\s+\[[^\]]+\]\s+(NOT\s+)*IN\s+\([^)]+\)/g;
 
 const LOAD_DATE_DATASET_DEFAULTS = {
     includeUnavailableDateDataSetsCount: true,
@@ -35,12 +33,6 @@ function bucketItemsToExecConfig(bucketItems, options = {}) {
         }
     }, options);
     const definitions = get(executionConfig, 'definitions');
-
-    // replace metric filters to speed up processing of availability
-    definitions.forEach(({ metricDefinition }) => {
-        const maql = get(metricDefinition, 'expression');
-        set(metricDefinition, 'expression', maql.replace(WHERE_REGEXP, ''));
-    });
 
     return get(executionConfig, 'columns').map(column => {
         const definition = find(definitions, ({ metricDefinition }) =>

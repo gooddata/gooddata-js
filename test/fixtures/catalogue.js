@@ -94,7 +94,7 @@ export const requestForMeasureTypeFactWithFilter = {
             'limit': 100
         },
         'bucketItems': [
-            'SELECT SUM([/gdc/md/FoodMartDemo/obj/1])'
+            'SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000])'
         ],
         'requiredDataSets': {
             'type': 'PRODUCTION'
@@ -170,7 +170,7 @@ export const requestForMeasureWithFilterAndCategory = {
         },
         'bucketItems': [
             '/gdc/md/FoodMartDemo/obj/54',
-            'SELECT SUM([/gdc/md/FoodMartDemo/obj/1])'
+            'SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000])'
         ],
         'requiredDataSets': {
             'type': 'PRODUCTION'
@@ -246,7 +246,28 @@ export const requestForMeasureWithFilterAndCategoryShowInPercent = {
         },
         'bucketItems': [
             '/gdc/md/FoodMartDemo/obj/54',
-            'SELECT (SELECT SUM([/gdc/md/FoodMartDemo/obj/1])) / (SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) BY ALL [/gdc/md/FoodMartDemo/obj/54])'
+            'SELECT (SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000])) / (SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) BY ALL [/gdc/md/FoodMartDemo/obj/54] WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000]))'
+        ],
+        'requiredDataSets': {
+            'type': 'PRODUCTION'
+        }
+    }
+};
+
+export const requestForMeasureWithNotInFilterAndCategoryShowInPercent = {
+    catalogRequest: {
+        'types': [
+            'metric',
+            'attribute',
+            'fact'
+        ],
+        'paging': {
+            'offset': 0,
+            'limit': 100
+        },
+        'bucketItems': [
+            '/gdc/md/FoodMartDemo/obj/54',
+            'SELECT (SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) WHERE [/gdc/md/FoodMartDemo/obj/58] NOT IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000])) / (SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) BY ALL [/gdc/md/FoodMartDemo/obj/54] WHERE [/gdc/md/FoodMartDemo/obj/58] NOT IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000]))'
         ],
         'requiredDataSets': {
             'type': 'PRODUCTION'
@@ -322,7 +343,8 @@ export const requestForMeasureWithShowInPercent = {
         },
         'bucketItems': [
             '/gdc/md/FoodMartDemo/obj/54',
-            'SELECT (SELECT SUM([/gdc/md/FoodMartDemo/obj/1])) / (SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) BY ALL [/gdc/md/FoodMartDemo/obj/54])'
+            'SELECT (SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000])) ' +
+                '/ (SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) BY ALL [/gdc/md/FoodMartDemo/obj/54] WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000]))'
         ],
         'requiredDataSets': {
             'type': 'PRODUCTION'
@@ -400,7 +422,7 @@ export const requestForTwoMeasureFactAndAttribute = {
             'limit': 100
         },
         'bucketItems': [
-            'SELECT SUM([/gdc/md/FoodMartDemo/obj/1])',
+            'SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000])',
             'SELECT COUNT([/gdc/md/FoodMartDemo/obj/40])'
         ],
         'requiredDataSets': {

@@ -793,6 +793,58 @@ describe('execution', () => {
                     format: '#,##0.00%'
                 }, execConfig);
             });
+
+            it('for generated measure with attribute filters', () => {
+                mdObjContribution.buckets.measures = [
+                    {
+                        'measure': {
+                            'type': 'fact',
+                            'aggregation': 'sum',
+                            'objectUri': '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1',
+                            'title': '% Sum of Amount',
+                            'format': '#,##0.00',
+                            'showInPercent': true,
+                            'measureFilters': [
+                                {
+                                    'listAttributeFilter': {
+                                        'attribute': '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/42',
+                                        'displayForm': '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/43',
+                                        'default': {
+                                            'negativeSelection': false,
+                                            'attributeElements': [
+                                                '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/42/elements?id=61527'
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ];
+
+                const execConfig = ex.mdToExecutionConfiguration(mdObjContribution);
+
+                expectColumns([
+                    '/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1028',
+                    'fact_qamfsd9cw85e53mcqs74k8a0mwbf5gc2_1.generated.filtered_percent.08fe4920a4353ed70cdb0cb255489611'
+                ], execConfig);
+
+                expectMetricDefinition({
+                    title: '% Sum of Amount',
+                    identifier: 'fact_qamfsd9cw85e53mcqs74k8a0mwbf5gc2_1.generated.filtered_percent.08fe4920a4353ed70cdb0cb255489611',
+                    expression: 'SELECT (' +
+                        'SELECT SUM([/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1]) ' +
+                        'WHERE [/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/42] ' +
+                        'IN ([/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/42/elements?id=61527])' +
+                    ') / (' +
+                        'SELECT SUM([/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1]) ' +
+                        'BY ALL [/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/1027] ' +
+                        'WHERE [/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/42] ' +
+                        'IN ([/gdc/md/qamfsd9cw85e53mcqs74k8a0mwbf5gc2/obj/42/elements?id=61527])' +
+                    ')',
+                    format: '#,##0.00%'
+                }, execConfig);
+            });
         });
 
         describe('generating pop metric', () => {
