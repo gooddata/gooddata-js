@@ -1,8 +1,7 @@
-import { get, fromPairs, trim, find, omit, cloneDeep } from 'lodash';
+import { get, find, omit, cloneDeep, set } from 'lodash';
 import * as xhr from './xhr';
 import { mdToExecutionConfiguration } from './execution';
 
-const SELECT_LENGTH = 'SELECT '.length;
 const REQUEST_DEFAULTS = {
     types: ['attribute', 'metric', 'fact'],
     paging: {
@@ -10,7 +9,6 @@ const REQUEST_DEFAULTS = {
     }
 };
 
-const ID_REGEXP = /\{[^}]+\}/g;
 const WHERE_REGEXP = /\s+WHERE\s+\[[^\]]+\]\s+(NOT\s+)*IN\s+\([^)]+\)/g;
 
 const LOAD_DATE_DATASET_DEFAULTS = {
@@ -28,14 +26,6 @@ const parseCategories = (bucketItems) => (
     )
 );
 
-function recursiveReplace(text, regexp, replaceFn) {
-    const replacedText = text.replace(regexp, replaceFn);
-    if (text === replacedText) {
-        return text;
-    }
-    return recursiveReplace(replacedText, regexp, replaceFn);
-}
-
 function bucketItemsToExecConfig(bucketItems, options = {}) {
     const categories = parseCategories(bucketItems);
     const executionConfig = mdToExecutionConfiguration({
@@ -45,9 +35,12 @@ function bucketItemsToExecConfig(bucketItems, options = {}) {
         }
     }, options);
     const definitions = get(executionConfig, 'definitions');
-    const idToExpr = fromPairs(definitions.map(
-        ({ metricDefinition }) =>
-            [metricDefinition.identifier, metricDefinition.expression] ));
+
+    // replace metric filters to speed up processing of availability
+    definitions.forEach(({ metricDefinition }) => {
+        const maql = get(metricDefinition, 'expression');
+        set(metricDefinition, 'expression', maql.replace(WHERE_REGEXP, ''));
+    });
 
     return get(executionConfig, 'columns').map(column => {
         const definition = find(definitions, ({ metricDefinition }) =>
@@ -56,10 +49,7 @@ function bucketItemsToExecConfig(bucketItems, options = {}) {
         const maql = get(definition, 'metricDefinition.expression');
 
         if (maql) {
-            return recursiveReplace(maql, ID_REGEXP, match => {
-                const expression = idToExpr[trim(match, '{}')];
-                return expression.substr(SELECT_LENGTH).replace(WHERE_REGEXP, '');
-            });
+            return maql;
         }
         return column;
     });

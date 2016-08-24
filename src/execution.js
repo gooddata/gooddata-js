@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
+// Copyright (C) 2007-2016, GoodData(R) Corporation. All rights reserved.
 import $ from 'jquery';
 import md5 from 'md5';
 
@@ -152,16 +152,16 @@ const getGeneratedMetricExpression = item => {
         (notEmpty(where) ? ` WHERE ${where.join(' AND ')}` : '');
 };
 
-const getPercentMetricExpression = ({ category }, metricId) => {
+const getPercentMetricExpression = ({ category }, metricExpression) => {
     const attributeUri = get(category, 'attribute');
 
-    return `SELECT (SELECT ${metricId}) / (SELECT ${metricId} BY ALL [${attributeUri}])`;
+    return `SELECT (${metricExpression}) / (${metricExpression} BY ALL [${attributeUri}])`;
 };
 
-const getPoPExpression = (attribute, metricId) => {
+const getPoPExpression = (attribute, metricExpression) => {
     const attributeUri = get(attribute, 'attribute');
 
-    return `SELECT (SELECT ${metricId}) FOR PREVIOUS ([${attributeUri}])`;
+    return `SELECT ${metricExpression} FOR PREVIOUS ([${attributeUri}])`;
 };
 
 const getGeneratedMetricHash = (title, format, expression) => md5(`${expression}#${title}#${format}`);
@@ -256,15 +256,14 @@ const createDerivedMetric = (measure, mdObj, measureIndex) => {
 const createContributionMetric = (measure, mdObj, measureIndex) => {
     const category = first(getCategories(mdObj));
 
-    let generated;
-    let getMetricExpression = partial(getPercentMetricExpression, category, `[${get(measure, 'objectUri')}]`);
+    let getMetricExpression = partial(getPercentMetricExpression, category, `SELECT [${get(measure, 'objectUri')}]`);
     if (isDerived(measure)) {
-        generated = createDerivedMetric(measure, mdObj, measureIndex);
-        getMetricExpression = partial(getPercentMetricExpression, category, `{${get(generated, 'definition.metricDefinition.identifier')}}`);
+        const generated = createDerivedMetric(measure, mdObj, measureIndex);
+        getMetricExpression = partial(getPercentMetricExpression, category, get(generated, 'definition.metricDefinition.expression'));
     }
     const title = getBaseMetricTitle(get(measure, 'title'));
     const hasher = partial(getGeneratedMetricHash, title, CONTRIBUTION_METRIC_FORMAT);
-    const result = [{
+    return {
         element: getGeneratedMetricIdentifier(measure, 'percent', getMetricExpression, hasher),
         definition: {
             metricDefinition: {
@@ -278,13 +277,7 @@ const createContributionMetric = (measure, mdObj, measureIndex) => {
         meta: {
             measureIndex
         }
-    }];
-
-    if (generated) {
-        result.unshift({ definition: generated.definition });
-    }
-
-    return result;
+    };
 };
 
 const createPoPMetric = (measure, mdObj, measureIndex) => {
@@ -299,7 +292,7 @@ const createPoPMetric = (measure, mdObj, measureIndex) => {
 
     if (isDerived(measure)) {
         generated = createDerivedMetric(measure, mdObj, measureIndex);
-        getMetricExpression = partial(getPoPExpression, date, `{${get(generated, 'definition.metricDefinition.identifier')}}`);
+        getMetricExpression = partial(getPoPExpression, date, `(${get(generated, 'definition.metricDefinition.expression')})`);
     }
 
     const identifier = getGeneratedMetricIdentifier(measure, 'pop', getMetricExpression, hasher);
@@ -339,7 +332,7 @@ const createContributionPoPMetric = (measure, mdObj, measureIndex) => {
     const format = CONTRIBUTION_METRIC_FORMAT;
     const hasher = partial(getGeneratedMetricHash, title, format);
 
-    const getMetricExpression = partial(getPoPExpression, date, `{${last(generated).element}}`);
+    const getMetricExpression = partial(getPoPExpression, date, `(${get(generated, 'definition.metricDefinition.expression')})`);
 
     const identifier = getGeneratedMetricIdentifier(measure, 'pop', getMetricExpression, hasher);
 
@@ -362,7 +355,7 @@ const createContributionPoPMetric = (measure, mdObj, measureIndex) => {
 
     result.push(generated);
 
-    return flatten(result);
+    return result;
 };
 
 const categoryToElement = ({ category }) =>

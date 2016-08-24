@@ -94,7 +94,7 @@ export const requestForMeasureTypeFactWithFilter = {
             'limit': 100
         },
         'bucketItems': [
-            'SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000])'
+            'SELECT SUM([/gdc/md/FoodMartDemo/obj/1])'
         ],
         'requiredDataSets': {
             'type': 'PRODUCTION'
@@ -170,7 +170,7 @@ export const requestForMeasureWithFilterAndCategory = {
         },
         'bucketItems': [
             '/gdc/md/FoodMartDemo/obj/54',
-            'SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000])'
+            'SELECT SUM([/gdc/md/FoodMartDemo/obj/1])'
         ],
         'requiredDataSets': {
             'type': 'PRODUCTION'
@@ -400,7 +400,7 @@ export const requestForTwoMeasureFactAndAttribute = {
             'limit': 100
         },
         'bucketItems': [
-            'SELECT SUM([/gdc/md/FoodMartDemo/obj/1]) WHERE [/gdc/md/FoodMartDemo/obj/58] IN ([/gdc/md/FoodMartDemo/obj/58/elements?id=1000])',
+            'SELECT SUM([/gdc/md/FoodMartDemo/obj/1])',
             'SELECT COUNT([/gdc/md/FoodMartDemo/obj/40])'
         ],
         'requiredDataSets': {
