@@ -232,12 +232,6 @@ describe('Catalogue', () => {
                                 type: 'date',
                                 attribute: '/attr1'
                             }
-                        }],
-                        filters: [{
-                            dateFilter: {
-                                type: 'relative', // does not matter
-                                attribute: '/attr1'
-                            }
                         }]
                     }
                 }
@@ -246,6 +240,32 @@ describe('Catalogue', () => {
                 const call = ajax.getCall(0);
                 const items = call.args[1].data.dateDataSetsRequest.bucketItems;
                 expect(items).to.have.length(0);
+            });
+        });
+
+        it('should send filter column if filter is in the request', () => {
+            const mockPayload = {
+                bucketItems: {
+                    buckets: {
+                        categories: [{
+                            category: {
+                                type: 'date',
+                                attribute: '/attr1'
+                            }
+                        }],
+                        filters: [{
+                            dateFilter: {
+                                type: 'relative', // does not matter
+                                attribute: '/attr2'
+                            }
+                        }]
+                    }
+                }
+            };
+            return catalogue.loadDateDataSets(projectId, mockPayload).then(() => {
+                const call = ajax.getCall(0);
+                const items = call.args[1].data.dateDataSetsRequest.bucketItems;
+                expect(items).to.have.length(1);
             });
         });
 
@@ -320,11 +340,11 @@ describe('Catalogue', () => {
             return catalogue.loadDateDataSets(projectId, mockPayload).then(() => {
                 const call = ajax.getCall(0);
                 const items = call.args[1].data.dateDataSetsRequest.bucketItems;
-                expect(items).to.have.eql([
-                    '/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2274',
+                expect(items).to.have.eql([ '/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2274',
                     'SELECT (SELECT (SELECT SUM([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2276]) WHERE [/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2266] NOT IN ([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2266/elements?id=706])) / (SELECT SUM([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2276]) BY ALL [/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2274] WHERE [/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2266] NOT IN ([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2266/elements?id=706]))) FOR PREVIOUS ([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2167])',
-                    'SELECT (SELECT SUM([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2276]) WHERE [/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2266] NOT IN ([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2266/elements?id=706])) / (SELECT SUM([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2276]) BY ALL [/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2274] WHERE [/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2266] NOT IN ([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2266/elements?id=706]))'
-                ]);
+                    'SELECT (SELECT SUM([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2276]) WHERE [/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2266] NOT IN ([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2266/elements?id=706])) / (SELECT SUM([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2276]) BY ALL [/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2274] WHERE [/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2266] NOT IN ([/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2266/elements?id=706]))',
+                    '/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2274',
+                    '/gdc/md/ovs4ke6eyaus033gyojhv1rh7u1bukmy/obj/2167' ]);
             });
         });
     });

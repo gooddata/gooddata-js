@@ -81,7 +81,8 @@ export const requestForFilters = {
         'bucketItems': [
             '/gdc/md/FoodMartDemo/obj/1',
             '/gdc/md/FoodMartDemo/obj/2'
-        ]
+        ],
+        requiredDataSets: { type: 'PRODUCTION' }
     }
 };
 
