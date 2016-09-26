@@ -73,6 +73,35 @@ export function getObjectUsing(projectId, uri, options = {}) {
 }
 
 /**
+ * Get MD objects from using2 resource. Include only objects of given types
+ * and take care about fetching only nearest objects if requested.
+ *
+ * @method getObjectUsingMany
+ * @param {String} projectId id of the project
+ * @param {Array} uris uris of objects for which dependencies are to be found
+ * @param {Object} options objects with options:
+ *        - types {Array} array of strings with object types to be included
+ *        - nearest {Boolean} whether to include only nearest dependencies
+ * @return {Array} entries returned by using2 resource
+ */
+export function getObjectUsingMany(projectId, uris, options = {}) {
+    const { types = [], nearest = false } = options;
+    const resourceUri = `/gdc/md/${projectId}/using2`;
+
+    const data = {
+        inUseMany: {
+            uris,
+            types,
+            nearest: nearest ? 1 : 0
+        }
+    };
+
+    return post(resourceUri, {
+        data: JSON.stringify(data)
+    }).then(result => result.useMany);
+}
+
+/**
  * Get additional information about elements specified by their uris
  * `elementUris` is the array of uris of elements to be look-up
  * Currently makes a request for each object, should be encapsulated
@@ -568,4 +597,3 @@ export function getObjectUri(projectId, identifier) {
 
     return d.promise();
 }
-
