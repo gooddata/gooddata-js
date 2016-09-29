@@ -479,26 +479,29 @@ export const mdToExecutionConfiguration = (mdObj, options = {}) => {
 };
 
 const getOriginalMetricFormats = (mdObj) => {
-    const measures = map(get(mdObj, 'buckets.measures'), ({ measure }) => measure);
     // for metrics with showPoP or measureFilters.length > 0 roundtrip for original metric format
-    return $.when.apply(this, map(measures, (measure) => {
-        if (measure.showPoP === true || measure.measureFilters.length > 0) {
-            return xhrGet(measure.objectUri).then((obj) => {
-                measure.format = get(obj, 'metric.content.format', measure.format);
-                return measure;
-            });
-        }
+    return $.when.apply(undefined, map(
+        map(get(mdObj, 'buckets.measures'), ({ measure }) => measure),
+        (measure) => {
+            if (measure.showPoP === true || measure.measureFilters.length > 0) {
+                return xhrGet(measure.objectUri).then((obj) => {
+                    return {
+                        ...measure,
+                        format: get(obj, 'metric.content.format', measure.format)
+                    };
+                });
+            }
 
-        /* eslint-disable new-cap */
-        return $.Deferred().resolve(measure);
-        /* eslint-enable new-cap */
-    }));
+            /* eslint-disable new-cap */
+            return $.Deferred().resolve(measure);
+            /* eslint-enable new-cap */
+        }
+    ));
 };
 
 export const getDataForVis = (projectId, mdObj, settings) => {
-    return getOriginalMetricFormats(mdObj).then((...args) => {
-        const measures = map([...args], (measure) => { return { measure: measure }; });
-        mdObj.buckets.measures = measures;
+    return getOriginalMetricFormats(mdObj).then((...measures) => {
+        mdObj.buckets.measures = map([...measures], (measure) => ({ measure }));
         const { columns, ...executionConfiguration } = mdToExecutionConfiguration(mdObj);
         return getData(projectId, columns, executionConfiguration, settings);
     });

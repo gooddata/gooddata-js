@@ -987,6 +987,7 @@ describe('execution', () => {
                     ]
                 }
             };
+
             beforeEach(() => {
                 const responseMock = { metric: { content: { format: 'someone changed me' } } };
                 serverResponseMock = {
