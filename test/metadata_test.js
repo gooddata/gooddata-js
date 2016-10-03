@@ -415,7 +415,7 @@ describe('metadata', () => {
                 postSpy.restore();
             });
 
-            it('should load objects dependencies', done => {
+            it('should load objects dependencies', () => {
                 server.respondWith(
                     'POST',
                     using2Uri,
@@ -423,7 +423,7 @@ describe('metadata', () => {
                         JSON.stringify({ useMany: response })]
                 );
 
-                md.getObjectUsingMany(projectId, objects, { types }).then(result => {
+                return md.getObjectUsingMany(projectId, objects, { types }).then(result => {
                     expect(postSpy.calledWith(using2Uri, {
                         data: JSON.stringify({
                             inUseMany: {
@@ -434,11 +434,10 @@ describe('metadata', () => {
                         })
                     })).to.be(true);
                     expect(result).to.eql(response);
-                    done();
                 });
             });
 
-            it('should be properly called with nearest when requested', done => {
+            it('should be properly called with nearest when requested', () => {
                 server.respondWith(
                     'POST',
                     using2Uri,
@@ -448,7 +447,7 @@ describe('metadata', () => {
 
                 const nearest = true;
 
-                md.getObjectUsingMany(projectId, objects, { types, nearest }).then(() => {
+                return md.getObjectUsingMany(projectId, objects, { types, nearest }).then(() => {
                     expect(postSpy.calledWith(using2Uri, {
                         data: JSON.stringify({
                             inUseMany: {
@@ -458,7 +457,6 @@ describe('metadata', () => {
                             }
                         })
                     })).to.be(true);
-                    done();
                 });
             });
 
