@@ -53,7 +53,8 @@ export function getObjects(projectId, objectUris) {
  * @param {Object} options objects with options:
  *        - types {Array} array of strings with object types to be included
  *        - nearest {Boolean} whether to include only nearest dependencies
- * @return {Array} entries returned by using2 resource
+ * @return {jQuery promise} promise promise once resolved returns an array of
+ *         entries returned by using2 resource
  */
 export function getObjectUsing(projectId, uri, options = {}) {
     const { types = [], nearest = false } = options;
@@ -82,7 +83,8 @@ export function getObjectUsing(projectId, uri, options = {}) {
  * @param {Object} options objects with options:
  *        - types {Array} array of strings with object types to be included
  *        - nearest {Boolean} whether to include only nearest dependencies
- * @return {Array} entries returned by using2 resource
+ * @return {jQuery promise} promise promise once resolved returns an array of
+ *         entries returned by using2 resource
  */
 export function getObjectUsingMany(projectId, uris, options = {}) {
     const { types = [], nearest = false } = options;
