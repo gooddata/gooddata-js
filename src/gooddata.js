@@ -6,7 +6,7 @@ import * as execution from './execution';
 import * as project from './project';
 import * as config from './config';
 import * as catalogue from './catalogue';
-import * as admin from './admin';
+import admin from './admin';
 
 /**
  * # JS SDK

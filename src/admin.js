@@ -1,6 +1,7 @@
 // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
 
 import * as dataProducts from './admin/dataProducts';
+import * as domains from './admin/domains';
 
 /**
  * Network-UI support methods. Mostly private
@@ -10,6 +11,7 @@ import * as dataProducts from './admin/dataProducts';
  *
  */
 
-export const admin = {
-    dataProducts
+export default {
+    dataProducts,
+    domains
 };
