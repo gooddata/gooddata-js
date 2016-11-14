@@ -2,6 +2,7 @@
 
 import * as dataProducts from './admin/dataProducts';
 import * as domains from './admin/domains';
+import * as clients from './admin/client';
 
 /**
  * Network-UI support methods. Mostly private
@@ -13,5 +14,6 @@ import * as domains from './admin/domains';
 
 export default {
     dataProducts,
-    domains
+    domains,
+    clients
 };
