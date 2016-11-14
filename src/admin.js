@@ -2,6 +2,7 @@
 
 import * as dataProducts from './admin/dataProducts';
 import * as domains from './admin/domains';
+import * as domainSegments from './admin/domainSegments';
 import * as clients from './admin/client';
 
 /**
@@ -15,5 +16,6 @@ import * as clients from './admin/client';
 export default {
     dataProducts,
     domains,
+    domainSegments,
     clients
 };
