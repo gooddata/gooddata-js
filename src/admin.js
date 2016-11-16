@@ -1,6 +1,7 @@
 // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
 
 import * as dataProducts from './admin/dataProducts';
+import * as domainDataProducts from './admin/domainDataProducts';
 import * as domains from './admin/domains';
 import * as domainSegments from './admin/domainSegments';
 import * as clients from './admin/clients';
@@ -17,6 +18,7 @@ import * as contracts from './admin/contracts';
 
 export default {
     dataProducts,
+    domainDataProducts,
     domains,
     domainSegments,
     clients,
