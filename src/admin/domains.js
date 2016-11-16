@@ -22,12 +22,11 @@ export const getDomains = (contractId, query) => {
 };
 
 const transformDomainUser = (item) => {
-    const user = item.userInClientsProject;
+    const user = item.domainUser;
     const params = routes.parse(user.links.domain, routes.CONTRACT_DOMAIN);
     return {
         id: user.login,
-        domainId: params.domainId,
-        contractId: params.contractId,
+        ...params,
         fullName: `${user.firstName} ${user.surname}`,
         ...user
     };
