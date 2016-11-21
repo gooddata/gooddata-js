@@ -10,13 +10,12 @@ export const getDataProducts = contractId =>
     })
 );
 
-export const createDataProduct = (contractId, id, title, domains) => new Promise((resolve, reject) => {
+export const createDataProduct = (contractId, id, domainIds) => new Promise((resolve, reject) => {
     post(routes.interpolate(routes.CONTRACT_DATA_PRODUCTS, { contractId }), {
         data: JSON.stringify({
             dataProductCreate: {
                 id,
-                title,
-                domains: domains.map(item => `/gdc/admin/contracts/${contractId}/domains/${item}`)
+                domains: domainIds.map(item => `/gdc/admin/contracts/${contractId}/domains/${item}`)
             }
         })
     })
