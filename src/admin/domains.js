@@ -27,7 +27,7 @@ const transformDomainUser = (item) => {
     return {
         id: user.login,
         ...params,
-        fullName: `${user.firstName} ${user.surname}`,
+        fullName: `${user.firstName} ${user.lastName}`,
         ...user
     };
 };

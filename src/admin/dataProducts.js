@@ -10,6 +10,13 @@ export const getDataProducts = contractId =>
     })
 );
 
+export const getDataProduct = (contractId, dataProductId) =>
+    get(routes.interpolate(routes.CONTRACT_DATA_PRODUCT, { contractId, dataProductId })).then(data => ({
+        ...data.dataProduct,
+        contractId
+    })
+);
+
 export const createDataProduct = (contractId, id, domainIds) => new Promise((resolve, reject) => {
     post(routes.interpolate(routes.CONTRACT_DATA_PRODUCTS, { contractId }), {
         data: JSON.stringify({
