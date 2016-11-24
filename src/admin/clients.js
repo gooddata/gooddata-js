@@ -18,8 +18,12 @@ export const getClients = (contractId, dataProductId, segmentId, domainId, filte
             { contractId, dataProductId, segmentId, domainId },
             query
         );
+    
+    if (uri) {
+        return get(uri).then(result => ({ items: result.client.items.map(transformClient), paging: result.client.paging }));
+    }
 
-    return get(uri).then(result => ({ items: result.client.items.map(transformClient), paging: result.client.paging }));
+    return Promise.resolve({ items: [], paging: {} });
 };
 
 const transformClientUser = (item) => {
