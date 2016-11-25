@@ -17,14 +17,12 @@ export const getDataProduct = (contractId, dataProductId) =>
     })
 );
 
-export const createDataProduct = (contractId, id, domainIds) => new Promise((resolve, reject) => {
+export const createDataProduct = (contractId, dataProductId, domainIds) =>
     post(routes.interpolate(routes.CONTRACT_DATA_PRODUCTS, { contractId }), {
         data: JSON.stringify({
             dataProductCreate: {
-                id,
-                domains: domainIds.map(item => `/gdc/admin/contracts/${contractId}/domains/${item}`)
+                id: dataProductId,
+                domains: domainIds.map(domainId => routes.interpolate(routes.CONTRACT_DOMAIN, { contractId, domainId }))
             }
         })
-    })
-    .then(r => (r.ok ? resolve(r) : reject(r)));
-});
+    });
