@@ -23,10 +23,11 @@ export const getDomainSegments = (contractId, dataProductId, segmentId, query) =
     .then(result => ({ items: result.domainSegments.items.map(transformDomainSegment) }));
 };
 
-export const getDomainSegment = (contractId, dataProductId, segmentId, domainId) => {
+export const getDomainSegment = (contractId, dataProductId, segmentId, domainId, query) => {
     return get(routes.interpolate(
         routes.CONTRACT_DATA_PRODUCT_DOMAIN_SEGMENTS_DOMAIN,
-        { contractId, dataProductId, segmentId, domainId }
+        { contractId, dataProductId, segmentId, domainId },
+        query
     ))
-    .then(result => transformDomainSegment(result.domainSegment));
+    .then(result => transformDomainSegment(result));
 };
