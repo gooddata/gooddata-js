@@ -31,3 +31,19 @@ export const getDomainSegment = (contractId, dataProductId, segmentId, domainId,
     ))
     .then(result => transformDomainSegment(result));
 };
+
+export const cloneDomainSegment = (contractId, dataProductId, segmentId, domainId, newSegmentId, newDomainId) =>
+    post(
+        routes.interpolate(
+            routes.CONTRACT_DATA_PRODUCT_DOMAIN_SEGMENTS_DOMAIN_CLONE,
+            { contractId, dataProductId, segmentId, domainId }
+        ),
+        {
+            data: JSON.stringify({
+                cloneSegmentRequest: {
+                    clonedSegmentId: newSegmentId,
+                    domain: newDomainId
+                }
+            })
+        }
+    );
