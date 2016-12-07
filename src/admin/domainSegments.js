@@ -1,4 +1,4 @@
-import { get } from '../xhr';
+import { get, post } from '../xhr';
 import * as routes from './routes';
 
 const transformDomainSegment = (item) => {
