@@ -1,4 +1,4 @@
-import { get, post } from '../xhr';
+import { get, post, deleteObject } from '../xhr';
 import * as routes from './routes';
 
 const transformDomainSegment = (item) => {
@@ -47,3 +47,9 @@ export const cloneDomainSegment = (contractId, dataProductId, segmentId, domainI
             })
         }
     );
+
+export const deleteDomainSegment = (contractId, dataProductId, segmentId, domainId) =>
+    deleteObject(
+        routes.interpolate(routes.CONTRACT_DATA_PRODUCT_DOMAIN_SEGMENTS_DOMAIN,
+        { contractId, dataProductId, segmentId, domainId }
+    ));

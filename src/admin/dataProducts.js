@@ -1,4 +1,4 @@
-import { get, post } from '../xhr';
+import { get, post, deleteObject } from '../xhr';
 import * as routes from './routes';
 
 export const getDataProducts = contractId =>
@@ -26,3 +26,6 @@ export const createDataProduct = (contractId, dataProductId, domainIds) =>
             }
         })
     });
+
+export const deleteDataProduct = (contractId, dataProductId) =>
+    deleteObject(routes.interpolate(routes.CONTRACT_DATA_PRODUCT, { contractId, dataProductId }));
