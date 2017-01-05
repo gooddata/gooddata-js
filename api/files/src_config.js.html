@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.53</span>
+                        <strong>gooddata-js</strong> <span class="version">v1.0.4</span>
                         <h1 class="file-heading">File: src/config.js</h1>
                         
                         <div class="file">
@@ -69,7 +69,8 @@ title: foobar
                         
                         const URL_REGEXP = &#x27;(?:(https)://+|(www\\.)?)\\w[:;,\\.?\\[\\]\\w/~%&amp;=+#-@!]*&#x27;;
                         
-                        export let domain;
+                        // TODO - fix this
+                        export let domain; // eslint-disable-line import/no-mutable-exports
                         
                         /**
                          * Sets custom domain. Parameter is url which has always to be https://
@@ -77,24 +78,28 @@ title: foobar
                          *
                          * RegExp inspired taken from
                          * https://github.com/jarib/google-closure-library/blob/master/closure/goog/string/linkify.js
-                         *
+                         * @param {String|null} d valid domain starting with https:// or null for removing
                          * @method setCustomDomain
                          */
                         export function setCustomDomain(d) {
                             const sanitizedDomain = d || &#x27;&#x27;;
                             const link = sanitizedDomain.match(URL_REGEXP);
                         
+                            if (d === null) {
+                                domain = undefined;
+                                return;
+                            }
+                        
                             if (!link) {
-                                throw new Error(d + &#x27; is not a valid url&#x27;);
+                                throw new Error(&#x60;${d} is not a valid url&#x60;);
                             }
                         
                             // ensure https:// prefix
                             // and strip possible trailing /
-                            domain = &#x27;https://&#x27; + link[0]
+                            domain = &#x60;https://${link[0]
                                      .replace(/^https:\/\//, &#x27;&#x27;)
-                                     .replace(/\/$/, &#x27;&#x27;);
+                                     .replace(/\/$/, &#x27;&#x27;)}&#x60;;
                         }
-                        
                         
                         
                             </pre>

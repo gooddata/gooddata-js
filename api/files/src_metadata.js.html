@@ -49,14 +49,19 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.53</span>
+                        <strong>gooddata-js</strong> <span class="version">v1.0.4</span>
                         <h1 class="file-heading">File: src/metadata.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
                         // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
-                        import $ from &#x27;jquery&#x27;;
-                        import { ajax, get, post } from &#x27;./xhr&#x27;;
+                        import {
+                            isPlainObject,
+                            get as _get,
+                            chunk,
+                            flatten
+                        } from &#x27;lodash&#x27;;
+                        import { ajax, get, post, parseJSON } from &#x27;./xhr&#x27;;
                         import { getIn } from &#x27;./util&#x27;;
                         
                         /**
@@ -66,6 +71,119 @@ title: foobar
                          * @module metadata
                          */
                         
+                        /**
+                         * Load all objects with given uris
+                         * (use bulk loading instead of getting objects one by one)
+                         *
+                         * @method getObjects
+                         * @param {String} projectId id of the project
+                         * @param {Array} objectUris array of uris for objects to be loaded
+                         * @return {Array} array of loaded elements
+                         */
+                        export function getObjects(projectId, objectUris) {
+                            const LIMIT = 50;
+                            const uri = &#x60;/gdc/md/${projectId}/objects/get&#x60;;
+                        
+                            const objectsUrisChunks = chunk(objectUris, LIMIT);
+                        
+                            const promises = objectsUrisChunks.map((objectUrisChunk) =&gt; {
+                                const data = {
+                                    get: {
+                                        items: objectUrisChunk
+                                    }
+                                };
+                        
+                                return post(uri, {
+                                    data: JSON.stringify(data)
+                                }).then((r) =&gt; {
+                                    if (!r.ok) {
+                                        const err = new Error(r.statusText);
+                                        err.response = r;
+                                        throw err;
+                                    }
+                        
+                                    return r.json();
+                                }).then(result =&gt; _get(result, [&#x27;objects&#x27;, &#x27;items&#x27;]));
+                            });
+                        
+                            return Promise.all(promises).then(flatten);
+                        }
+                        
+                        /**
+                         * Get MD objects from using2 resource. Include only objects of given types
+                         * and take care about fetching only nearest objects if requested.
+                         *
+                         * @method getObjectUsing
+                         * @param {String} projectId id of the project
+                         * @param {String} uri uri of the object for which dependencies are to be found
+                         * @param {Object} options objects with options:
+                         *        - types {Array} array of strings with object types to be included
+                         *        - nearest {Boolean} whether to include only nearest dependencies
+                         * @return {jQuery promise} promise promise once resolved returns an array of
+                         *         entries returned by using2 resource
+                         */
+                        export function getObjectUsing(projectId, uri, options = {}) {
+                            const { types = [], nearest = false } = options;
+                            const resourceUri = &#x60;/gdc/md/${projectId}/using2&#x60;;
+                        
+                            const data = {
+                                inUse: {
+                                    uri,
+                                    types,
+                                    nearest: nearest ? 1 : 0
+                                }
+                            };
+                        
+                            return post(resourceUri, {
+                                data: JSON.stringify(data)
+                            }).then((r) =&gt; {
+                                if (!r.ok) {
+                                    const err = new Error(r.statusText);
+                                    err.response = r;
+                                    throw err;
+                                }
+                        
+                                return r.json();
+                            }).then(result =&gt; result.entries);
+                        }
+                        
+                        /**
+                         * Get MD objects from using2 resource. Include only objects of given types
+                         * and take care about fetching only nearest objects if requested.
+                         *
+                         * @method getObjectUsingMany
+                         * @param {String} projectId id of the project
+                         * @param {Array} uris uris of objects for which dependencies are to be found
+                         * @param {Object} options objects with options:
+                         *        - types {Array} array of strings with object types to be included
+                         *        - nearest {Boolean} whether to include only nearest dependencies
+                         * @return {jQuery promise} promise promise once resolved returns an array of
+                         *         entries returned by using2 resource
+                         */
+                        export function getObjectUsingMany(projectId, uris, options = {}) {
+                            const { types = [], nearest = false } = options;
+                            const resourceUri = &#x60;/gdc/md/${projectId}/using2&#x60;;
+                        
+                            const data = {
+                                inUseMany: {
+                                    uris,
+                                    types,
+                                    nearest: nearest ? 1 : 0
+                                }
+                            };
+                        
+                            return post(resourceUri, {
+                                data: JSON.stringify(data)
+                            }).then((r) =&gt; {
+                                if (!r.ok) {
+                                    const err = new Error(r.statusText);
+                                    err.response = r;
+                                    throw err;
+                                }
+                        
+                                return r.json();
+                            }).then(result =&gt; result.useMany);
+                        }
                         
                         /**
                          * Get additional information about elements specified by their uris
@@ -78,19 +196,10 @@ title: foobar
                          * @private
                          */
                         export function getElementDetails(elementUris) {
-                            /*eslint-disable new-cap*/
-                            const d = $.Deferred();
-                            /*eslint-enable new-cap*/
+                            const fns = elementUris.map(uri =&gt; get(uri));
                         
-                            const fns = elementUris.map(function mapUrisToRequests(uri) {
-                                return ajax(uri);
-                            });
-                        
-                            $.when.apply(this, fns).done(function requestsDone() {
-                                // arguments is the array of resolved
-                                const args = Array.prototype.slice.call(arguments);
-                        
-                                const enriched = args.map(function mapArgumentsToObjects(element) {
+                            return Promise.all(fns).then((...args) =&gt; {
+                                const enriched = args.map((element) =&gt; {
                                     const root = element[0];
                                     if (root.attributeDisplayForm) {
                                         return {
@@ -106,6 +215,8 @@ title: foobar
                                             name: root.metric.meta.title
                                         };
                                     }
+                        
+                                    return undefined;
                                 });
                         
                                 // override titles with related attribute title
@@ -114,19 +225,18 @@ title: foobar
                                 let i = 0;
                                 const formOfFns = [];
                         
-                                enriched.forEach(function loopEnrichedObjects(el, idx) {
+                                enriched.forEach((el, idx) =&gt; {
                                     if (el.formOf) {
-                                        formOfFns.push(ajax(el.formOf));
+                                        formOfFns.push(get(el.formOf));
                                         ids[el.uri] = idx;
-                                        indi[i++] = idx;
+                                        indi[i] = idx;
+                                        i += 1;
                                     }
                                 });
                         
                                 // all formOf are executed
-                                $.when.apply(this, formOfFns).done(function formOfRequestsDone() {
-                                    const formOfArgs = Array.prototype.slice.call(arguments);
-                        
-                                    formOfArgs.forEach(function loopFormOfRequests(arg, idx) {
+                                return Promise.all(formOfFns).then((...formOfArgs) =&gt; {
+                                    formOfArgs.forEach((arg, idx) =&gt; {
                                         // get element to owerwrite
                                         const which = indi[idx];
                                         const update = enriched[which];
@@ -134,11 +244,9 @@ title: foobar
                                         update.name = arg[0].attribute.meta.title;
                                     });
                         
-                                    d.resolve(enriched);
+                                    return enriched;
                                 });
                             });
-                        
-                            return d.promise();
                         }
                         
                         /**
@@ -149,7 +257,7 @@ title: foobar
                         * @return {Array} An array of attribute objects
                         */
                         export function getAttributes(projectId) {
-                            return get(&#x27;/gdc/md/&#x27; + projectId + &#x27;/query/attributes&#x27;).then(getIn(&#x27;query.entries&#x27;));
+                            return get(&#x60;/gdc/md/${projectId}/query/attributes&#x60;).then(r =&gt; (r.ok ? r.json() : r)).then(getIn(&#x27;query.entries&#x27;));
                         }
                         
                         /**
@@ -161,7 +269,7 @@ title: foobar
                          * @see getFolders
                          */
                         export function getDimensions(projectId) {
-                            return get(&#x27;/gdc/md/&#x27; + projectId + &#x27;/query/dimensions&#x27;).then(getIn(&#x27;query.entries&#x27;));
+                            return get(&#x60;/gdc/md/${projectId}/query/dimensions&#x60;).then(r =&gt; (r.ok ? r.json() : r)).then(getIn(&#x27;query.entries&#x27;));
                         }
                         
                         /**
@@ -174,193 +282,29 @@ title: foobar
                          * @return {Array} An array of dimension objects
                          */
                         export function getFolders(projectId, type) {
-                            function _getFolders(pId, t) {
-                                const typeURL = t ? &#x27;?type=&#x27; + t : &#x27;&#x27;;
+                            function getFolderEntries(pId, t) {
+                                const typeURL = t ? &#x60;?type=${t}&#x60; : &#x27;&#x27;;
                         
-                                return get(&#x27;/gdc/md/&#x27; + pId + &#x27;/query/folders&#x27; + typeURL).then(getIn(&#x27;query.entries&#x27;));
+                                return get(&#x60;/gdc/md/${pId}/query/folders${typeURL}&#x60;).then(getIn(&#x27;query.entries&#x27;));
                             }
                         
                             switch (type) {
                                 case &#x27;fact&#x27;:
                                 case &#x27;metric&#x27;:
-                                    return _getFolders(projectId, type);
+                                    return getFolderEntries(projectId, type);
                                 case &#x27;attribute&#x27;:
                                     return getDimensions(projectId);
                                 default:
-                                    /*eslint-disable new-cap*/
-                                    const d = $.Deferred();
-                                    /*eslint-enable new-cap*/
-                                    $.when(_getFolders(projectId, &#x27;fact&#x27;),
-                                            _getFolders(projectId, &#x27;metric&#x27;),
-                                            getDimensions(projectId)).done(function requestsDone(facts, metrics, attributes) {
-                                        d.resolve({fact: facts, metric: metrics, attribute: attributes});
+                                    return Promise.all([
+                                        getFolderEntries(projectId, &#x27;fact&#x27;),
+                                        getFolderEntries(projectId, &#x27;metric&#x27;),
+                                        getDimensions(projectId)
+                                    ])
+                                    .then((facts, metrics, attributes) =&gt; {
+                                        return { fact: facts, metric: metrics, attribute: attributes };
                                     });
-                                    return d.promise();
                             }
                         }
-                        
-                        /**
-                         * Get folders with items.
-                         * Returns array of folders, each having a title and items property which is an array of
-                         * corresponding items. Each item is either a metric or attribute, keeping its original
-                         * verbose structure.
-                         *
-                         * @method getFoldersWithItems
-                         * @param {String} type type of folders to return
-                         * @return {Array} Array of folder object, each containing title and
-                         * corresponding items.
-                         */
-                        /*eslint-disable*/
-                        export function getFoldersWithItems(projectId, type) {
-                            /*eslint-disable new-cap*/
-                            const result = $.Deferred();
-                            /*eslint-enable new-cap*/
-                        
-                            // fetch all folders of given type and process them
-                            getFolders(projectId, type).then(function resolveGetForlders(folders) {
-                                // Helper function to get details for each metric in the given
-                                // array of links to the metadata objects representing the metrics.
-                                // @return the array of promises
-                                function getMetricItemsDetails(array) {
-                                    /*eslint-disable new-cap*/
-                                    const d = $.Deferred();
-                                    /*eslint-enable new-cap*/
-                                    $.when.apply(this, array.map(getObjectDetails)).then(function getObjectDetailsDone() {
-                                        const metrics = Array.prototype.slice.call(arguments).map(function mapObjectsToMetricNames(item) {
-                                            return item.metric;
-                                        });
-                                        d.resolve(metrics);
-                                    }, d.reject);
-                                    return d.promise();
-                                }
-                        
-                                // helper mapBy function
-                                function mapBy(array, key) {
-                                    return array.map(function mapKeyToItem(item) {
-                                        return item[key];
-                                    });
-                                }
-                        
-                                // helper for sorting folder tree structure
-                                // sadly @returns void (sorting == mutating array in js)
-                                /*eslint-disable func-names*/
-                                const sortFolderTree = function(structure) {
-                                    structure.forEach(function(folder) {
-                                        folder.items.sort(function(a, b) {
-                                            if (a.meta.title &lt; b.meta.title) {
-                                                return -1;
-                                            } else if (a.meta.title &gt; b.meta.title) {
-                                                return 1;
-                                            }
-                        
-                                            return 0;
-                                        });
-                                    });
-                                    structure.sort(function(a, b) {
-                                        if (a.title &lt; b.title) {
-                                            return -1;
-                                        } else if (a.title &gt; b.title) {
-                                            return 1;
-                                        }
-                        
-                                        return 0;
-                                    });
-                                };
-                                /*eslint-enable func-names*/
-                        
-                                const foldersLinks = mapBy(folders, &#x27;link&#x27;);
-                                const foldersTitles = mapBy(folders, &#x27;title&#x27;);
-                        
-                                // fetch details for each folder
-                                $.when.apply(this, foldersLinks.map(getObjectDetails)).then(function() {
-                                    var folderDetails = Array.prototype.slice.call(arguments);
-                        
-                                    // if attribute, just parse everything from what we&#x27;ve received
-                                    // and resolve. For metrics, lookup again each metric to get its
-                                    // identifier. If passing unsupported type, reject immediately.
-                                    if (type === &#x27;attribute&#x27;) {
-                                        // get all attributes, subtract what we have and add rest in unsorted folder
-                                        getAttributes(projectId).then(function(attributes) {
-                                            // get uris of attributes which are in some dimension folders
-                                            var attributesInFolders = [];
-                                            folderDetails.forEach(function(fd) {
-                                                fd.dimension.content.attributes.forEach(function(attr) {
-                                                    attributesInFolders.push(attr.meta.uri);
-                                                });
-                                            });
-                                            // unsortedUris now contains uris of all attributes which aren&#x27;t in a folder
-                                            var unsortedUris =
-                                                attributes
-                                                    .filter(function(item) { return attributesInFolders.indexOf(item.link) === -1; })
-                                                    .map(function(item) { return item.link; });
-                                            // now get details of attributes in no folders
-                                            $.when.apply(this, unsortedUris.map(getObjectDetails)).then(function() {
-                                                // get unsorted attribute objects
-                                                var unsortedAttributes = Array.prototype.slice.call(arguments).map(function(attr) { return attr.attribute; });
-                                                // create structure of folders with attributes
-                                                var structure = folderDetails.map(function(folderDetail) {
-                                                    return {
-                                                        title: folderDetail.dimension.meta.title,
-                                                        items: folderDetail.dimension.content.attributes
-                                                    };
-                                                });
-                                                // and append &quot;Unsorted&quot; folder with attributes to the structure
-                                                structure.push({
-                                                    title: &quot;Unsorted&quot;,
-                                                    items: unsortedAttributes
-                                                });
-                                                sortFolderTree(structure);
-                                                result.resolve(structure);
-                                            });
-                                        });
-                                    } else if (type === &#x27;metric&#x27;) {
-                                        var entriesLinks = folderDetails.map(function(entry) {
-                                            return mapBy(entry.folder.content.entries, &#x27;link&#x27;);
-                                        });
-                                        // get all metrics, subtract what we have and add rest in unsorted folder
-                                        getMetrics(projectId).then(function(metrics) {
-                                            // get uris of metrics which are in some dimension folders
-                                            var metricsInFolders = [];
-                                            folderDetails.forEach(function(fd) {
-                                                fd.folder.content.entries.forEach(function(metric) {
-                                                    metricsInFolders.push(metric.link);
-                                                });
-                                            });
-                                            // unsortedUris now contains uris of all metrics which aren&#x27;t in a folder
-                                            var unsortedUris =
-                                                metrics
-                                                    .filter(function(item) { return metricsInFolders.indexOf(item.link) === -1; })
-                                                    .map(function(item) { return item.link; });
-                        
-                                            // sadly order of parameters of concat matters! (we want unsorted last)
-                                            entriesLinks.push(unsortedUris);
-                        
-                                            // now get details of all metrics
-                                            $.when.apply(this, entriesLinks.map(function(linkArray, idx) {
-                                                return getMetricItemsDetails(linkArray);
-                                            })).then(function() {
-                                                // all promises resolved, i.e. details for each metric are available
-                                                var tree = Array.prototype.slice.call(arguments);
-                                                var structure = tree.map(function(treeItems, idx) {
-                                                    // if idx is not in foldes list than metric is in &quot;Unsorted&quot; folder
-                                                    return {
-                                                        title: (foldersTitles[idx] || &quot;Unsorted&quot;),
-                                                        items: treeItems
-                                                    };
-                                                });
-                                                sortFolderTree(structure);
-                                                result.resolve(structure);
-                                            }, result.reject);
-                                        });
-                                    } else {
-                                        result.reject();
-                                    }
-                                });
-                            }, result.reject);
-                        
-                            return result.promise();
-                        }
-                        /*eslint-enable*/
                         
                         /**
                          * Returns all facts in a project specified by the given projectId
@@ -370,7 +314,7 @@ title: foobar
                          * @return {Array} An array of fact objects
                          */
                         export function getFacts(projectId) {
-                            return get(&#x27;/gdc/md/&#x27; + projectId + &#x27;/query/facts&#x27;).then(getIn(&#x27;query.entries&#x27;));
+                            return get(&#x60;/gdc/md/${projectId}/query/facts&#x60;).then(r =&gt; (r.ok ? r.json() : r)).then(getIn(&#x27;query.entries&#x27;));
                         }
                         
                         /**
@@ -381,7 +325,7 @@ title: foobar
                          * @return {Array} An array of metric objects
                          */
                         export function getMetrics(projectId) {
-                            return get(&#x27;/gdc/md/&#x27; + projectId + &#x27;/query/metrics&#x27;).then(getIn(&#x27;query.entries&#x27;));
+                            return get(&#x60;/gdc/md/${projectId}/query/metrics&#x60;).then(r =&gt; (r.ok ? r.json() : r)).then(getIn(&#x27;query.entries&#x27;));
                         }
                         
                         /**
@@ -397,17 +341,9 @@ title: foobar
                          * @see getAvailableFacts
                          */
                         export function getAvailableMetrics(projectId, attrs) {
-                            /*eslint-disable new-cap*/
-                            const d = $.Deferred();
-                            /*eslint-enable new-cap*/
-                        
-                            post(&#x27;/gdc/md/&#x27; + projectId + &#x27;/availablemetrics&#x27;, {
+                            return post(&#x60;/gdc/md/${projectId}/availablemetrics&#x60;, {
                                 data: JSON.stringify(attrs)
-                            }).then(function resolveAvailableMetrics(result) {
-                                d.resolve(result.entries);
-                            }, d.reject);
-                        
-                            return d.promise();
+                            }).then(r =&gt; (r.ok ? r.json() : r)).then(r =&gt; r.entries);
                         }
                         
                         /**
@@ -423,17 +359,9 @@ title: foobar
                          * @see getAvailableFacts
                          */
                         export function getAvailableAttributes(projectId, metrics) {
-                            /*eslint-disable new-cap*/
-                            const d = $.Deferred();
-                            /*eslint-enable new-cap*/
-                        
-                            post(&#x27;/gdc/md/&#x27; + projectId + &#x27;/drillcrosspaths&#x27;, {
-                                data: JSON.stringify(metrics)
-                            }).then(function resolveAvailableAttributes(result) {
-                                d.resolve(result.drillcrosspath.links);
-                            }, d.reject);
-                        
-                            return d.promise();
+                            return post(&#x60;/gdc/md/${projectId}/drillcrosspaths&#x60;, {
+                                body: JSON.stringify(metrics)
+                            }).then(r =&gt; (r.ok ? r.json() : r)).then(r =&gt; r.drillcrosspath.links);
                         }
                         
                         /**
@@ -449,17 +377,9 @@ title: foobar
                          * @see getAvailableMetrics
                          */
                         export function getAvailableFacts(projectId, items) {
-                            /*eslint-disable new-cap*/
-                            const d = $.Deferred();
-                            /*eslint-enable new-cap*/
-                        
-                            post(&#x27;/gdc/md/&#x27; + projectId + &#x27;/availablefacts&#x27;, {
+                            return post(&#x60;/gdc/md/${projectId}/availablefacts&#x60;, {
                                 data: JSON.stringify(items)
-                            }).then(function resolveAvailableFacts(result) {
-                                d.resolve(result.entries);
-                            }, d.reject);
-                        
-                            return d.promise();
+                            }).then(r =&gt; (r.ok ? r.json() : r)).then(r =&gt; r.entries);
                         }
                         
                         /**
@@ -470,19 +390,152 @@ title: foobar
                          * @return {Object} object details
                          */
                         export function getObjectDetails(uri) {
-                            /*eslint-disable new-cap*/
-                            const d = $.Deferred();
-                            /*eslint-enable new-cap*/
+                            return get(uri);
+                        }
                         
-                            get(uri, {
-                                headers: { Accept: &#x27;application/json&#x27; },
-                                dataType: &#x27;json&#x27;,
-                                contentType: &#x27;application/json&#x27;
-                            }).then(function resolveGetObject(res) {
-                                d.resolve(res);
-                            }, d.reject);
+                        /**
+                         * Get folders with items.
+                         * Returns array of folders, each having a title and items property which is an array of
+                         * corresponding items. Each item is either a metric or attribute, keeping its original
+                         * verbose structure.
+                         *
+                         * @method getFoldersWithItems
+                         * @param {String} type type of folders to return
+                         * @return {Array} Array of folder object, each containing title and
+                         * corresponding items.
+                         */
                         
-                            return d.promise();
+                        export function getFoldersWithItems(projectId, type) {
+                            // fetch all folders of given type and process them
+                            return getFolders(projectId, type).then((folders) =&gt; {
+                                // Helper function to get details for each metric in the given
+                                // array of links to the metadata objects representing the metrics.
+                                // @return the array of promises
+                                function getMetricItemsDetails(array) {
+                                    return Promise.all(array.map(getObjectDetails)).then((...metricArgs) =&gt; {
+                                        return metricArgs.map(item =&gt; item.metric);
+                                    });
+                                }
+                        
+                                // helper mapBy function
+                                function mapBy(array, key) {
+                                    return array.map((item) =&gt; {
+                                        return item[key];
+                                    });
+                                }
+                        
+                                // helper for sorting folder tree structure
+                                // sadly @returns void (sorting == mutating array in js)
+                                const sortFolderTree = (structure) =&gt; {
+                                    structure.forEach((folder) =&gt; {
+                                        folder.items.sort((a, b) =&gt; {
+                                            if (a.meta.title &lt; b.meta.title) {
+                                                return -1;
+                                            } else if (a.meta.title &gt; b.meta.title) {
+                                                return 1;
+                                            }
+                        
+                                            return 0;
+                                        });
+                                    });
+                                    structure.sort((a, b) =&gt; {
+                                        if (a.title &lt; b.title) {
+                                            return -1;
+                                        } else if (a.title &gt; b.title) {
+                                            return 1;
+                                        }
+                        
+                                        return 0;
+                                    });
+                                };
+                        
+                                const foldersLinks = mapBy(folders, &#x27;link&#x27;);
+                                const foldersTitles = mapBy(folders, &#x27;title&#x27;);
+                        
+                                // fetch details for each folder
+                                return Promise.all(foldersLinks.map(getObjectDetails)).then((...folderDetails) =&gt; {
+                                    // if attribute, just parse everything from what we&#x27;ve received
+                                    // and resolve. For metrics, lookup again each metric to get its
+                                    // identifier. If passing unsupported type, reject immediately.
+                                    if (type === &#x27;attribute&#x27;) {
+                                        // get all attributes, subtract what we have and add rest in unsorted folder
+                                        getAttributes(projectId).then((attributes) =&gt; {
+                                            // get uris of attributes which are in some dimension folders
+                                            const attributesInFolders = [];
+                                            folderDetails.forEach((fd) =&gt; {
+                                                fd.dimension.content.attributes.forEach((attr) =&gt; {
+                                                    attributesInFolders.push(attr.meta.uri);
+                                                });
+                                            });
+                                            // unsortedUris now contains uris of all attributes which aren&#x27;t in a folder
+                                            const unsortedUris =
+                                                attributes
+                                                    .filter(item =&gt; attributesInFolders.indexOf(item.link) === -1)
+                                                    .map(item =&gt; item.link);
+                                            // now get details of attributes in no folders
+                                            return Promise.all(unsortedUris.map(getObjectDetails))
+                                                .then((...unsortedAttributeArgs) =&gt; { // TODO add map to r.json
+                                                    // get unsorted attribute objects
+                                                    const unsortedAttributes = unsortedAttributeArgs.map(attr =&gt; attr.attribute);
+                                                    // create structure of folders with attributes
+                                                    const structure = folderDetails.map((folderDetail) =&gt; {
+                                                        return {
+                                                            title: folderDetail.dimension.meta.title,
+                                                            items: folderDetail.dimension.content.attributes
+                                                        };
+                                                    });
+                                                    // and append &quot;Unsorted&quot; folder with attributes to the structure
+                                                    structure.push({
+                                                        title: &#x27;Unsorted&#x27;,
+                                                        items: unsortedAttributes
+                                                    });
+                                                    sortFolderTree(structure);
+                        
+                                                    return structure;
+                                                });
+                                        });
+                                    } else if (type === &#x27;metric&#x27;) {
+                                        const entriesLinks = folderDetails.map(entry =&gt; mapBy(entry.folder.content.entries, &#x27;link&#x27;));
+                                        // get all metrics, subtract what we have and add rest in unsorted folder
+                                        return getMetrics(projectId).then((metrics) =&gt; {
+                                            // get uris of metrics which are in some dimension folders
+                                            const metricsInFolders = [];
+                                            folderDetails.forEach((fd) =&gt; {
+                                                fd.folder.content.entries.forEach((metric) =&gt; {
+                                                    metricsInFolders.push(metric.link);
+                                                });
+                                            });
+                                            // unsortedUris now contains uris of all metrics which aren&#x27;t in a folder
+                                            const unsortedUris =
+                                                metrics
+                                                    .filter(item =&gt; metricsInFolders.indexOf(item.link) === -1)
+                                                    .map(item =&gt; item.link);
+                        
+                                            // sadly order of parameters of concat matters! (we want unsorted last)
+                                            entriesLinks.push(unsortedUris);
+                        
+                                            // now get details of all metrics
+                                            return Promise.all(entriesLinks.map(linkArray =&gt; getMetricItemsDetails(linkArray)))
+                                                .then((...tree) =&gt; { // TODO add map to r.json
+                                                    // all promises resolved, i.e. details for each metric are available
+                                                    const structure = tree.map((treeItems, idx) =&gt; {
+                                                        // if idx is not in foldes list than metric is in &quot;Unsorted&quot; folder
+                                                        return {
+                                                            title: (foldersTitles[idx] || &#x27;Unsorted&#x27;),
+                                                            items: treeItems
+                                                        };
+                                                    });
+                                                    sortFolderTree(structure);
+                                                    return structure;
+                                                });
+                                        });
+                                    } else {
+                                        return Promise.reject();
+                                    }
+                        
+                                    return undefined;
+                                });
+                            });
                         }
                         
                         /**
@@ -493,9 +546,6 @@ title: foobar
                          * @return {String} object identifier
                          */
                         export function getObjectIdentifier(uri) {
-                            /*eslint-disable new-cap*/
-                            const d = $.Deferred();
-                            /*eslint-enable new-cap*/
                             function idFinder(obj) {
                                 if (obj.attribute) {
                                     return obj.attribute.content.displayForms[0].meta.identifier;
@@ -508,13 +558,10 @@ title: foobar
                                 throw Error(&#x27;Unknown object!&#x27;);
                             }
                         
-                            if (!$.isPlainObject(uri)) {
-                                getObjectDetails(uri).then(function resolveGetObjectDetails(data) { d.resolve(idFinder(data)); }, d.reject);
-                            } else {
-                                d.resolve(idFinder(uri));
+                            if (!isPlainObject(uri)) {
+                                return getObjectDetails(uri).then(data =&gt; idFinder(data));
                             }
-                        
-                            return d.promise();
+                            return Promise.resolve(idFinder(uri));
                         }
                         
                         /**
@@ -526,44 +573,32 @@ title: foobar
                          * @return {String} uri of the metadata object
                          */
                         export function getObjectUri(projectId, identifier) {
-                            /*eslint-disable new-cap*/
-                            const d = $.Deferred();
-                            /*eslint-enable new-cap*/
                             function uriFinder(obj) {
                                 const data = (obj.attribute) ? obj.attribute : obj.metric;
                                 return data.meta.uri;
                             }
                         
-                            ajax(&#x27;/gdc/md/&#x27; + projectId + &#x27;/identifiers&#x27;, {
-                                type: &#x27;POST&#x27;,
-                                headers: { Accept: &#x27;application/json&#x27; },
-                                data: {
+                            return ajax(&#x60;/gdc/md/${projectId}/identifiers&#x60;, {
+                                method: &#x27;POST&#x27;,
+                                body: {
                                     identifierToUri: [identifier]
                                 }
-                            }).then(function resolveIdentifiers(data) {
-                                const found = data.identifiers.filter(function findObjectByIdentifier(i) {
-                                    return i.identifier === identifier;
-                                });
+                            }).then(parseJSON).then((data) =&gt; {
+                                const found = data.identifiers.filter(i =&gt; i.identifier === identifier);
                         
                                 if (found[0]) {
                                     return getObjectDetails(found[0].uri);
                                 }
-                        
-                                /*eslint-disable new-cap*/
-                                return $.Deferred().reject(&#x27;identifier not found&#x27;);
-                                /*eslint-enable new-cap*/
-                            }, d.reject).then(function resolveObjectDetails(objData) {
+                                throw new Error(&#x60;Object with identifier ${identifier} not found in project ${projectId}&#x60;);
+                            }).then((objData) =&gt; {
                                 if (!objData.attributeDisplayForm) {
-                                    return d.resolve(uriFinder(objData));
+                                    return uriFinder(objData);
                                 }
-                                return getObjectDetails(objData.attributeDisplayForm.content.formOf).then(function resolve(objectData) {
-                                    d.resolve(uriFinder(objectData));
-                                }, d.reject);
-                            }, d.reject);
-                        
-                            return d.promise();
+                                return getObjectDetails(objData.attributeDisplayForm.content.formOf).then((objectData) =&gt; {
+                                    return uriFinder(objectData);
+                                });
+                            });
                         }
-                        
                         
                             </pre>
                         </div>

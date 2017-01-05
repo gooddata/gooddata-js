@@ -49,13 +49,13 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.53</span>
+                        <strong>gooddata-js</strong> <span class="version">v1.0.4</span>
                         <h1>xhr Class</h1>
                         <div class="meta">
                         
                         
                                 <div class="foundat">
-                                    <strong>Defined in:</strong> <a href="../files/src_xhr.js.html#l13"><code>src&#x2F;xhr.js:13</code></a>
+                                    <strong>Defined in:</strong> <a href="../files/src_xhr.js.html#l11"><code>src&#x2F;xhr.js:11</code></a>
                                 </div>
                         
                                     <strong>Module:</strong> <a href="../modules/xhr.html">xhr</a>
@@ -111,14 +111,6 @@ title: foobar
                         
                                             <ul class="index-list methods">
                                                     <li class="index-item method">
-                                                        <a href="#method_ajax">ajax</a>
-                        
-                                                    </li>
-                                                    <li class="index-item method">
-                                                        <a href="#method_ajaxSetup">ajaxSetup</a>
-                        
-                                                    </li>
-                                                    <li class="index-item method">
                                                         <a href="#method_get">get</a>
                         
                                                     </li>
@@ -161,111 +153,6 @@ title: foobar
                                             </div>
                                         
                         
-                                            <div id="method_ajax" class="method item">
-                                                <h3 class="name"><code>ajax</code></h3>
-                                            
-                                                    <div class="args">
-                                                        <span class="paren">(</span><ul class="args-list inline commas">
-                                                            <li class="arg">
-                                                                    <code>url</code>
-                                                            </li>
-                                                            <li class="arg">
-                                                                    <code>settings</code>
-                                                            </li>
-                                                        </ul><span class="paren">)</span>
-                                                    </div>
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                                <div class="meta">
-                                                            <p>
-                                                            Defined in
-                                                    <a href="../files/src_xhr.js.html#l127"><code>src&#x2F;xhr.js:127</code></a>
-                                                    </p>
-                                            
-                                            
-                                            
-                                                </div>
-                                            
-                                                <div class="description">
-                                                    <p>Same api as jQuery.ajax - arguments (url, settings) or (settings) with url inside
-                                            Additionally content type is automatically json, and object in settings.data is converted to string
-                                            to be consumed by GDC backend.</p>
-                                            <p>settings additionally accepts keys: unauthorized, pollDelay (see xhrSetup for more details)</p>
-                                            
-                                                </div>
-                                            
-                                                    <div class="params">
-                                                        <h4>Parameters</h4>
-                                            
-                                                        <ul class="params-list">
-                                                            <li class="param">
-                                                                    <code class="param-name">url</code>
-                                                                    <span class="type">Object</span>
-                                            
-                                            
-                                                                <div class="param-description">
-                                                                    <p>request url</p>
-                                            
-                                                                </div>
-                                            
-                                                            </li>
-                                                            <li class="param">
-                                                                    <code class="param-name">settings</code>
-                                                                    <span class="type">Object</span>
-                                            
-                                            
-                                                                <div class="param-description">
-                                                                    <p>settings object</p>
-                                            
-                                                                </div>
-                                            
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                            
-                                            
-                                            </div>
-                                            <div id="method_ajaxSetup" class="method item">
-                                                <h3 class="name"><code>ajaxSetup</code></h3>
-                                            
-                                                    <span class="paren">()</span>
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                                <div class="meta">
-                                                            <p>
-                                                            Defined in
-                                                    <a href="../files/src_xhr.js.html#l105"><code>src&#x2F;xhr.js:105</code></a>
-                                                    </p>
-                                            
-                                            
-                                            
-                                                </div>
-                                            
-                                                <div class="description">
-                                                    <p>additional ajax configuration specific for xhr module, keys
-                                            unauthorized: function(xhr) - called when user is unauthorized and token renewal failed
-                                            pollDelay: int - polling interval in milliseconds, default 1000 - or generator function</p>
-                                            <p>method also accepts any option from original $.ajaxSetup. Options will be applied to all call of xhr.ajax().</p>
-                                            <p>xhrSetup behave similar tp $.ajaxSetup, each call replaces settings completely.
-                                            Options can be also passed to particular xhr.ajax calls (same as optios for $.ajax and $.ajaxSetup)</p>
-                                            
-                                                </div>
-                                            
-                                            
-                                            
-                                            </div>
                                             <div id="method_get" class="method item">
                                                 <h3 class="name"><code>get</code></h3>
                                             
@@ -281,7 +168,7 @@ title: foobar
                                                 <div class="meta">
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_xhr.js.html#l201"><code>src&#x2F;xhr.js:201</code></a>
+                                                    <a href="../files/src_xhr.js.html#l217"><code>src&#x2F;xhr.js:217</code></a>
                                                     </p>
                                             
                                             
@@ -311,7 +198,7 @@ title: foobar
                                                 <div class="meta">
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_xhr.js.html#l207"><code>src&#x2F;xhr.js:207</code></a>
+                                                    <a href="../files/src_xhr.js.html#l227"><code>src&#x2F;xhr.js:227</code></a>
                                                     </p>
                                             
                                             
@@ -341,7 +228,7 @@ title: foobar
                                                 <div class="meta">
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_xhr.js.html#l213"><code>src&#x2F;xhr.js:213</code></a>
+                                                    <a href="../files/src_xhr.js.html#l233"><code>src&#x2F;xhr.js:233</code></a>
                                                     </p>
                                             
                                             

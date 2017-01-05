@@ -49,16 +49,15 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.53</span>
+                        <strong>gooddata-js</strong> <span class="version">v1.0.4</span>
                         <h1 class="file-heading">File: src/catalogue.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
-                        import { get, fromPairs, trim, find, omit, cloneDeep } from &#x27;lodash&#x27;;
-                        import * as xhr from &#x27;./xhr&#x27;;
+                        import { get, find, omit, cloneDeep } from &#x27;lodash&#x27;;
+                        import { post, parseJSON } from &#x27;./xhr&#x27;;
                         import { mdToExecutionConfiguration } from &#x27;./execution&#x27;;
                         
-                        const SELECT_LENGTH = &#x27;SELECT &#x27;.length;
                         const REQUEST_DEFAULTS = {
                             types: [&#x27;attribute&#x27;, &#x27;metric&#x27;, &#x27;fact&#x27;],
                             paging: {
@@ -66,31 +65,20 @@ title: foobar
                             }
                         };
                         
-                        const ID_REGEXP = /\{[^}]+\}/g;
-                        const WHERE_REGEXP = /\s+WHERE\s+\[[^\]]+\]\s+(NOT\s+)*IN\s+\([^)]+\)/g;
-                        
                         const LOAD_DATE_DATASET_DEFAULTS = {
                             includeUnavailableDateDataSetsCount: true,
                             includeAvailableDateAttributes: true
                         };
                         
-                        const parseCategories = (bucketItems) =&gt; (
+                        const parseCategories = bucketItems =&gt; (
                             get(bucketItems, &#x27;categories&#x27;).map(({ category }) =&gt; ({
-                                    category: {
-                                        ...category,
-                                        displayForm: get(category, &#x27;attribute&#x27;)
-                                    }
-                                })
+                                category: {
+                                    ...category,
+                                    displayForm: get(category, &#x27;attribute&#x27;)
+                                }
+                            })
                             )
                         );
-                        
-                        function recursiveReplace(text, regexp, replaceFn) {
-                            const replacedText = text.replace(regexp, replaceFn);
-                            if (text === replacedText) {
-                                return text;
-                            }
-                            return recursiveReplace(replacedText, regexp, replaceFn);
-                        }
                         
                         function bucketItemsToExecConfig(bucketItems, options = {}) {
                             const categories = parseCategories(bucketItems);
@@ -101,21 +89,15 @@ title: foobar
                                 }
                             }, options);
                             const definitions = get(executionConfig, &#x27;definitions&#x27;);
-                            const idToExpr = fromPairs(definitions.map(
-                                ({ metricDefinition }) =&gt;
-                                    [metricDefinition.identifier, metricDefinition.expression] ));
                         
-                            return get(executionConfig, &#x27;columns&#x27;).map(column =&gt; {
+                            return get(executionConfig, &#x27;columns&#x27;).map((column) =&gt; {
                                 const definition = find(definitions, ({ metricDefinition }) =&gt;
                                     get(metricDefinition, &#x27;identifier&#x27;) === column
                                 );
                                 const maql = get(definition, &#x27;metricDefinition.expression&#x27;);
                         
                                 if (maql) {
-                                    return recursiveReplace(maql, ID_REGEXP, match =&gt; {
-                                        const expression = idToExpr[trim(match, &#x27;{}&#x27;)];
-                                        return expression.substr(SELECT_LENGTH).replace(WHERE_REGEXP, &#x27;&#x27;);
-                                    });
+                                    return maql;
                                 }
                                 return column;
                             });
@@ -129,39 +111,43 @@ title: foobar
                          * &lt;ul&gt;
                          * &lt;li&gt;dataSetIdentifier - in value is string identifier of dataSet - this leads to CUSTOM type
                          * &lt;li&gt;returnAllDateDataSets - true value means to return ALL values without dataSet differentiation
+                         * &lt;li&gt;returnAllRelatedDateDataSets - only related date dataSets are loaded across all dataSets
                          * &lt;li&gt;by default we get PRODUCTION dataSets
                          * &lt;/ul&gt;
                          * @returns {Object} &quot;requiredDataSets&quot; object hash.
                          */
-                        const getRequiredDataSets = options =&gt; {
-                            if (get(options, &#x27;returnAllDateDataSets&#x27;)) {
-                                return {
-                                    type: &#x27;ALL&#x27;
-                                };
-                            } else if (get(options, &#x27;dataSetIdentifier&#x27;)) {
-                                return {
-                                    type: &#x27;CUSTOM&#x27;,
-                                    customIdentifiers: [ get(options, &#x27;dataSetIdentifier&#x27;) ]
-                                };
+                        const getRequiredDataSets = (options) =&gt; {
+                            if (get(options, &#x27;returnAllRelatedDateDataSets&#x27;)) {
+                                return {};
                             }
-                            return {
-                                type: &#x27;PRODUCTION&#x27;
-                            };
+                        
+                            if (get(options, &#x27;returnAllDateDataSets&#x27;)) {
+                                return { requiredDataSets: { type: &#x27;ALL&#x27; } };
+                            }
+                        
+                            if (get(options, &#x27;dataSetIdentifier&#x27;)) {
+                                return { requiredDataSets: {
+                                    type: &#x27;CUSTOM&#x27;,
+                                    customIdentifiers: [get(options, &#x27;dataSetIdentifier&#x27;)]
+                                } };
+                            }
+                        
+                            return { requiredDataSets: { type: &#x27;PRODUCTION&#x27; } };
                         };
                         
-                        function loadCatalog(projectId, request) {
+                        function loadCatalog(projectId, catalogRequest) {
                             const uri = &#x60;/gdc/internal/projects/${projectId}/loadCatalog&#x60;;
-                            return xhr.ajax(uri, {
-                                type: &#x27;POST&#x27;,
-                                data: { catalogRequest: request }
-                            }).then(data =&gt; data.catalogResponse);
+                        
+                            return post(uri, { data: { catalogRequest } })
+                                .then(parseJSON)
+                                .then(data =&gt; data.catalogResponse);
                         }
                         
                         export function loadItems(projectId, options = {}) {
                             const request = omit({
                                 ...REQUEST_DEFAULTS,
                                 ...options,
-                                requiredDataSets: getRequiredDataSets(options)
+                                ...getRequiredDataSets(options)
                             }, [&#x27;dataSetIdentifier&#x27;, &#x27;returnAllDateDataSets&#x27;]);
                         
                             let bucketItems = get(cloneDeep(options), &#x27;bucketItems.buckets&#x27;);
@@ -179,13 +165,12 @@ title: foobar
                             return loadCatalog(projectId, request);
                         }
                         
-                        function requestDateDataSets(projectId, request) {
+                        function requestDateDataSets(projectId, dateDataSetsRequest) {
                             const uri = &#x60;/gdc/internal/projects/${projectId}/loadDateDataSets&#x60;;
                         
-                            return xhr.ajax(uri, {
-                                type: &#x27;POST&#x27;,
-                                data: { dateDataSetsRequest: request }
-                            });
+                            return post(uri, { data: { dateDataSetsRequest } })
+                                .then(parseJSON)
+                                .then(data =&gt; data.dateDataSetsResponse);
                         }
                         
                         export function loadDateDataSets(projectId, options) {
@@ -195,15 +180,13 @@ title: foobar
                                 bucketItems = bucketItemsToExecConfig(bucketItems, { removeDateItems: true });
                             }
                         
-                            const requiredDataSets = getRequiredDataSets(options);
-                        
                             const request = omit({
                                 ...LOAD_DATE_DATASET_DEFAULTS,
                                 ...REQUEST_DEFAULTS,
                                 ...options,
-                                requiredDataSets,
+                                ...getRequiredDataSets(options),
                                 bucketItems
-                            }, [&#x27;filter&#x27;, &#x27;types&#x27;, &#x27;paging&#x27;, &#x27;dataSetIdentifier&#x27;, &#x27;returnAllDateDataSets&#x27;]);
+                            }, [&#x27;filter&#x27;, &#x27;types&#x27;, &#x27;paging&#x27;, &#x27;dataSetIdentifier&#x27;, &#x27;returnAllDateDataSets&#x27;, &#x27;returnAllRelatedDateDataSets&#x27;]);
                         
                             return requestDateDataSets(projectId, request);
                         }

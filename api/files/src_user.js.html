@@ -49,14 +49,13 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.53</span>
+                        <strong>gooddata-js</strong> <span class="version">v1.0.4</span>
                         <h1 class="file-heading">File: src/user.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
                         // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
-                        import $ from &#x27;jquery&#x27;;
-                        import { ajax, get, post, put } from &#x27;./xhr&#x27;;
+                        import { ajax, get, post, put, parseJSON } from &#x27;./xhr&#x27;;
                         
                         /**
                          * @module user
@@ -66,13 +65,27 @@ title: foobar
                         /**
                          * Find out whether a user is logged in
                          *
-                         * Returns a promise which either:
-                         * **resolves** - which means user is logged in or
-                         * **rejects** - meaning is not logged in
+                         * @return {Promise} resolves with true if user logged in, false otherwise
                          * @method isLoggedIn
                          */
                         export function isLoggedIn() {
-                            return $.getJSON(&#x27;/gdc/account/token&#x27;);
+                            return new Promise((resolve, reject) =&gt; {
+                                // cannot use get here directly - we need to access to response
+                                // not to responses JSON get returns
+                                ajax(&#x27;/gdc/account/token&#x27;, { method: &#x27;GET&#x27; }).then((r) =&gt; {
+                                    if (r.ok) {
+                                        resolve(true);
+                                    }
+                        
+                                    resolve(false);
+                                }, (err) =&gt; {
+                                    if (err.response.status === 401) {
+                                        resolve(false);
+                                    } else {
+                                        reject(err);
+                                    }
+                                });
+                            });
                         }
                         
                         
@@ -87,16 +100,16 @@ title: foobar
                          */
                         export function login(username, password) {
                             return post(&#x27;/gdc/account/login&#x27;, {
-                                data: JSON.stringify({
+                                body: JSON.stringify({
                                     postUserLogin: {
                                         login: username,
-                                        password: password,
+                                        password,
                                         remember: 1,
                                         captcha: &#x27;&#x27;,
                                         verifyCaptcha: &#x27;&#x27;
                                     }
                                 })
-                            });
+                            }).then(parseJSON);
                         }
                         
                         /**
@@ -104,23 +117,20 @@ title: foobar
                          * @method logout
                          */
                         export function logout() {
-                            /* eslint new-cap: 0 */
-                            const d = $.Deferred();
+                            return isLoggedIn().then((loggedIn) =&gt; {
+                                if (loggedIn) {
+                                    return get(&#x27;/gdc/app/account/bootstrap&#x27;).then((result) =&gt; {
+                                        const userUri = result.bootstrapResource.accountSetting.links.self;
+                                        const userId = userUri.match(/([^\/]+)\/?$/)[1]; // eslint-disable-line no-useless-escape
                         
-                            isLoggedIn().then(function resolve() {
-                                return get(&#x27;/gdc/app/account/bootstrap&#x27;).then(function resolveGet(result) {
-                                    const userUri = result.bootstrapResource.accountSetting.links.self;
-                                    const userId = userUri.match(/([^\/]+)\/?$/)[1];
+                                        return ajax(&#x60;/gdc/account/login/${userId}&#x60;, {
+                                            method: &#x27;delete&#x27;
+                                        });
+                                    });
+                                }
                         
-                                    return userId;
-                                }, d.reject);
-                            }, d.resolve).then(function resolveAll(userId) {
-                                return ajax(&#x27;/gdc/account/login/&#x27; + userId, {
-                                    method: &#x27;delete&#x27;
-                                });
-                            }).then(d.resolve, d.reject);
-                        
-                            return d.promise();
+                                return Promise.resolve();
+                            });
                         }
                         
                         /**
@@ -130,15 +140,9 @@ title: foobar
                          * @param {Object} profileSetting
                         */
                         export function updateProfileSettings(profileId, profileSetting) {
-                            /*eslint-disable new-cap*/
-                            const d = $.Deferred();
-                            /*eslint-enable new-cap*/
-                        
-                            put(&#x27;/gdc/account/profile/&#x27; + profileId + &#x27;/settings&#x27;, {
+                            return put(&#x60;/gdc/account/profile/${profileId}/settings&#x60;, {
                                 data: profileSetting
-                            }).then(d.resolve, d.reject);
-                        
-                            return d.promise();
+                            });
                         }
                         
                         /**
@@ -146,24 +150,20 @@ title: foobar
                          * @method getAccountInfo
                          */
                         export function getAccountInfo() {
-                            /* eslint new-cap: 0 */
-                            const d = $.Deferred();
+                            return get(&#x27;/gdc/app/account/bootstrap&#x27;)
+                                .then((result) =&gt; {
+                                    const br = result.bootstrapResource;
+                                    const accountInfo = {
+                                        login: br.accountSetting.login,
+                                        loginMD5: br.current.loginMD5,
+                                        firstName: br.accountSetting.firstName,
+                                        lastName: br.accountSetting.lastName,
+                                        organizationName: br.settings.organizationName,
+                                        profileUri: br.accountSetting.links.self
+                                    };
                         
-                            get(&#x27;/gdc/app/account/bootstrap&#x27;).then(function resolveBootstrap(result) {
-                                const br = result.bootstrapResource;
-                                const accountInfo = {
-                                    login: br.accountSetting.login,
-                                    loginMD5: br.current.loginMD5,
-                                    firstName: br.accountSetting.firstName,
-                                    lastName: br.accountSetting.lastName,
-                                    organizationName: br.settings.organizationName,
-                                    profileUri: br.accountSetting.links.self
-                                };
-                        
-                                d.resolve(accountInfo);
-                            }, d.reject);
-                        
-                            return d.promise();
+                                    return accountInfo;
+                                });
                         }
                         
                             </pre>

@@ -49,23 +49,13 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v0.1.53</span>
+                        <strong>gooddata-js</strong> <span class="version">v1.0.4</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
                         // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
-                        import $ from &#x27;jquery&#x27;;
                         import md5 from &#x27;md5&#x27;;
-                        
-                        import {
-                            ajax,
-                            post
-                        } from &#x27;./xhr&#x27;;
-                        
-                        import Rules from &#x27;./utils/rules&#x27;;
-                        import { sortDefinitions } from &#x27;./utils/definitions&#x27;;
-                        
                         import invariant from &#x27;invariant&#x27;;
                         import {
                             compact,
@@ -82,12 +72,24 @@ title: foobar
                             assign,
                             partial,
                             flatten,
+                            omit
                         } from &#x27;lodash&#x27;;
+                        
+                        import {
+                            ajax,
+                            post,
+                            get as xhrGet,
+                            parseJSON
+                        } from &#x27;./xhr&#x27;;
+                        
+                        import Rules from &#x27;./utils/rules&#x27;;
+                        import { sortDefinitions } from &#x27;./utils/definitions&#x27;;
                         
                         const notEmpty = negate(isEmpty);
                         
                         const findHeaderForMappingFn = (mapping, header) =&gt;
-                            ((mapping.element === header.id || mapping.element === header.uri) &amp;&amp; header.measureIndex === undefined);
+                            ((mapping.element === header.id || mapping.element === header.uri) &amp;&amp;
+                                header.measureIndex === undefined);
                         
                         
                         const wrapMeasureIndexesFromMappings = (metricMappings, headers) =&gt; {
@@ -122,7 +124,11 @@ title: foobar
                          *                 property &quot;where&quot; containing query-like filters
                          *                 property &quot;orderBy&quot; contains array of sorted properties to order in form
                          *                      [{column: &#x27;identifier&#x27;, direction: &#x27;asc|desc&#x27;}]
-                         * @param {Object} settings - AJAX settings
+                         * @param {Object} settings - Set &quot;extended&quot; to true to retrieve the result
+                         *                            including internal attribute IDs (useful to construct filters
+                         *                            for subsequent report execution requests).
+                         *                             Supports additional settings accepted by the underlying
+                         *                             xhr.ajax() calls
                          *
                          * @return {Object} Structure with &#x60;headers&#x60; and &#x60;rawData&#x60; keys filled with values from execution.
                          */
@@ -131,41 +137,59 @@ title: foobar
                                 isLoaded: false
                             };
                         
+                            // Extended result exposes internal attribute element IDs which can
+                            // be used when constructing executionConfiguration filters for
+                            // subsequent report execution requests
+                            const resultKey = settings.extended ? &#x27;extendedTabularDataResult&#x27; : &#x27;tabularDataResult&#x27;;
                             // Create request and result structures
                             const request = {
                                 execution: { columns }
                             };
                             // enrich configuration with supported properties such as
                             // where clause with query-like filters or execution context filters
-                            [&#x27;filters&#x27;, &#x27;where&#x27;, &#x27;orderBy&#x27;, &#x27;definitions&#x27;].forEach(property =&gt; {
+                            [&#x27;filters&#x27;, &#x27;where&#x27;, &#x27;orderBy&#x27;, &#x27;definitions&#x27;].forEach((property) =&gt; {
                                 if (executionConfiguration[property]) {
                                     request.execution[property] = executionConfiguration[property];
                                 }
                             });
                         
-                            /*eslint-disable new-cap*/
-                            const d = $.Deferred();
-                            /*eslint-enable new-cap*/
-                        
                             // Execute request
-                            post(&#x60;/gdc/internal/projects/${projectId}/experimental/executions&#x60;, {
-                                ...settings,
-                                data: JSON.stringify(request)
-                            }, d.reject).then((result) =&gt; {
+                            return post(&#x60;/gdc/internal/projects/${projectId}/experimental/executions&#x60;, {
+                                body: JSON.stringify(request)
+                            })
+                            .then(parseJSON)
+                            .then((result) =&gt; {
                                 executedReport.headers = wrapMeasureIndexesFromMappings(
                                     get(executionConfiguration, &#x27;metricMappings&#x27;), result.executionResult.headers);
                         
                                 // Start polling on url returned in the executionResult for tabularData
-                                return ajax(result.executionResult.tabularDataResult, settings);
-                            }, d.reject).then((result, message, response) =&gt; {
-                                // After the retrieving computed tabularData, resolve the promise
-                                executedReport.rawData = (result &amp;&amp; result.tabularDataResult) ? result.tabularDataResult.values : [];
-                                executedReport.isLoaded = true;
-                                executedReport.isEmpty = (response.status === 204);
-                                d.resolve(executedReport);
-                            }, d.reject);
+                                return ajax(result.executionResult[resultKey], settings);
+                            })
+                            .then((r) =&gt; {
+                                if (r.status === 204) {
+                                    return {
+                                        status: r.status,
+                                        result: &#x27;&#x27;
+                                    };
+                                }
                         
-                            return d.promise();
+                                return r.json().then((result) =&gt; {
+                                    return {
+                                        status: r.status,
+                                        result
+                                    };
+                                });
+                            })
+                            .then((r) =&gt; {
+                                const { result, status } = r;
+                        
+                                return Object.assign({}, executedReport, {
+                                    rawData: get(result, &#x60;${resultKey}.values&#x60;, []),
+                                    warnings: get(result, &#x60;${resultKey}.warnings&#x60;, []),
+                                    isLoaded: true,
+                                    isEmpty: status === 204
+                                });
+                            });
                         }
                         
                         const MAX_TITLE_LENGTH = 255;
@@ -187,7 +211,17 @@ title: foobar
                         
                         const CONTRIBUTION_METRIC_FORMAT = &#x27;#,##0.00%&#x27;;
                         
-                        const getFilterExpression = listAttributeFilter =&gt; {
+                        const allFiltersEmpty = item =&gt; every(map(
+                            get(item, &#x27;measureFilters&#x27;, []),
+                            f =&gt; isEmpty(get(f, &#x27;listAttributeFilter.default.attributeElements&#x27;, []))
+                        ));
+                        
+                        const isDerived = (measure) =&gt; {
+                            const type = get(measure, &#x27;type&#x27;);
+                            return (type === &#x27;fact&#x27; || type === &#x27;attribute&#x27; || !allFiltersEmpty(measure));
+                        };
+                        
+                        const getFilterExpression = (listAttributeFilter) =&gt; {
                             const attributeUri = get(listAttributeFilter, &#x27;listAttributeFilter.attribute&#x27;);
                             const elements = get(listAttributeFilter, &#x27;listAttributeFilter.default.attributeElements&#x27;, []);
                             if (isEmpty(elements)) {
@@ -199,33 +233,36 @@ title: foobar
                             return &#x60;[${attributeUri}] ${negative}IN (${elementsForQuery.join(&#x27;,&#x27;)})&#x60;;
                         };
                         
-                        const getGeneratedMetricExpression = item =&gt; {
+                        const getGeneratedMetricExpression = (item) =&gt; {
                             const aggregation = get(item, &#x27;aggregation&#x27;, &#x27;&#x27;).toUpperCase();
                             const objectUri = get(item, &#x27;objectUri&#x27;);
                             const where = filter(map(get(item, &#x27;measureFilters&#x27;), getFilterExpression), e =&gt; !!e);
                         
-                            return &#x27;SELECT &#x27; + (aggregation ? &#x60;${aggregation}([${objectUri}])&#x60; : &#x60;[${objectUri}]&#x60;) +
-                                (notEmpty(where) ? &#x60; WHERE ${where.join(&#x27; AND &#x27;)}&#x60; : &#x27;&#x27;);
+                            return &#x60;SELECT ${aggregation ? &#x60;${aggregation}([${objectUri}])&#x60; : &#x60;[${objectUri}]&#x60;
+                                }${notEmpty(where) ? &#x60; WHERE ${where.join(&#x27; AND &#x27;)}&#x60; : &#x27;&#x27;}&#x60;;
                         };
                         
-                        const getPercentMetricExpression = ({ category }, metricId) =&gt; {
+                        const getPercentMetricExpression = ({ category }, measure) =&gt; {
+                            let metricExpressionWithoutFilters = &#x60;SELECT [${get(measure, &#x27;objectUri&#x27;)}]&#x60;;
+                        
+                            if (isDerived(measure)) {
+                                metricExpressionWithoutFilters = getGeneratedMetricExpression(omit(measure, &#x27;measureFilters&#x27;));
+                            }
+                        
                             const attributeUri = get(category, &#x27;attribute&#x27;);
+                            const whereFilters = filter(map(get(measure, &#x27;measureFilters&#x27;), getFilterExpression), e =&gt; !!e);
+                            const whereExpression = notEmpty(whereFilters) ? &#x60; WHERE ${whereFilters.join(&#x27; AND &#x27;)}&#x60; : &#x27;&#x27;;
                         
-                            return &#x60;SELECT (SELECT ${metricId}) / (SELECT ${metricId} BY ALL [${attributeUri}])&#x60;;
+                            return &#x60;SELECT (${metricExpressionWithoutFilters}${whereExpression}) / (${metricExpressionWithoutFilters} BY ALL [${attributeUri}]${whereExpression})&#x60;;
                         };
                         
-                        const getPoPExpression = (attribute, metricId) =&gt; {
+                        const getPoPExpression = (attribute, metricExpression) =&gt; {
                             const attributeUri = get(attribute, &#x27;attribute&#x27;);
                         
-                            return &#x60;SELECT (SELECT ${metricId}) FOR PREVIOUS ([${attributeUri}])&#x60;;
+                            return &#x60;SELECT ${metricExpression} FOR PREVIOUS ([${attributeUri}])&#x60;;
                         };
                         
                         const getGeneratedMetricHash = (title, format, expression) =&gt; md5(&#x60;${expression}#${title}#${format}&#x60;);
-                        
-                        const allFiltersEmpty = item =&gt; every(map(
-                            get(item, &#x27;measureFilters&#x27;, []),
-                            f =&gt; isEmpty(get(f, &#x27;listAttributeFilter.default.attributeElements&#x27;, []))
-                        ));
                         
                         const getGeneratedMetricIdentifier = (item, aggregation, expressionCreator, hasher) =&gt; {
                             const [, , , prjId, , id] = get(item, &#x27;objectUri&#x27;).split(&#x27;/&#x27;);
@@ -239,24 +276,19 @@ title: foobar
                             return &#x60;${type}_${identifier}.generated.${prefix}${aggregation}.${hash}&#x60;;
                         };
                         
-                        const isDerived = measure =&gt; {
-                            const type = get(measure, &#x27;type&#x27;);
-                            return (type === &#x27;fact&#x27; || type === &#x27;attribute&#x27; || !allFiltersEmpty(measure));
-                        };
-                        
                         const isDateCategory = ({ category }) =&gt; category.type === &#x27;date&#x27;;
                         const isDateFilter = ({ dateFilter }) =&gt; dateFilter;
                         
                         const getCategories = ({ categories }) =&gt; categories;
                         const getFilters = ({ filters }) =&gt; filters;
                         
-                        const getDateCategory = mdObj =&gt; {
+                        const getDateCategory = (mdObj) =&gt; {
                             const category = find(getCategories(mdObj), isDateCategory);
                         
                             return get(category, &#x27;category&#x27;);
                         };
                         
-                        const getDateFilter = mdObj =&gt; {
+                        const getDateFilter = (mdObj) =&gt; {
                             const dateFilter = find(getFilters(mdObj), isDateFilter);
                         
                             return get(dateFilter, &#x27;dateFilter&#x27;);
@@ -311,16 +343,10 @@ title: foobar
                         
                         const createContributionMetric = (measure, mdObj, measureIndex) =&gt; {
                             const category = first(getCategories(mdObj));
-                        
-                            let generated;
-                            let getMetricExpression = partial(getPercentMetricExpression, category, &#x60;[${get(measure, &#x27;objectUri&#x27;)}]&#x60;);
-                            if (isDerived(measure)) {
-                                generated = createDerivedMetric(measure, mdObj, measureIndex);
-                                getMetricExpression = partial(getPercentMetricExpression, category, &#x60;{${get(generated, &#x27;definition.metricDefinition.identifier&#x27;)}}&#x60;);
-                            }
+                            const getMetricExpression = partial(getPercentMetricExpression, category);
                             const title = getBaseMetricTitle(get(measure, &#x27;title&#x27;));
                             const hasher = partial(getGeneratedMetricHash, title, CONTRIBUTION_METRIC_FORMAT);
-                            const result = [{
+                            return {
                                 element: getGeneratedMetricIdentifier(measure, &#x27;percent&#x27;, getMetricExpression, hasher),
                                 definition: {
                                     metricDefinition: {
@@ -334,13 +360,7 @@ title: foobar
                                 meta: {
                                     measureIndex
                                 }
-                            }];
-                        
-                            if (generated) {
-                                result.unshift({ definition: generated.definition });
-                            }
-                        
-                            return result;
+                            };
                         };
                         
                         const createPoPMetric = (measure, mdObj, measureIndex) =&gt; {
@@ -355,7 +375,7 @@ title: foobar
                         
                             if (isDerived(measure)) {
                                 generated = createDerivedMetric(measure, mdObj, measureIndex);
-                                getMetricExpression = partial(getPoPExpression, date, &#x60;{${get(generated, &#x27;definition.metricDefinition.identifier&#x27;)}}&#x60;);
+                                getMetricExpression = partial(getPoPExpression, date, &#x60;(${get(generated, &#x27;definition.metricDefinition.expression&#x27;)})&#x60;);
                             }
                         
                             const identifier = getGeneratedMetricIdentifier(measure, &#x27;pop&#x27;, getMetricExpression, hasher);
@@ -395,7 +415,7 @@ title: foobar
                             const format = CONTRIBUTION_METRIC_FORMAT;
                             const hasher = partial(getGeneratedMetricHash, title, format);
                         
-                            const getMetricExpression = partial(getPoPExpression, date, &#x60;{${last(generated).element}}&#x60;);
+                            const getMetricExpression = partial(getPoPExpression, date, &#x60;(${get(generated, &#x27;definition.metricDefinition.expression&#x27;)})&#x60;);
                         
                             const identifier = getGeneratedMetricIdentifier(measure, &#x27;pop&#x27;, getMetricExpression, hasher);
                         
@@ -418,13 +438,13 @@ title: foobar
                         
                             result.push(generated);
                         
-                            return flatten(result);
+                            return result;
                         };
                         
                         const categoryToElement = ({ category }) =&gt;
                             ({ element: get(category, &#x27;displayForm&#x27;), sort: get(category, &#x27;sort&#x27;) });
                         
-                        const attributeFilterToWhere = f =&gt; {
+                        const attributeFilterToWhere = (f) =&gt; {
                             const elements = get(f, &#x27;listAttributeFilter.default.attributeElements&#x27;, []);
                             const elementsForQuery = map(elements, e =&gt; ({ id: last(e.split(&#x27;=&#x27;)) }));
                         
@@ -432,15 +452,18 @@ title: foobar
                             const negative = get(f, &#x27;listAttributeFilter.default.negativeSelection&#x27;);
                         
                             return negative ?
-                                { [dfUri]: { &#x27;$not&#x27;: { &#x27;$in&#x27;: elementsForQuery } } } :
-                                { [dfUri]: { &#x27;$in&#x27;: elementsForQuery } };
+                                { [dfUri]: { $not: { $in: elementsForQuery } } } :
+                                { [dfUri]: { $in: elementsForQuery } };
                         };
                         
-                        const dateFilterToWhere = f =&gt; {
-                            const dateUri = get(f, &#x27;dateFilter.dimension&#x27;) || get(f, &#x27;dateFilter.dataset&#x27;);
+                        const dateFilterToWhere = (f) =&gt; {
+                            const dateUri =
+                                get(f, &#x27;dateFilter.dimension&#x27;) ||
+                                get(f, &#x27;dateFilter.dataSet&#x27;) ||
+                                get(f, &#x27;dateFilter.dataset&#x27;); // dataset with lowercase &#x27;s&#x27; is deprecated; kept here for backwards compatibility
                             const granularity = get(f, &#x27;dateFilter.granularity&#x27;);
                             const between = [get(f, &#x27;dateFilter.from&#x27;), get(f, &#x27;dateFilter.to&#x27;)];
-                            return { [dateUri]: { &#x27;$between&#x27;: between, &#x27;$granularity&#x27;: granularity } };
+                            return { [dateUri]: { $between: between, $granularity: granularity } };
                         };
                         
                         const isPoP = ({ showPoP }) =&gt; showPoP;
@@ -492,10 +515,21 @@ title: foobar
                         
                         
                         function getWhere(filters) {
-                            const attributeFilters = map(filter(filters, ({ listAttributeFilter }) =&gt; isAttributeFilterExecutable(listAttributeFilter)), attributeFilterToWhere);
+                            const executableFilters = filter(
+                                filters, ({ listAttributeFilter }) =&gt; isAttributeFilterExecutable(listAttributeFilter)
+                            );
+                            const attributeFilters = map(executableFilters, attributeFilterToWhere);
                             const dateFilters = map(filter(filters, ({ dateFilter }) =&gt; isDateFilterExecutable(dateFilter)), dateFilterToWhere);
                         
-                            return [...attributeFilters, ...dateFilters].reduce(assign, {});
+                            const resultDate = [...dateFilters].reduce(assign, {});
+                            const resultAttribute = {
+                                $and: attributeFilters
+                            };
+                        
+                            return {
+                                ...resultDate,
+                                ...resultAttribute
+                            };
                         }
                         
                         const sortToOrderBy = item =&gt; ({ column: get(item, &#x27;element&#x27;), direction: get(item, &#x27;sort&#x27;) });
@@ -536,9 +570,32 @@ title: foobar
                             };
                         };
                         
+                        const getOriginalMetricFormats = (mdObj) =&gt; {
+                            // for metrics with showPoP or measureFilters.length &gt; 0 roundtrip for original metric format
+                            return Promise.all(map(
+                                map(get(mdObj, &#x27;buckets.measures&#x27;), ({ measure }) =&gt; measure),
+                                (measure) =&gt; {
+                                    if (measure.showPoP === true || measure.measureFilters.length &gt; 0) {
+                                        return xhrGet(measure.objectUri).then((obj) =&gt; {
+                                            return {
+                                                ...measure,
+                                                format: get(obj, &#x27;metric.content.format&#x27;, measure.format)
+                                            };
+                                        });
+                                    }
+                        
+                                    return Promise.resolve(measure);
+                                }
+                            ));
+                        };
+                        
                         export const getDataForVis = (projectId, mdObj, settings) =&gt; {
-                            const { columns, ...executionConfiguration } = mdToExecutionConfiguration(mdObj);
-                            return getData(projectId, columns, executionConfiguration, settings);
+                            return getOriginalMetricFormats(mdObj).then((measures) =&gt; {
+                                const metadata = mdObj;
+                                metadata.buckets.measures = map(measures, measure =&gt; ({ measure }));
+                                const { columns, ...executionConfiguration } = mdToExecutionConfiguration(mdObj);
+                                return getData(projectId, columns, executionConfiguration, settings);
+                            });
                         };
                         
                             </pre>
