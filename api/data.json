@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "1.0.4",
+        "version": "1.1.0",
         "url": ""
     },
     "files": {
@@ -156,7 +156,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/metadata.js",
-            "line": 11,
+            "line": 12,
             "description": "Functions for working with metadata objects"
         },
         "project": {
@@ -269,7 +269,7 @@
             "module": "metadata",
             "namespace": "",
             "file": "src/metadata.js",
-            "line": 11,
+            "line": 12,
             "description": "Functions for working with metadata objects"
         },
         "project": {
@@ -399,7 +399,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 18,
+            "line": 19,
             "description": "Load all objects with given uris\n(use bulk loading instead of getting objects one by one)",
             "itemtype": "method",
             "name": "getObjects",
@@ -424,7 +424,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 56,
+            "line": 57,
             "description": "Get MD objects from using2 resource. Include only objects of given types\nand take care about fetching only nearest objects if requested.",
             "itemtype": "method",
             "name": "getObjectUsing",
@@ -454,7 +454,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 94,
+            "line": 95,
             "description": "Get MD objects from using2 resource. Include only objects of given types\nand take care about fetching only nearest objects if requested.",
             "itemtype": "method",
             "name": "getObjectUsingMany",
@@ -484,7 +484,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 132,
+            "line": 133,
             "description": "Get additional information about elements specified by their uris\n`elementUris` is the array of uris of elements to be look-up\nCurrently makes a request for each object, should be encapsulated\nto one call",
             "itemtype": "method",
             "name": "getElementDetails",
@@ -502,7 +502,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 196,
+            "line": 197,
             "description": "Reutrns all attributes in a project specified by projectId param",
             "itemtype": "method",
             "name": "getAttributes",
@@ -521,7 +521,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 207,
+            "line": 208,
             "description": "Returns all dimensions in a project specified by projectId param",
             "itemtype": "method",
             "name": "getDimensions",
@@ -543,7 +543,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 219,
+            "line": 220,
             "description": "Returns project folders. Folders can be of specific types and you can specify\nthe type you need by passing and optional `type` parameter",
             "itemtype": "method",
             "name": "getFolders",
@@ -568,7 +568,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 253,
+            "line": 254,
             "description": "Returns all facts in a project specified by the given projectId",
             "itemtype": "method",
             "name": "getFacts",
@@ -587,7 +587,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 264,
+            "line": 265,
             "description": "Returns all metrics in a project specified by the given projectId",
             "itemtype": "method",
             "name": "getMetrics",
@@ -606,7 +606,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 275,
+            "line": 276,
             "description": "Returns all metrics that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given attributes",
             "itemtype": "method",
             "name": "getAvailableMetrics",
@@ -635,7 +635,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 293,
+            "line": 294,
             "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
             "itemtype": "method",
             "name": "getAvailableAttributes",
@@ -664,7 +664,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 311,
+            "line": 312,
             "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
             "itemtype": "method",
             "name": "getAvailableFacts",
@@ -693,7 +693,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 329,
+            "line": 330,
             "description": "Get details of a metadata object specified by its uri",
             "itemtype": "method",
             "name": "getObjectDetails",
@@ -712,7 +712,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 340,
+            "line": 341,
             "description": "Get folders with items.\nReturns array of folders, each having a title and items property which is an array of\ncorresponding items. Each item is either a metric or attribute, keeping its original\nverbose structure.",
             "itemtype": "method",
             "name": "getFoldersWithItems",
@@ -732,7 +732,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 485,
+            "line": 486,
             "description": "Get identifier of a metadata object identified by its uri",
             "itemtype": "method",
             "name": "getObjectIdentifier",
@@ -751,7 +751,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 511,
+            "line": 512,
             "description": "Get uri of an metadata object, specified by its identifier and project id it belongs to",
             "itemtype": "method",
             "name": "getObjectUri",
@@ -768,6 +768,34 @@
             "return": {
                 "description": "uri of the metadata object",
                 "type": "String"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.js",
+            "line": 548,
+            "description": "Get valid elements of an attribute, specified by its identifier and project id it belongs to",
+            "itemtype": "method",
+            "name": "getValidElements",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project"
+                },
+                {
+                    "name": "id",
+                    "description": "display form identifier of the metadata object"
+                },
+                {
+                    "name": "options",
+                    "description": "objects with options:\n     - limit {Number}\n     - offset {Number}\n     - order {String} 'asc' or 'desc'\n     - filter {String}\n     - prompt {String}\n     - uris {Array}\n     - complement {Boolean}\n     - includeTotalCountWithoutFilters {Boolean}\n     - restrictiveDefinition {String}",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "ValidElements response with:\n     - items {Array} elements\n     - paging {Object}\n     - elementsMeta {Object}",
+                "type": "Object"
             },
             "class": "metadata",
             "module": "metadata"
