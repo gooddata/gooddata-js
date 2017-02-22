@@ -3,7 +3,7 @@
 setupGrunt () {
     echo "Installing Grunt and dependencies..."
 
-    export MODULES_HASH="$(echo -n "$(cat package.json) $(node --version) $(yarn --version)" | md5sum | awk '{ print $1 }')"
+    export MODULES_HASH="$(echo -n "$(cat package.json yarn.lock) $(node --version) $(yarn --version)" | md5sum | awk '{ print $1 }')"
     export MODULES_FILE="/tmp/node-modules-cache.${MODULES_HASH}.tar.gz"
 
     if [ -f ${MODULES_FILE} ]; then
@@ -16,8 +16,7 @@ setupGrunt () {
         fi
     fi
 
-    # install dependencies
-    bower install
+    yarn check
 
     export SETUP="1"
 }
