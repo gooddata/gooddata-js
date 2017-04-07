@@ -2,10 +2,17 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "1.1.0",
+        "version": "1.5.0",
         "url": ""
     },
     "files": {
+        "src/utils/promise.js": {
+            "name": "src/utils/promise.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
         "src/catalogue.js": {
             "name": "src/catalogue.js",
             "modules": {},
@@ -170,7 +177,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/project.js",
-            "line": 5,
+            "line": 6,
             "description": "Functions for working with projects"
         },
         "user": {
@@ -211,7 +218,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/xhr.js",
-            "line": 11,
+            "line": 14,
             "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
         }
     },
@@ -283,7 +290,7 @@
             "module": "project",
             "namespace": "",
             "file": "src/project.js",
-            "line": 5,
+            "line": 6,
             "description": "Functions for working with projects"
         },
         "user": {
@@ -324,12 +331,29 @@
             "module": "xhr",
             "namespace": "",
             "file": "src/xhr.js",
-            "line": 11,
+            "line": 14,
             "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
         }
     },
     "elements": {},
     "classitems": [
+        {
+            "file": "src/utils/promise.js",
+            "line": 1,
+            "description": "Return promise that will resolve after `ms` miliseconds",
+            "params": [
+                {
+                    "name": "ms",
+                    "description": "time in miliseconds",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "config"
+        },
         {
             "file": "src/catalogue.js",
             "line": 50,
@@ -801,8 +825,25 @@
             "module": "metadata"
         },
         {
+            "file": "src/metadata.js",
+            "line": 583,
+            "description": "Delete object",
+            "experimental": "",
+            "itemtype": "method",
+            "name": "deleteObject",
+            "params": [
+                {
+                    "name": "uri",
+                    "description": "of the object to be deleted",
+                    "type": "String"
+                }
+            ],
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
             "file": "src/project.js",
-            "line": 13,
+            "line": 14,
             "description": "Get current project id",
             "itemtype": "method",
             "name": "getCurrentProjectId",
@@ -815,7 +856,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 31,
+            "line": 32,
             "description": "Fetches projects available for the user represented by the given profileId",
             "itemtype": "method",
             "name": "getProjects",
@@ -835,7 +876,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 44,
+            "line": 45,
             "description": "Fetches all datasets for the given project",
             "itemtype": "method",
             "name": "getDatasets",
@@ -855,7 +896,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 76,
+            "line": 77,
             "description": "Fetches a chart color palette for a project represented by the given\nprojectId parameter.",
             "itemtype": "method",
             "name": "getColorPalette",
@@ -875,7 +916,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 103,
+            "line": 104,
             "description": "Sets given colors as a color palette for a given project.",
             "itemtype": "method",
             "name": "setColorPalette",
@@ -896,7 +937,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 123,
+            "line": 124,
             "description": "Gets current timezone and its offset. Example output:\n\n    {\n        id: 'Europe/Prague',\n        displayName: 'Central European Time',\n        currentOffsetMs: 3600000\n    }",
             "itemtype": "method",
             "name": "getTimezone",
@@ -907,6 +948,27 @@
                     "type": "String"
                 }
             ],
+            "class": "project",
+            "module": "project"
+        },
+        {
+            "file": "src/project.js",
+            "line": 189,
+            "description": "Create project\nNote: returns a promise which is resolved when the project creation is finished",
+            "experimental": "",
+            "itemtype": "method",
+            "name": "createProject",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "for project creation (title, subtitle, authorizationToken, ...)",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "created project object",
+                "type": "Object"
+            },
             "class": "project",
             "module": "project"
         },
@@ -1003,7 +1065,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 28,
+            "line": 31,
             "description": "Back compatible method for setting common XHR settings\n\nUsually in our apps we used beforeSend ajax callback to set the X-GDC-REQUEST header with unique ID.",
             "params": [
                 {
@@ -1016,7 +1078,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 137,
+            "line": 138,
             "params": [
                 {
                     "name": "response",
@@ -1033,7 +1095,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 143,
+            "line": 144,
             "params": [
                 {
                     "name": "response",
@@ -1050,7 +1112,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 217,
+            "line": 220,
             "description": "Wrapper for xhr.ajax method GET",
             "itemtype": "method",
             "name": "get",
@@ -1059,7 +1121,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 227,
+            "line": 230,
             "description": "Wrapper for xhr.ajax method POST",
             "itemtype": "method",
             "name": "post",
@@ -1068,10 +1130,19 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 233,
+            "line": 236,
             "description": "Wrapper for xhr.ajax method PUT",
             "itemtype": "method",
             "name": "put",
+            "class": "xhr",
+            "module": "xhr"
+        },
+        {
+            "file": "src/xhr.js",
+            "line": 242,
+            "description": "Wrapper for xhr.ajax method DELETE",
+            "itemtype": "method",
+            "name": "delete",
             "class": "xhr",
             "module": "xhr"
         }
@@ -1082,20 +1153,24 @@
             "line": " src/catalogue.js:50"
         },
         {
+            "message": "Missing item type\nReturn promise that will resolve after `ms` miliseconds",
+            "line": " src/utils/promise.js:1"
+        },
+        {
             "message": "Missing item type\nConvert specific params in options to \"requiredDataSets\" structure. For more details look into\nres file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res",
             "line": " src/catalogue.js:50"
         },
         {
             "message": "Missing item type\nBack compatible method for setting common XHR settings\n\nUsually in our apps we used beforeSend ajax callback to set the X-GDC-REQUEST header with unique ID.",
-            "line": " src/xhr.js:28"
+            "line": " src/xhr.js:31"
         },
         {
             "message": "Missing item type",
-            "line": " src/xhr.js:137"
+            "line": " src/xhr.js:138"
         },
         {
             "message": "Missing item type",
-            "line": " src/xhr.js:143"
+            "line": " src/xhr.js:144"
         }
     ]
 }

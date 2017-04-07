@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v1.1.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v1.5.0</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -271,9 +271,9 @@ title: foobar
                             const hasNoFilters = isEmpty(get(item, &#x27;measureFilters&#x27;, []));
                             const type = get(item, &#x27;type&#x27;);
                         
-                            const prefix = (hasNoFilters || allFiltersEmpty(item)) ? &#x27;&#x27; : &#x27;filtered_&#x27;;
+                            const prefix = (hasNoFilters || allFiltersEmpty(item)) ? &#x27;&#x27; : &#x27;_filtered&#x27;;
                         
-                            return &#x60;${type}_${identifier}.generated.${prefix}${aggregation}.${hash}&#x60;;
+                            return &#x60;${type}_${identifier}.generated.${hash}${prefix}_${aggregation}&#x60;;
                         };
                         
                         const isDateCategory = ({ category }) =&gt; category.type === &#x27;date&#x27;;

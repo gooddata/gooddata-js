@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v1.1.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v1.5.0</span>
                         <h1 class="file-heading">File: src/xhr.js</h1>
                         
                         <div class="file">
@@ -59,10 +59,13 @@ title: foobar
                             isPlainObject,
                             isFunction,
                             has,
-                            merge
+                            set,
+                            merge,
+                            result
                         } from &#x27;lodash&#x27;;
-                        import &#x27;isomorphic-fetch&#x27;;
+                        
                         import * as config from &#x27;./config&#x27;;
+                        import fetch from &#x27;./utils/fetch&#x27;;
                         
                         /**
                          * Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.
@@ -95,7 +98,7 @@ title: foobar
                         function simulateBeforeSend(settings) {
                             const xhr = {
                                 setRequestHeader(key, value) {
-                                    settings.headers.set(key, value);
+                                    set(settings, [&#x27;headers&#x27;, key], value);
                                 }
                             };
                         
@@ -136,16 +139,14 @@ title: foobar
                         }
                         
                         function createSettings(customSettings) {
-                            const headers = new Headers({
-                                Accept: &#x27;application/json; charset=utf-8&#x27;,
-                                &#x27;Content-Type&#x27;: &#x27;application/json&#x27;
-                            });
-                        
                             const settings = Object.assign({}, commonXhrSettings, customSettings);
                         
-                            settings.pollDelay = (settings.pollDelay !== undefined) ? settings.pollDelay : DEFAULT_POLL_DELAY;
+                            settings.headers = {
+                                Accept: &#x27;application/json; charset=utf-8&#x27;,
+                                &#x27;Content-Type&#x27;: &#x27;application/json&#x27;
+                            };
                         
-                            settings.headers = headers;
+                            settings.pollDelay = (settings.pollDelay !== undefined) ? settings.pollDelay : DEFAULT_POLL_DELAY;
                         
                             // TODO jquery compat - add to warnings
                             settings.body = (settings.data) ? settings.data : settings.body;
@@ -214,11 +215,13 @@ title: foobar
                             throw error;
                         };
                         
-                        function handlePolling(url, settings) {
+                        export function handlePolling(url, settings, sendRequest) {
+                            const pollingDelay = result(settings, &#x27;pollDelay&#x27;);
+                        
                             return new Promise((resolve, reject) =&gt; {
                                 setTimeout(() =&gt; {
-                                    ajax(url, settings).then(resolve, reject); // eslint-disable-line no-use-before-define
-                                }, settings.pollDelay);
+                                    sendRequest(url, settings).then(resolve, reject);
+                                }, pollingDelay);
                             });
                         }
                         
@@ -256,7 +259,7 @@ title: foobar
                                     finalSettings.method = &#x27;GET&#x27;;
                                     delete finalSettings.data;
                                     delete finalSettings.body;
-                                    return handlePolling(finalUrl, finalSettings);
+                                    return handlePolling(finalUrl, finalSettings, ajax);
                                 }
                                 return response;
                             }).then(checkStatus);
@@ -291,6 +294,12 @@ title: foobar
                          * @method put
                          */
                         export const put = xhrMethod(&#x27;PUT&#x27;);
+                        
+                        /**
+                         * Wrapper for xhr.ajax method DELETE
+                         * @method delete
+                         */
+                        export const del = xhrMethod(&#x27;DELETE&#x27;);
                         
                             </pre>
                         </div>

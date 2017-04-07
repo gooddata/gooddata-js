@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v1.1.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v1.5.0</span>
                         <h1 class="file-heading">File: src/catalogue.js</h1>
                         
                         <div class="file">
@@ -180,13 +180,20 @@ title: foobar
                                 bucketItems = bucketItemsToExecConfig(bucketItems, { removeDateItems: true });
                             }
                         
+                            const omittedOptions = [&#x27;filter&#x27;, &#x27;types&#x27;, &#x27;paging&#x27;, &#x27;dataSetIdentifier&#x27;, &#x27;returnAllDateDataSets&#x27;, &#x27;returnAllRelatedDateDataSets&#x27;];
+                            // includeObjectsWithTags has higher priority than excludeObjectsWithTags,
+                            // so when present omit excludeObjectsWithTags
+                            if (options.includeObjectsWithTags) {
+                                omittedOptions.push(&#x27;excludeObjectsWithTags&#x27;);
+                            }
+                        
                             const request = omit({
                                 ...LOAD_DATE_DATASET_DEFAULTS,
                                 ...REQUEST_DEFAULTS,
                                 ...options,
                                 ...getRequiredDataSets(options),
                                 bucketItems
-                            }, [&#x27;filter&#x27;, &#x27;types&#x27;, &#x27;paging&#x27;, &#x27;dataSetIdentifier&#x27;, &#x27;returnAllDateDataSets&#x27;, &#x27;returnAllRelatedDateDataSets&#x27;]);
+                            }, omittedOptions);
                         
                             return requestDateDataSets(projectId, request);
                         }

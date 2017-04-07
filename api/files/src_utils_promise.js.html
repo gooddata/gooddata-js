@@ -50,38 +50,23 @@ title: foobar
                 <div id="docs-main">
                     <div class="content">
                         <strong>gooddata-js</strong> <span class="version">v1.5.0</span>
-                        <h1>project Module</h1>
-                        <div class="clearfix meta">
+                        <h1 class="file-heading">File: src/utils/promise.js</h1>
                         
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        /**
+                         * Return promise that will resolve after &#x60;ms&#x60; miliseconds
+                         *
+                         * @param {Number} ms time in miliseconds
+                         * @return {Promise}
+                         */
+                        export function delay(ms) {
+                            return new Promise((resolve) =&gt; {
+                                setTimeout(() =&gt; resolve(), ms);
+                            });
+                        }
                         
-                                <div class="foundat">
-                                    Defined in: <a href="../files/src_project.js.html#l6"><code>src&#x2F;project.js:6</code></a>
-                                </div>
-                        
-                        </div>
-                        
-                        
-                        <div class="intro">
-                            <p>Functions for working with projects</p>
-                        
-                        </div>
-                        
-                        
-                        <div class="yui3-g">
-                            <div class="yui3-u-1-2">
-                                    <p>This module provides the following classes:</p>
-                        
-                                    <ul class="module-classes">
-                                        <li class="module-class">
-                                            <a href="../classes/project.html">
-                                                project
-                                            </a>
-                                        </li>
-                                    </ul>
-                            </div>
-                        
-                            <div class="yui3-u-1-2">
-                            </div>
+                            </pre>
                         </div>
                     </div>
                 </div>
