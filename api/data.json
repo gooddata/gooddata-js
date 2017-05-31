@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "1.5.0",
+        "version": "1.7.0",
         "url": ""
     },
     "files": {
@@ -509,24 +509,6 @@
         {
             "file": "src/metadata.js",
             "line": 133,
-            "description": "Get additional information about elements specified by their uris\n`elementUris` is the array of uris of elements to be look-up\nCurrently makes a request for each object, should be encapsulated\nto one call",
-            "itemtype": "method",
-            "name": "getElementDetails",
-            "params": [
-                {
-                    "name": "array",
-                    "description": "of element uri strings",
-                    "type": "Array"
-                }
-            ],
-            "access": "private",
-            "tagname": "",
-            "class": "metadata",
-            "module": "metadata"
-        },
-        {
-            "file": "src/metadata.js",
-            "line": 197,
             "description": "Reutrns all attributes in a project specified by projectId param",
             "itemtype": "method",
             "name": "getAttributes",
@@ -545,7 +527,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 208,
+            "line": 144,
             "description": "Returns all dimensions in a project specified by projectId param",
             "itemtype": "method",
             "name": "getDimensions",
@@ -567,7 +549,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 220,
+            "line": 156,
             "description": "Returns project folders. Folders can be of specific types and you can specify\nthe type you need by passing and optional `type` parameter",
             "itemtype": "method",
             "name": "getFolders",
@@ -592,7 +574,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 254,
+            "line": 190,
             "description": "Returns all facts in a project specified by the given projectId",
             "itemtype": "method",
             "name": "getFacts",
@@ -611,7 +593,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 265,
+            "line": 201,
             "description": "Returns all metrics in a project specified by the given projectId",
             "itemtype": "method",
             "name": "getMetrics",
@@ -630,7 +612,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 276,
+            "line": 212,
             "description": "Returns all metrics that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given attributes",
             "itemtype": "method",
             "name": "getAvailableMetrics",
@@ -659,7 +641,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 294,
+            "line": 230,
             "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
             "itemtype": "method",
             "name": "getAvailableAttributes",
@@ -688,7 +670,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 312,
+            "line": 248,
             "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
             "itemtype": "method",
             "name": "getAvailableFacts",
@@ -717,7 +699,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 330,
+            "line": 266,
             "description": "Get details of a metadata object specified by its uri",
             "itemtype": "method",
             "name": "getObjectDetails",
@@ -736,7 +718,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 341,
+            "line": 277,
             "description": "Get folders with items.\nReturns array of folders, each having a title and items property which is an array of\ncorresponding items. Each item is either a metric or attribute, keeping its original\nverbose structure.",
             "itemtype": "method",
             "name": "getFoldersWithItems",
@@ -756,7 +738,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 486,
+            "line": 420,
             "description": "Get identifier of a metadata object identified by its uri",
             "itemtype": "method",
             "name": "getObjectIdentifier",
@@ -775,7 +757,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 512,
+            "line": 446,
             "description": "Get uri of an metadata object, specified by its identifier and project id it belongs to",
             "itemtype": "method",
             "name": "getObjectUri",
@@ -798,7 +780,32 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 548,
+            "line": 482,
+            "description": "Get uris specified by identifiers",
+            "itemtype": "method",
+            "name": "getUrisFromIdentifiers",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "identifiers",
+                    "description": "identifiers of the metadata objects",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "array of identifier + uri pairs",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.js",
+            "line": 500,
             "description": "Get valid elements of an attribute, specified by its identifier and project id it belongs to",
             "itemtype": "method",
             "name": "getValidElements",
@@ -826,7 +833,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 583,
+            "line": 535,
             "description": "Delete object",
             "experimental": "",
             "itemtype": "method",
@@ -1078,7 +1085,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 138,
+            "line": 142,
             "params": [
                 {
                     "name": "response",
@@ -1095,7 +1102,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 144,
+            "line": 148,
             "params": [
                 {
                     "name": "response",
@@ -1112,7 +1119,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 220,
+            "line": 224,
             "description": "Wrapper for xhr.ajax method GET",
             "itemtype": "method",
             "name": "get",
@@ -1121,7 +1128,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 230,
+            "line": 234,
             "description": "Wrapper for xhr.ajax method POST",
             "itemtype": "method",
             "name": "post",
@@ -1130,7 +1137,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 236,
+            "line": 240,
             "description": "Wrapper for xhr.ajax method PUT",
             "itemtype": "method",
             "name": "put",
@@ -1139,7 +1146,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 242,
+            "line": 246,
             "description": "Wrapper for xhr.ajax method DELETE",
             "itemtype": "method",
             "name": "delete",
@@ -1166,11 +1173,11 @@
         },
         {
             "message": "Missing item type",
-            "line": " src/xhr.js:138"
+            "line": " src/xhr.js:142"
         },
         {
             "message": "Missing item type",
-            "line": " src/xhr.js:144"
+            "line": " src/xhr.js:148"
         }
     ]
 }

@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v1.5.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v1.7.0</span>
                         <h1 class="file-heading">File: src/xhr.js</h1>
                         
                         <div class="file">
@@ -95,7 +95,7 @@ title: foobar
                             commonXhrSettings = Object.assign({}, commonXhrSettings, settings);
                         }
                         
-                        function simulateBeforeSend(settings) {
+                        function simulateBeforeSend(settings, url) {
                             const xhr = {
                                 setRequestHeader(key, value) {
                                     set(settings, [&#x27;headers&#x27;, key], value);
@@ -103,7 +103,7 @@ title: foobar
                             };
                         
                             if (isFunction(settings.beforeSend)) {
-                                settings.beforeSend(xhr);
+                                settings.beforeSend(xhr, url);
                             }
                         }
                         
@@ -139,12 +139,16 @@ title: foobar
                         }
                         
                         function createSettings(customSettings) {
-                            const settings = Object.assign({}, commonXhrSettings, customSettings);
-                        
-                            settings.headers = {
-                                Accept: &#x27;application/json; charset=utf-8&#x27;,
-                                &#x27;Content-Type&#x27;: &#x27;application/json&#x27;
-                            };
+                            const settings = merge(
+                                {
+                                    headers: {
+                                        Accept: &#x27;application/json; charset=utf-8&#x27;,
+                                        &#x27;Content-Type&#x27;: &#x27;application/json&#x27;
+                                    }
+                                },
+                                commonXhrSettings,
+                                customSettings
+                            );
                         
                             settings.pollDelay = (settings.pollDelay !== undefined) ? settings.pollDelay : DEFAULT_POLL_DELAY;
                         
@@ -229,7 +233,7 @@ title: foobar
                             const firstSettings = createSettings(tempSettings);
                             const { url, settings } = enrichSettingWithCustomDomain(originalUrl, firstSettings, config.domain);
                         
-                            simulateBeforeSend(settings);
+                            simulateBeforeSend(settings, url);
                         
                             if (tokenRequest) {
                                 return continueAfterTokenRequest(url, settings);

@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v1.5.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v1.7.0</span>
                         <h1 class="file-heading">File: src/metadata.js</h1>
                         
                         <div class="file">
@@ -187,70 +187,6 @@ title: foobar
                         }
                         
                         /**
-                         * Get additional information about elements specified by their uris
-                         * &#x60;elementUris&#x60; is the array of uris of elements to be look-up
-                         * Currently makes a request for each object, should be encapsulated
-                         * to one call
-                         *
-                         * @method getElementDetails
-                         * @param {Array} array of element uri strings
-                         * @private
-                         */
-                        export function getElementDetails(elementUris) {
-                            const fns = elementUris.map(uri =&gt; get(uri));
-                        
-                            return Promise.all(fns).then((...args) =&gt; {
-                                const enriched = args.map((element) =&gt; {
-                                    const root = element[0];
-                                    if (root.attributeDisplayForm) {
-                                        return {
-                                            type: &#x27;attribute&#x27;,
-                                            uri: root.attributeDisplayForm.meta.uri,
-                                            formOf: root.attributeDisplayForm.content.formOf,
-                                            name: root.attributeDisplayForm.meta.title
-                                        };
-                                    } else if (root.metric) {
-                                        return {
-                                            type: &#x27;metric&#x27;,
-                                            uri: root.metric.meta.uri,
-                                            name: root.metric.meta.title
-                                        };
-                                    }
-                        
-                                    return undefined;
-                                });
-                        
-                                // override titles with related attribute title
-                                const ids = {};
-                                const indi = [];
-                                let i = 0;
-                                const formOfFns = [];
-                        
-                                enriched.forEach((el, idx) =&gt; {
-                                    if (el.formOf) {
-                                        formOfFns.push(get(el.formOf));
-                                        ids[el.uri] = idx;
-                                        indi[i] = idx;
-                                        i += 1;
-                                    }
-                                });
-                        
-                                // all formOf are executed
-                                return Promise.all(formOfFns).then((...formOfArgs) =&gt; {
-                                    formOfArgs.forEach((arg, idx) =&gt; {
-                                        // get element to owerwrite
-                                        const which = indi[idx];
-                                        const update = enriched[which];
-                        
-                                        update.name = arg[0].attribute.meta.title;
-                                    });
-                        
-                                    return enriched;
-                                });
-                            });
-                        }
-                        
-                        /**
                         * Reutrns all attributes in a project specified by projectId param
                         *
                         * @method getAttributes
@@ -301,7 +237,7 @@ title: foobar
                                         getFolderEntries(projectId, &#x27;metric&#x27;),
                                         getDimensions(projectId)
                                     ])
-                                    .then((facts, metrics, attributes) =&gt; {
+                                    .then(([facts, metrics, attributes]) =&gt; {
                                         return { fact: facts, metric: metrics, attribute: attributes };
                                     });
                             }
@@ -413,7 +349,7 @@ title: foobar
                                 // array of links to the metadata objects representing the metrics.
                                 // @return the array of promises
                                 function getMetricItemsDetails(array) {
-                                    return Promise.all(array.map(getObjectDetails)).then((...metricArgs) =&gt; {
+                                    return Promise.all(array.map(getObjectDetails)).then((metricArgs) =&gt; {
                                         return metricArgs.map(item =&gt; item.metric);
                                     });
                                 }
@@ -454,13 +390,13 @@ title: foobar
                                 const foldersTitles = mapBy(folders, &#x27;title&#x27;);
                         
                                 // fetch details for each folder
-                                return Promise.all(foldersLinks.map(getObjectDetails)).then((...folderDetails) =&gt; {
+                                return Promise.all(foldersLinks.map(getObjectDetails)).then((folderDetails) =&gt; {
                                     // if attribute, just parse everything from what we&#x27;ve received
                                     // and resolve. For metrics, lookup again each metric to get its
                                     // identifier. If passing unsupported type, reject immediately.
                                     if (type === &#x27;attribute&#x27;) {
                                         // get all attributes, subtract what we have and add rest in unsorted folder
-                                        getAttributes(projectId).then((attributes) =&gt; {
+                                        return getAttributes(projectId).then((attributes) =&gt; {
                                             // get uris of attributes which are in some dimension folders
                                             const attributesInFolders = [];
                                             folderDetails.forEach((fd) =&gt; {
@@ -475,7 +411,7 @@ title: foobar
                                                     .map(item =&gt; item.link);
                                             // now get details of attributes in no folders
                                             return Promise.all(unsortedUris.map(getObjectDetails))
-                                                .then((...unsortedAttributeArgs) =&gt; { // TODO add map to r.json
+                                                .then((unsortedAttributeArgs) =&gt; { // TODO add map to r.json
                                                     // get unsorted attribute objects
                                                     const unsortedAttributes = unsortedAttributeArgs.map(attr =&gt; attr.attribute);
                                                     // create structure of folders with attributes
@@ -517,7 +453,7 @@ title: foobar
                         
                                             // now get details of all metrics
                                             return Promise.all(entriesLinks.map(linkArray =&gt; getMetricItemsDetails(linkArray)))
-                                                .then((...tree) =&gt; { // TODO add map to r.json
+                                                .then((tree) =&gt; { // TODO add map to r.json
                                                     // all promises resolved, i.e. details for each metric are available
                                                     const structure = tree.map((treeItems, idx) =&gt; {
                                                         // if idx is not in foldes list than metric is in &quot;Unsorted&quot; folder
@@ -530,11 +466,9 @@ title: foobar
                                                     return structure;
                                                 });
                                         });
-                                    } else {
-                                        return Promise.reject();
                                     }
                         
-                                    return undefined;
+                                    return Promise.reject();
                                 });
                             });
                         }
@@ -598,6 +532,24 @@ title: foobar
                                 return getObjectDetails(objData.attributeDisplayForm.content.formOf).then((objectData) =&gt; {
                                     return uriFinder(objectData);
                                 });
+                            });
+                        }
+                        
+                        /**
+                         * Get uris specified by identifiers
+                         *
+                         * @method getUrisFromIdentifiers
+                         * @param {String} projectId id of the project
+                         * @param {Array} identifiers identifiers of the metadata objects
+                         * @return {Array} array of identifier + uri pairs
+                         */
+                        export function getUrisFromIdentifiers(projectId, identifiers) {
+                            return post(&#x60;/gdc/md/${projectId}/identifiers&#x60;, {
+                                body: {
+                                    identifierToUri: identifiers
+                                }
+                            }).then(parseJSON).then((data) =&gt; {
+                                return data.identifiers;
                             });
                         }
                         

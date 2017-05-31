@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v1.5.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v1.7.0</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -155,6 +155,7 @@ title: foobar
                         
                             // Execute request
                             return post(&#x60;/gdc/internal/projects/${projectId}/experimental/executions&#x60;, {
+                                ...settings,
                                 body: JSON.stringify(request)
                             })
                             .then(parseJSON)
