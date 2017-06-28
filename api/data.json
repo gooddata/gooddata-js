@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "1.7.0",
+        "version": "1.7.1",
         "url": ""
     },
     "files": {
