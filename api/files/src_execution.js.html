@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v1.7.1</span>
+                        <strong>gooddata-js</strong> <span class="version">v2.0.0</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -63,6 +63,7 @@ title: foobar
                             first,
                             find,
                             map,
+                            merge,
                             every,
                             get,
                             isEmpty,
@@ -105,6 +106,59 @@ title: foobar
                             return headers;
                         };
                         
+                        const emptyResult = {
+                            extendedTabularDataResult: {
+                                values: [],
+                                warnings: []
+                            }
+                        };
+                        
+                        function loadExtendedDataResults(uri, settings, prevResult = emptyResult) {
+                            return new Promise((resolve, reject) =&gt; {
+                                ajax(uri, settings)
+                                    .then((r) =&gt; {
+                                        if (r.status === 204) {
+                                            return {
+                                                status: r.status,
+                                                result: &#x27;&#x27;
+                                            };
+                                        }
+                        
+                                        return r.json().then((result) =&gt; {
+                                            return {
+                                                status: r.status,
+                                                result
+                                            };
+                                        });
+                                    })
+                                    .then(({ status, result }) =&gt; {
+                                        const values = [
+                                            ...get(prevResult, &#x27;extendedTabularDataResult.values&#x27;, []),
+                                            ...get(result, &#x27;extendedTabularDataResult.values&#x27;, [])
+                                        ];
+                        
+                                        const warnings = [
+                                            ...get(prevResult, &#x27;extendedTabularDataResult.warnings&#x27;, []),
+                                            ...get(result, &#x27;extendedTabularDataResult.warnings&#x27;, [])
+                                        ];
+                        
+                                        const updatedResult = merge({}, prevResult, {
+                                            extendedTabularDataResult: {
+                                                values,
+                                                warnings
+                                            }
+                                        });
+                        
+                                        const nextUri = get(result, &#x27;extendedTabularDataResult.paging.next&#x27;);
+                                        if (nextUri) {
+                                            resolve(loadExtendedDataResults(nextUri, settings, updatedResult));
+                                        } else {
+                                            resolve({ status, result: updatedResult });
+                                        }
+                                    }, reject);
+                            });
+                        }
+                        
                         /**
                          * Module for execution on experimental execution resource
                          *
@@ -124,10 +178,7 @@ title: foobar
                          *                 property &quot;where&quot; containing query-like filters
                          *                 property &quot;orderBy&quot; contains array of sorted properties to order in form
                          *                      [{column: &#x27;identifier&#x27;, direction: &#x27;asc|desc&#x27;}]
-                         * @param {Object} settings - Set &quot;extended&quot; to true to retrieve the result
-                         *                            including internal attribute IDs (useful to construct filters
-                         *                            for subsequent report execution requests).
-                         *                             Supports additional settings accepted by the underlying
+                         * @param {Object} settings - Supports additional settings accepted by the underlying
                          *                             xhr.ajax() calls
                          *
                          * @return {Object} Structure with &#x60;headers&#x60; and &#x60;rawData&#x60; keys filled with values from execution.
@@ -137,10 +188,6 @@ title: foobar
                                 isLoaded: false
                             };
                         
-                            // Extended result exposes internal attribute element IDs which can
-                            // be used when constructing executionConfiguration filters for
-                            // subsequent report execution requests
-                            const resultKey = settings.extended ? &#x27;extendedTabularDataResult&#x27; : &#x27;tabularDataResult&#x27;;
                             // Create request and result structures
                             const request = {
                                 execution: { columns }
@@ -164,29 +211,14 @@ title: foobar
                                     get(executionConfiguration, &#x27;metricMappings&#x27;), result.executionResult.headers);
                         
                                 // Start polling on url returned in the executionResult for tabularData
-                                return ajax(result.executionResult[resultKey], settings);
-                            })
-                            .then((r) =&gt; {
-                                if (r.status === 204) {
-                                    return {
-                                        status: r.status,
-                                        result: &#x27;&#x27;
-                                    };
-                                }
-                        
-                                return r.json().then((result) =&gt; {
-                                    return {
-                                        status: r.status,
-                                        result
-                                    };
-                                });
+                                return loadExtendedDataResults(result.executionResult.extendedTabularDataResult, settings);
                             })
                             .then((r) =&gt; {
                                 const { result, status } = r;
                         
                                 return Object.assign({}, executedReport, {
-                                    rawData: get(result, &#x60;${resultKey}.values&#x60;, []),
-                                    warnings: get(result, &#x60;${resultKey}.warnings&#x60;, []),
+                                    rawData: get(result, &#x27;extendedTabularDataResult.values&#x27;, []),
+                                    warnings: get(result, &#x27;extendedTabularDataResult.warnings&#x27;, []),
                                     isLoaded: true,
                                     isEmpty: status === 204
                                 });

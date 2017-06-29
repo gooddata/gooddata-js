@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "1.7.1",
+        "version": "2.0.0",
         "url": ""
     },
     "files": {
@@ -135,7 +135,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/execution.js",
-            "line": 52,
+            "line": 106,
             "description": "Module for execution on experimental execution resource"
         },
         "sdk": {
@@ -248,7 +248,7 @@
             "module": "execution",
             "namespace": "",
             "file": "src/execution.js",
-            "line": 52,
+            "line": 106,
             "description": "Module for execution on experimental execution resource"
         },
         "sdk": {
@@ -388,7 +388,7 @@
         },
         {
             "file": "src/execution.js",
-            "line": 59,
+            "line": 113,
             "description": "For the given projectId it returns table structure with the given\nelements in column headers.",
             "itemtype": "method",
             "name": "getData",
@@ -410,7 +410,7 @@
                 },
                 {
                     "name": "settings",
-                    "description": "- Set \"extended\" to true to retrieve the result\n                           including internal attribute IDs (useful to construct filters\n                           for subsequent report execution requests).\n                            Supports additional settings accepted by the underlying\n                            xhr.ajax() calls",
+                    "description": "- Supports additional settings accepted by the underlying\n                            xhr.ajax() calls",
                     "type": "Object"
                 }
             ],
