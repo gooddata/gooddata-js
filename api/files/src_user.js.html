@@ -49,12 +49,12 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v2.0.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v2.1.0</span>
                         <h1 class="file-heading">File: src/user.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
-                        // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
+                        // Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
                         import { ajax, get, post, put, parseJSON } from &#x27;./xhr&#x27;;
                         
                         /**
@@ -110,6 +110,20 @@ title: foobar
                                     }
                                 })
                             }).then(parseJSON);
+                        }
+                        
+                        /**
+                         * This function provides an authentication entry point to the GD API via SSO
+                         * https://help.gooddata.com/display/developer/GoodData+PGP+Single+Sign-On
+                         *
+                         * @method loginSso
+                         * @param {String} sessionId PGP message
+                         * @param {String} serverUrl
+                         * @param {String} targetUrl
+                         */
+                        export function loginSso(sessionId, serverUrl, targetUrl) {
+                            // cannot use xhr.get, server doesn&#x27;t respond with JSON
+                            return ajax(&#x60;/gdc/account/customerlogin?sessionId=${sessionId}&amp;serverURL=${serverUrl}&amp;targetURL=${targetUrl}&#x60;, { method: &#x27;GET&#x27; });
                         }
                         
                         /**

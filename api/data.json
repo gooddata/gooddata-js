@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "2.0.0",
+        "version": "2.1.0",
         "url": ""
     },
     "files": {
@@ -967,8 +967,18 @@
             "name": "createProject",
             "params": [
                 {
+                    "name": "title",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "authorizationToken",
+                    "description": "",
+                    "type": "String"
+                },
+                {
                     "name": "options",
-                    "description": "for project creation (title, subtitle, authorizationToken, ...)",
+                    "description": "for project creation (summary, projectTemplate, ...)",
                     "type": "Object"
                 }
             ],
@@ -1016,6 +1026,32 @@
         {
             "file": "src/user.js",
             "line": 59,
+            "description": "This function provides an authentication entry point to the GD API via SSO\nhttps://help.gooddata.com/display/developer/GoodData+PGP+Single+Sign-On",
+            "itemtype": "method",
+            "name": "loginSso",
+            "params": [
+                {
+                    "name": "sessionId",
+                    "description": "PGP message",
+                    "type": "String"
+                },
+                {
+                    "name": "serverUrl",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "targetUrl",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "class": "user",
+            "module": "user"
+        },
+        {
+            "file": "src/user.js",
+            "line": 73,
             "description": "Logs out current user",
             "itemtype": "method",
             "name": "logout",
@@ -1024,7 +1060,7 @@
         },
         {
             "file": "src/user.js",
-            "line": 80,
+            "line": 94,
             "description": "Updates user's profile settings",
             "itemtype": "method",
             "name": "updateProfileSettings",
@@ -1045,7 +1081,7 @@
         },
         {
             "file": "src/user.js",
-            "line": 92,
+            "line": 106,
             "description": "Returns info about currently logged in user from bootstrap resource",
             "itemtype": "method",
             "name": "getAccountInfo",

@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v2.0.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v2.1.0</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -490,13 +490,25 @@ title: foobar
                                 { [dfUri]: { $in: elementsForQuery } };
                         };
                         
+                        const getFromFilter = (f, property) =&gt; get(f, &#x60;dateFilter.${property}&#x60;);
+                        const toInteger = value =&gt; parseInt(value, 10);
+                        
                         const dateFilterToWhere = (f) =&gt; {
                             const dateUri =
-                                get(f, &#x27;dateFilter.dimension&#x27;) ||
-                                get(f, &#x27;dateFilter.dataSet&#x27;) ||
-                                get(f, &#x27;dateFilter.dataset&#x27;); // dataset with lowercase &#x27;s&#x27; is deprecated; kept here for backwards compatibility
-                            const granularity = get(f, &#x27;dateFilter.granularity&#x27;);
-                            const between = [get(f, &#x27;dateFilter.from&#x27;), get(f, &#x27;dateFilter.to&#x27;)];
+                                getFromFilter(f, &#x27;dimension&#x27;) ||
+                                getFromFilter(f, &#x27;dataSet&#x27;) ||
+                                getFromFilter(f, &#x27;dataset&#x27;); // dataset with lowercase &#x27;s&#x27; is deprecated; kept here for backwards compatibility
+                        
+                            const granularity = getFromFilter(f, &#x27;granularity&#x27;);
+                            const isRelative = getFromFilter(f, &#x27;type&#x27;) === &#x27;relative&#x27;;
+                        
+                            const filterFrom = getFromFilter(f, &#x27;from&#x27;);
+                            const filterTo = getFromFilter(f, &#x27;to&#x27;);
+                        
+                            const from = isRelative ? toInteger(filterFrom) : filterFrom;
+                            const to = isRelative ? toInteger(filterTo) : filterTo;
+                        
+                            const between = [from, to];
                             return { [dateUri]: { $between: between, $granularity: granularity } };
                         };
                         
