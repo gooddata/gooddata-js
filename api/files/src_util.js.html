@@ -49,14 +49,16 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v2.1.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v2.1.1</span>
                         <h1 class="file-heading">File: src/util.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
-                        // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
+                        // Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
                         
                         import { get } from &#x27;lodash&#x27;;
+                        import { get as xhrGet } from &#x27;./xhr&#x27;;
+                        import { delay } from &#x27;./utils/promise&#x27;;
                         
                         /**
                          * Utility methods. Mostly private
@@ -74,6 +76,36 @@ title: foobar
                          * @private
                          */
                         export const getIn = path =&gt; object =&gt; get(object, path);
+                        
+                        /**
+                         * Helper for polling
+                         *
+                         * @param {String} uri
+                         * @param {Function} isPollingDone
+                         * @param {Object} options for polling (maxAttempts, pollStep)
+                         * @private
+                         */
+                        export const handlePolling = (uri, isPollingDone, options = {}) =&gt; {
+                            const {
+                                attempts = 0,
+                                maxAttempts = 50,
+                                pollStep = 5000
+                            } = options;
+                        
+                            return xhrGet(uri).then((response) =&gt; {
+                                if (attempts &gt; maxAttempts) {
+                                    return Promise.reject(new Error(response));
+                                }
+                                return isPollingDone(response) ?
+                                    Promise.resolve(response) :
+                                    delay(pollStep).then(() =&gt; {
+                                        return handlePolling(uri, isPollingDone, {
+                                            ...options,
+                                            attempts: attempts + 1
+                                        });
+                                    });
+                            });
+                        };
                         
                             </pre>
                         </div>
