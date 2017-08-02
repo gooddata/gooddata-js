@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "2.1.1",
+        "version": "2.2.0",
         "url": ""
     },
     "files": {
@@ -806,6 +806,31 @@
         {
             "file": "src/metadata.js",
             "line": 500,
+            "description": "Get identifiers specified by uris",
+            "itemtype": "method",
+            "name": "getIdentifiersFromUris",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "uris",
+                    "description": "of the metadata objects",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "array of identifier + uri pairs",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.js",
+            "line": 518,
             "description": "Get valid elements of an attribute, specified by its identifier and project id it belongs to",
             "itemtype": "method",
             "name": "getValidElements",
@@ -833,7 +858,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 535,
+            "line": 553,
             "description": "Delete object",
             "experimental": "",
             "itemtype": "method",
@@ -850,7 +875,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 546,
+            "line": 564,
             "description": "Create object",
             "experimental": "",
             "itemtype": "method",
@@ -872,7 +897,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 572,
+            "line": 590,
             "description": "LDM manage",
             "experimental": "",
             "itemtype": "method",
@@ -899,7 +924,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 595,
+            "line": 613,
             "description": "ETL pull",
             "experimental": "",
             "itemtype": "method",

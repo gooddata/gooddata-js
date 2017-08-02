@@ -49,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v2.1.1</span>
+                        <strong>gooddata-js</strong> <span class="version">v2.2.0</span>
                         <h1 class="file-heading">File: src/metadata.js</h1>
                         
                         <div class="file">
@@ -547,6 +547,24 @@ title: foobar
                             return post(&#x60;/gdc/md/${projectId}/identifiers&#x60;, {
                                 body: {
                                     identifierToUri: identifiers
+                                }
+                            }).then(parseJSON).then((data) =&gt; {
+                                return data.identifiers;
+                            });
+                        }
+                        
+                        /**
+                         * Get identifiers specified by uris
+                         *
+                         * @method getIdentifiersFromUris
+                         * @param {String} projectId id of the project
+                         * @param {Array} uris of the metadata objects
+                         * @return {Array} array of identifier + uri pairs
+                         */
+                        export function getIdentifiersFromUris(projectId, uris) {
+                            return post(&#x60;/gdc/md/${projectId}/identifiers&#x60;, {
+                                body: {
+                                    uriToIdentifier: uris
                                 }
                             }).then(parseJSON).then((data) =&gt; {
                                 return data.identifiers;
