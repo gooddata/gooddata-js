@@ -1,6 +1,7 @@
 YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
+        "admin",
         "config",
         "execution",
         "metadata",
@@ -11,6 +12,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "xhr"
     ],
     "modules": [
+        "admin",
         "config",
         "execution",
         "metadata",
@@ -21,6 +23,11 @@ YUI.add("yuidoc-meta", function(Y) {
         "xhr"
     ],
     "allModules": [
+        {
+            "displayName": "admin",
+            "name": "admin",
+            "description": "Network-UI support methods. Mostly private"
+        },
         {
             "displayName": "config",
             "name": "config",

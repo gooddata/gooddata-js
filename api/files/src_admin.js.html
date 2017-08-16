@@ -52,38 +52,41 @@ title: foobar
                 <div id="docs-main">
                     <div class="content">
                         <strong>gooddata-js</strong> <span class="version">v2.3.0</span>
-                        <h1>project Module</h1>
-                        <div class="clearfix meta">
+                        <h1 class="file-heading">File: src/admin.js</h1>
                         
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
                         
-                                <div class="foundat">
-                                    Defined in: <a href="../files/src_project.js.html#l5"><code>src&#x2F;project.js:5</code></a>
-                                </div>
+                        import * as dataProducts from &#x27;./admin/dataProducts&#x27;;
+                        import * as domainDataProducts from &#x27;./admin/domainDataProducts&#x27;;
+                        import * as domains from &#x27;./admin/domains&#x27;;
+                        import * as domainSegments from &#x27;./admin/domainSegments&#x27;;
+                        import * as clients from &#x27;./admin/clients&#x27;;
+                        import * as segments from &#x27;./admin/segments&#x27;;
+                        import * as logs from &#x27;./admin/logs&#x27;;
+                        import * as contracts from &#x27;./admin/contracts&#x27;;
                         
-                        </div>
+                        /**
+                         * Network-UI support methods. Mostly private
+                         *
+                         * @module admin
+                         * @class admin
+                         *
+                         */
                         
+                        export default {
+                            dataProducts,
+                            domainDataProducts,
+                            domains,
+                            domainSegments,
+                            clients,
+                            logs,
+                            contracts,
+                            segments
+                        };
                         
-                        <div class="intro">
-                            <p>Functions for working with projects</p>
-                        
-                        </div>
-                        
-                        
-                        <div class="yui3-g">
-                            <div class="yui3-u-1-2">
-                                    <p>This module provides the following classes:</p>
-                        
-                                    <ul class="module-classes">
-                                        <li class="module-class">
-                                            <a href="../classes/project.html">
-                                                project
-                                            </a>
-                                        </li>
-                                    </ul>
-                            </div>
-                        
-                            <div class="yui3-u-1-2">
-                            </div>
+                            </pre>
                         </div>
                     </div>
                 </div>

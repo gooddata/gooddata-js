@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "2.2.0",
+        "version": "2.3.0",
         "url": ""
     },
     "files": {
@@ -10,6 +10,17 @@
             "name": "src/utils/promise.js",
             "modules": {},
             "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/admin.js": {
+            "name": "src/admin.js",
+            "modules": {
+                "admin": 1
+            },
+            "classes": {
+                "admin": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -110,6 +121,20 @@
         }
     },
     "modules": {
+        "admin": {
+            "name": "admin",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "admin": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/admin.js",
+            "line": 12,
+            "description": "Network-UI support methods. Mostly private"
+        },
         "config": {
             "name": "config",
             "submodules": {},
@@ -149,7 +174,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/gooddata.js",
-            "line": 10,
+            "line": 11,
             "description": "# JS SDK\nHere is a set of functions that mostly are a thin wraper over the [GoodData API](https://developer.gooddata.com/api).\nBefore calling any of those functions, you need to authenticate with a valid GoodData\nuser credentials. After that, every subsequent call in the current session is authenticated.\nYou can find more about the GD authentication mechanism here.\n\n## GD Authentication Mechansim\nIn this JS SDK library we provide you with a simple `login(username, passwd)` function\nthat does the magic for you.\nTo fully understand the authentication mechansim, please read\n[Authentication via API article](http://developer.gooddata.com/article/authentication-via-api)\non [GoodData Developer Portal](http://developer.gooddata.com/)"
         },
         "metadata": {
@@ -223,6 +248,20 @@
         }
     },
     "classes": {
+        "admin": {
+            "name": "admin",
+            "shortname": "admin",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "admin",
+            "namespace": "",
+            "file": "src/admin.js",
+            "line": 12,
+            "description": "Network-UI support methods. Mostly private"
+        },
         "config": {
             "name": "config",
             "shortname": "config",
@@ -262,7 +301,7 @@
             "module": "sdk",
             "namespace": "",
             "file": "src/gooddata.js",
-            "line": 10,
+            "line": 11,
             "description": "# JS SDK\nHere is a set of functions that mostly are a thin wraper over the [GoodData API](https://developer.gooddata.com/api).\nBefore calling any of those functions, you need to authenticate with a valid GoodData\nuser credentials. After that, every subsequent call in the current session is authenticated.\nYou can find more about the GD authentication mechanism here.\n\n## GD Authentication Mechansim\nIn this JS SDK library we provide you with a simple `login(username, passwd)` function\nthat does the magic for you.\nTo fully understand the authentication mechansim, please read\n[Authentication via API article](http://developer.gooddata.com/article/authentication-via-api)\non [GoodData Developer Portal](http://developer.gooddata.com/)"
         },
         "metadata": {
@@ -352,7 +391,7 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "config"
+            "class": "admin"
         },
         {
             "file": "src/catalogue.js",
@@ -368,7 +407,8 @@
                 "description": "\"requiredDataSets\" object hash.",
                 "type": "Object"
             },
-            "class": "config"
+            "class": "config",
+            "module": "admin"
         },
         {
             "file": "src/config.js",
@@ -1186,6 +1226,15 @@
             "description": "Returns info about currently logged in user from bootstrap resource",
             "itemtype": "method",
             "name": "getAccountInfo",
+            "class": "user",
+            "module": "user"
+        },
+        {
+            "file": "src/user.js",
+            "line": 127,
+            "description": "Returns the feature flags valid for the currently logged in user.",
+            "itemtype": "method",
+            "name": "getFeatureFlags",
             "class": "user",
             "module": "user"
         },
