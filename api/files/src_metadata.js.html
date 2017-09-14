@@ -51,7 +51,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v2.3.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v3.0.1</span>
                         <h1 class="file-heading">File: src/metadata.js</h1>
                         
                         <div class="file">
@@ -510,30 +510,19 @@ title: foobar
                          * @return {String} uri of the metadata object
                          */
                         export function getObjectUri(projectId, identifier) {
-                            function uriFinder(obj) {
-                                const data = (obj.attribute) ? obj.attribute : obj.metric;
-                                return data.meta.uri;
-                            }
-                        
                             return ajax(&#x60;/gdc/md/${projectId}/identifiers&#x60;, {
                                 method: &#x27;POST&#x27;,
                                 body: {
                                     identifierToUri: [identifier]
                                 }
                             }).then(parseJSON).then((data) =&gt; {
-                                const found = data.identifiers.filter(i =&gt; i.identifier === identifier);
+                                const found = data.identifiers.find(pair =&gt; pair.identifier === identifier);
                         
-                                if (found[0]) {
-                                    return getObjectDetails(found[0].uri);
+                                if (found) {
+                                    return found.uri;
                                 }
+                        
                                 throw new Error(&#x60;Object with identifier ${identifier} not found in project ${projectId}&#x60;);
-                            }).then((objData) =&gt; {
-                                if (!objData.attributeDisplayForm) {
-                                    return uriFinder(objData);
-                                }
-                                return getObjectDetails(objData.attributeDisplayForm.content.formOf).then((objectData) =&gt; {
-                                    return uriFinder(objectData);
-                                });
                             });
                         }
                         
@@ -571,6 +560,29 @@ title: foobar
                             }).then(parseJSON).then((data) =&gt; {
                                 return data.identifiers;
                             });
+                        }
+                        
+                        /**
+                         * Get attribute elements with their labels and uris.
+                         *
+                         * @param {String} projectId id of the project
+                         * @param {String} labelUri uri of the label (display form)
+                         * @param {Array&lt;String&gt;} patterns elements labels/titles (for EXACT mode), or patterns (for WILD mode)
+                         * @param {(&#x27;EXACT&#x27;|&#x27;WILD&#x27;)} mode match mode, currently only EXACT supported
+                         * @return {Array} array of elementLabelUri objects
+                         */
+                        export function translateElementLabelsToUris(projectId, labelUri, patterns, mode = &#x27;EXACT&#x27;) {
+                            return post(&#x60;/gdc/md/${projectId}/labels&#x60;, {
+                                body: {
+                                    elementLabelToUri: [
+                                        {
+                                            labelUri,
+                                            mode,
+                                            patterns
+                                        }
+                                    ]
+                                }
+                            }).then(r =&gt; (r.ok ? r.json() : r)).then(r =&gt; _get(r, &#x27;elementLabelUri&#x27;));
                         }
                         
                         /**

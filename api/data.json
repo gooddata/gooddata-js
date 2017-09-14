@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "2.3.0",
+        "version": "3.0.1",
         "url": ""
     },
     "files": {
@@ -820,7 +820,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 482,
+            "line": 471,
             "description": "Get uris specified by identifiers",
             "itemtype": "method",
             "name": "getUrisFromIdentifiers",
@@ -845,7 +845,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 500,
+            "line": 489,
             "description": "Get identifiers specified by uris",
             "itemtype": "method",
             "name": "getIdentifiersFromUris",
@@ -870,7 +870,40 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 518,
+            "line": 507,
+            "description": "Get attribute elements with their labels and uris.",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "labelUri",
+                    "description": "uri of the label (display form)",
+                    "type": "String"
+                },
+                {
+                    "name": "patterns",
+                    "description": "elements labels/titles (for EXACT mode), or patterns (for WILD mode)",
+                    "type": "Array<String>"
+                },
+                {
+                    "name": "mode",
+                    "description": "match mode, currently only EXACT supported",
+                    "type": "('EXACT'|'WILD')"
+                }
+            ],
+            "return": {
+                "description": "array of elementLabelUri objects",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.js",
+            "line": 530,
             "description": "Get valid elements of an attribute, specified by its identifier and project id it belongs to",
             "itemtype": "method",
             "name": "getValidElements",
@@ -898,7 +931,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 553,
+            "line": 565,
             "description": "Delete object",
             "experimental": "",
             "itemtype": "method",
@@ -915,7 +948,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 564,
+            "line": 576,
             "description": "Create object",
             "experimental": "",
             "itemtype": "method",
@@ -937,7 +970,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 590,
+            "line": 602,
             "description": "LDM manage",
             "experimental": "",
             "itemtype": "method",
@@ -964,7 +997,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 613,
+            "line": 625,
             "description": "ETL pull",
             "experimental": "",
             "itemtype": "method",
@@ -1127,6 +1160,22 @@
                 "description": "created project object",
                 "type": "Object"
             },
+            "class": "project",
+            "module": "project"
+        },
+        {
+            "file": "src/project.js",
+            "line": 206,
+            "description": "Delete project",
+            "itemtype": "method",
+            "name": "deleteProject",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
             "class": "project",
             "module": "project"
         },
@@ -1378,6 +1427,10 @@
         {
             "message": "Missing item type\nConvert specific params in options to \"requiredDataSets\" structure. For more details look into\nres file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res",
             "line": " src/catalogue.js:50"
+        },
+        {
+            "message": "Missing item type\nGet attribute elements with their labels and uris.",
+            "line": " src/metadata.js:507"
         },
         {
             "message": "Missing item type\nHelper for polling",
