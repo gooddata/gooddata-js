@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "3.0.1",
+        "version": "4.0.0",
         "url": ""
     },
     "files": {
@@ -445,7 +445,7 @@
                 },
                 {
                     "name": "executionConfiguration",
-                    "description": "- Execution configuration - can contain for example\n                property \"filters\" containing execution context filters\n                property \"where\" containing query-like filters\n                property \"orderBy\" contains array of sorted properties to order in form\n                     [{column: 'identifier', direction: 'asc|desc'}]",
+                    "description": "- Execution configuration - can contain for example\n                property \"where\" containing query-like filters\n                property \"orderBy\" contains array of sorted properties to order in form\n                     [{column: 'identifier', direction: 'asc|desc'}]",
                     "type": "Object"
                 },
                 {

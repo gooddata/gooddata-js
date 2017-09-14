@@ -51,7 +51,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v3.0.1</span>
+                        <strong>gooddata-js</strong> <span class="version">v4.0.0</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
@@ -176,7 +176,6 @@ title: foobar
                          * @param {String} projectId - GD project identifier
                          * @param {Array} columns - An array of attribute or metric identifiers.
                          * @param {Object} executionConfiguration - Execution configuration - can contain for example
-                         *                 property &quot;filters&quot; containing execution context filters
                          *                 property &quot;where&quot; containing query-like filters
                          *                 property &quot;orderBy&quot; contains array of sorted properties to order in form
                          *                      [{column: &#x27;identifier&#x27;, direction: &#x27;asc|desc&#x27;}]
@@ -195,8 +194,8 @@ title: foobar
                                 execution: { columns }
                             };
                             // enrich configuration with supported properties such as
-                            // where clause with query-like filters or execution context filters
-                            [&#x27;filters&#x27;, &#x27;where&#x27;, &#x27;orderBy&#x27;, &#x27;definitions&#x27;].forEach((property) =&gt; {
+                            // where clause with query-like filters
+                            [&#x27;where&#x27;, &#x27;orderBy&#x27;, &#x27;definitions&#x27;].forEach((property) =&gt; {
                                 if (executionConfiguration[property]) {
                                     request.execution[property] = executionConfiguration[property];
                                 }
