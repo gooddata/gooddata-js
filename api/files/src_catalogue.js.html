@@ -51,14 +51,14 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v4.0.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v4.4.0</span>
                         <h1 class="file-heading">File: src/catalogue.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
                         import { get, find, omit, cloneDeep } from &#x27;lodash&#x27;;
                         import { post, parseJSON } from &#x27;./xhr&#x27;;
-                        import { mdToExecutionConfiguration } from &#x27;./execution&#x27;;
+                        import { mdToExecutionConfiguration } from &#x27;./execution/experimental-executions&#x27;;
                         
                         const REQUEST_DEFAULTS = {
                             types: [&#x27;attribute&#x27;, &#x27;metric&#x27;, &#x27;fact&#x27;],

@@ -2,10 +2,24 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "4.0.0",
+        "version": "4.4.0",
         "url": ""
     },
     "files": {
+        "src/execution/execute-afm.js": {
+            "name": "src/execution/execute-afm.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/execution/experimental-executions.js": {
+            "name": "src/execution/experimental-executions.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
         "src/utils/promise.js": {
             "name": "src/utils/promise.js",
             "modules": {},
@@ -121,6 +135,20 @@
         }
     },
     "modules": {
+        "execution": {
+            "name": "execution",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "execution": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/execution.js",
+            "line": 5,
+            "description": "Execution endpoints"
+        },
         "admin": {
             "name": "admin",
             "submodules": {},
@@ -148,20 +176,6 @@
             "file": "src/config.js",
             "line": 2,
             "description": "Config module holds SDK configuration variables\n\nCurrently its only custom domain - which enabled using\nsdk from different domain (using CORS)\n\nNever set properties directly - always use setter methods"
-        },
-        "execution": {
-            "name": "execution",
-            "submodules": {},
-            "elements": {},
-            "classes": {
-                "execution": 1
-            },
-            "fors": {},
-            "namespaces": {},
-            "tag": "module",
-            "file": "src/execution.js",
-            "line": 106,
-            "description": "Module for execution on experimental execution resource"
         },
         "sdk": {
             "name": "sdk",
@@ -248,6 +262,19 @@
         }
     },
     "classes": {
+        "execution": {
+            "name": "execution",
+            "shortname": "execution",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "execution",
+            "file": "src/execution.js",
+            "line": 5,
+            "description": "Execution endpoints"
+        },
         "admin": {
             "name": "admin",
             "shortname": "admin",
@@ -275,20 +302,6 @@
             "file": "src/config.js",
             "line": 2,
             "description": "Config module holds SDK configuration variables\n\nCurrently its only custom domain - which enabled using\nsdk from different domain (using CORS)\n\nNever set properties directly - always use setter methods"
-        },
-        "execution": {
-            "name": "execution",
-            "shortname": "execution",
-            "classitems": [],
-            "plugins": [],
-            "extensions": [],
-            "plugin_for": [],
-            "extension_for": [],
-            "module": "execution",
-            "namespace": "",
-            "file": "src/execution.js",
-            "line": 106,
-            "description": "Module for execution on experimental execution resource"
         },
         "sdk": {
             "name": "sdk",
@@ -377,6 +390,65 @@
     "elements": {},
     "classitems": [
         {
+            "file": "src/execution/execute-afm.js",
+            "line": 97,
+            "description": "Execute AFM and fetch data results",
+            "itemtype": "method",
+            "name": "executeAfm",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- GD project identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "execution",
+                    "description": "- See https://github.com/gooddata/gooddata-typings/blob/master/index.ts#L4",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "Structure with `executionResult` and `executionResponse` -\n See https://github.com/gooddata/gooddata-typings/blob/master/index.ts#L294",
+                "type": "Object"
+            },
+            "class": "execution"
+        },
+        {
+            "file": "src/execution/experimental-executions.js",
+            "line": 113,
+            "description": "For the given projectId it returns table structure with the given\nelements in column headers.",
+            "itemtype": "method",
+            "name": "getData",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- GD project identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "columns",
+                    "description": "- An array of attribute or metric identifiers.",
+                    "type": "Array"
+                },
+                {
+                    "name": "executionConfiguration",
+                    "description": "- Execution configuration - can contain for example\n                property \"where\" containing query-like filters\n                property \"orderBy\" contains array of sorted properties to order in form\n                     [{column: 'identifier', direction: 'asc|desc'}]",
+                    "type": "Object"
+                },
+                {
+                    "name": "settings",
+                    "description": "- Supports additional settings accepted by the underlying\n                            xhr.ajax() calls",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "Structure with `headers` and `rawData` keys filled with values from execution.",
+                "type": "Object"
+            },
+            "class": "execution",
+            "module": "execution"
+        },
+        {
             "file": "src/utils/promise.js",
             "line": 1,
             "description": "Return promise that will resolve after `ms` miliseconds",
@@ -391,7 +463,8 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "admin"
+            "class": "admin",
+            "module": "execution"
         },
         {
             "file": "src/catalogue.js",
@@ -427,41 +500,6 @@
             "module": "config"
         },
         {
-            "file": "src/execution.js",
-            "line": 113,
-            "description": "For the given projectId it returns table structure with the given\nelements in column headers.",
-            "itemtype": "method",
-            "name": "getData",
-            "params": [
-                {
-                    "name": "projectId",
-                    "description": "- GD project identifier",
-                    "type": "String"
-                },
-                {
-                    "name": "columns",
-                    "description": "- An array of attribute or metric identifiers.",
-                    "type": "Array"
-                },
-                {
-                    "name": "executionConfiguration",
-                    "description": "- Execution configuration - can contain for example\n                property \"where\" containing query-like filters\n                property \"orderBy\" contains array of sorted properties to order in form\n                     [{column: 'identifier', direction: 'asc|desc'}]",
-                    "type": "Object"
-                },
-                {
-                    "name": "settings",
-                    "description": "- Supports additional settings accepted by the underlying\n                            xhr.ajax() calls",
-                    "type": "Object"
-                }
-            ],
-            "return": {
-                "description": "Structure with `headers` and `rawData` keys filled with values from execution.",
-                "type": "Object"
-            },
-            "class": "execution",
-            "module": "execution"
-        },
-        {
             "file": "src/metadata.js",
             "line": 19,
             "description": "Load all objects with given uris\n(use bulk loading instead of getting objects one by one)",
@@ -489,6 +527,31 @@
         {
             "file": "src/metadata.js",
             "line": 57,
+            "description": "Loads all objects by query (fetches all pages, one by one)",
+            "itemtype": "method",
+            "name": "getObjectsByQuery",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "options",
+                    "description": "(see https://developer.gooddata.com/api endpoint: /gdc/md/{project_id}/objects/query)\n       - category {String} for example 'dataSets' or 'projectDashboard'\n       - mode {String} 'enriched' or 'raw'\n       - author {String} the URI of the author of the metadata objects\n       - limit {number} default is 50 (also maximum)",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "array of returned objects",
+                "type": "Promise<Array>"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.js",
+            "line": 85,
             "description": "Get MD objects from using2 resource. Include only objects of given types\nand take care about fetching only nearest objects if requested.",
             "itemtype": "method",
             "name": "getObjectUsing",
@@ -518,7 +581,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 95,
+            "line": 123,
             "description": "Get MD objects from using2 resource. Include only objects of given types\nand take care about fetching only nearest objects if requested.",
             "itemtype": "method",
             "name": "getObjectUsingMany",
@@ -548,14 +611,35 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 133,
-            "description": "Reutrns all attributes in a project specified by projectId param",
+            "line": 161,
+            "description": "Returns all visualizations metadata in a project specified by projectId param",
+            "itemtype": "method",
+            "name": "getVisualizations",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "Project identifier",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "An array of visualization objects",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.js",
+            "line": 172,
+            "description": "Returns all attributes in a project specified by projectId param",
             "itemtype": "method",
             "name": "getAttributes",
             "params": [
                 {
                     "name": "projectId",
-                    "description": "Project identifier"
+                    "description": "Project identifier",
+                    "type": "String"
                 }
             ],
             "return": {
@@ -567,14 +651,15 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 144,
+            "line": 183,
             "description": "Returns all dimensions in a project specified by projectId param",
             "itemtype": "method",
             "name": "getDimensions",
             "params": [
                 {
                     "name": "projectId",
-                    "description": "Project identifier"
+                    "description": "Project identifier",
+                    "type": "String"
                 }
             ],
             "return": {
@@ -589,7 +674,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 156,
+            "line": 195,
             "description": "Returns project folders. Folders can be of specific types and you can specify\nthe type you need by passing and optional `type` parameter",
             "itemtype": "method",
             "name": "getFolders",
@@ -614,14 +699,15 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 190,
+            "line": 229,
             "description": "Returns all facts in a project specified by the given projectId",
             "itemtype": "method",
             "name": "getFacts",
             "params": [
                 {
                     "name": "projectId",
-                    "description": "Project identifier"
+                    "description": "Project identifier",
+                    "type": "String"
                 }
             ],
             "return": {
@@ -633,14 +719,15 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 201,
+            "line": 240,
             "description": "Returns all metrics in a project specified by the given projectId",
             "itemtype": "method",
             "name": "getMetrics",
             "params": [
                 {
                     "name": "projectId",
-                    "description": "Project identifier"
+                    "description": "Project identifier",
+                    "type": "String"
                 }
             ],
             "return": {
@@ -652,7 +739,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 212,
+            "line": 251,
             "description": "Returns all metrics that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given attributes",
             "itemtype": "method",
             "name": "getAvailableMetrics",
@@ -681,7 +768,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 230,
+            "line": 269,
             "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
             "itemtype": "method",
             "name": "getAvailableAttributes",
@@ -710,7 +797,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 248,
+            "line": 287,
             "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
             "itemtype": "method",
             "name": "getAvailableFacts",
@@ -739,7 +826,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 266,
+            "line": 305,
             "description": "Get details of a metadata object specified by its uri",
             "itemtype": "method",
             "name": "getObjectDetails",
@@ -758,7 +845,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 277,
+            "line": 316,
             "description": "Get folders with items.\nReturns array of folders, each having a title and items property which is an array of\ncorresponding items. Each item is either a metric or attribute, keeping its original\nverbose structure.",
             "itemtype": "method",
             "name": "getFoldersWithItems",
@@ -778,7 +865,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 420,
+            "line": 459,
             "description": "Get identifier of a metadata object identified by its uri",
             "itemtype": "method",
             "name": "getObjectIdentifier",
@@ -797,14 +884,15 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 446,
+            "line": 485,
             "description": "Get uri of an metadata object, specified by its identifier and project id it belongs to",
             "itemtype": "method",
             "name": "getObjectUri",
             "params": [
                 {
                     "name": "projectId",
-                    "description": "id of the project"
+                    "description": "id of the project",
+                    "type": "String"
                 },
                 {
                     "name": "identifier",
@@ -820,7 +908,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 471,
+            "line": 510,
             "description": "Get uris specified by identifiers",
             "itemtype": "method",
             "name": "getUrisFromIdentifiers",
@@ -845,7 +933,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 489,
+            "line": 528,
             "description": "Get identifiers specified by uris",
             "itemtype": "method",
             "name": "getIdentifiersFromUris",
@@ -870,7 +958,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 507,
+            "line": 546,
             "description": "Get attribute elements with their labels and uris.",
             "params": [
                 {
@@ -903,14 +991,15 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 530,
+            "line": 569,
             "description": "Get valid elements of an attribute, specified by its identifier and project id it belongs to",
             "itemtype": "method",
             "name": "getValidElements",
             "params": [
                 {
                     "name": "projectId",
-                    "description": "id of the project"
+                    "description": "id of the project",
+                    "type": "String"
                 },
                 {
                     "name": "id",
@@ -931,7 +1020,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 565,
+            "line": 602,
             "description": "Delete object",
             "experimental": "",
             "itemtype": "method",
@@ -948,7 +1037,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 576,
+            "line": 613,
             "description": "Create object",
             "experimental": "",
             "itemtype": "method",
@@ -970,7 +1059,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 602,
+            "line": 639,
             "description": "LDM manage",
             "experimental": "",
             "itemtype": "method",
@@ -997,7 +1086,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 625,
+            "line": 662,
             "description": "ETL pull",
             "experimental": "",
             "itemtype": "method",
@@ -1332,6 +1421,24 @@
             "module": "util"
         },
         {
+            "file": "src/util.js",
+            "line": 55,
+            "description": "Builds query string from plain object\n(Refactored from admin/routes.js)",
+            "params": [
+                {
+                    "name": "query",
+                    "description": "parameters possibly including arrays inside",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "querystring",
+                "type": "String"
+            },
+            "class": "util",
+            "module": "util"
+        },
+        {
             "file": "src/xhr.js",
             "line": 31,
             "description": "Back compatible method for setting common XHR settings\n\nUsually in our apps we used beforeSend ajax callback to set the X-GDC-REQUEST header with unique ID.",
@@ -1421,6 +1528,10 @@
             "line": " src/catalogue.js:50"
         },
         {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/util.js:55"
+        },
+        {
             "message": "Missing item type\nReturn promise that will resolve after `ms` miliseconds",
             "line": " src/utils/promise.js:1"
         },
@@ -1430,11 +1541,15 @@
         },
         {
             "message": "Missing item type\nGet attribute elements with their labels and uris.",
-            "line": " src/metadata.js:507"
+            "line": " src/metadata.js:546"
         },
         {
             "message": "Missing item type\nHelper for polling",
             "line": " src/util.js:24"
+        },
+        {
+            "message": "Missing item type\nBuilds query string from plain object\n(Refactored from admin/routes.js)",
+            "line": " src/util.js:55"
         },
         {
             "message": "Missing item type\nBack compatible method for setting common XHR settings\n\nUsually in our apps we used beforeSend ajax callback to set the X-GDC-REQUEST header with unique ID.",

@@ -36,7 +36,7 @@ YUI.add("yuidoc-meta", function(Y) {
         {
             "displayName": "execution",
             "name": "execution",
-            "description": "Module for execution on experimental execution resource"
+            "description": "Execution endpoints"
         },
         {
             "displayName": "metadata",
