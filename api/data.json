@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "4.4.0",
+        "version": "4.5.0",
         "url": ""
     },
     "files": {
@@ -1487,7 +1487,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 224,
+            "line": 229,
             "description": "Wrapper for xhr.ajax method GET",
             "itemtype": "method",
             "name": "get",
@@ -1496,7 +1496,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 234,
+            "line": 239,
             "description": "Wrapper for xhr.ajax method POST",
             "itemtype": "method",
             "name": "post",
@@ -1505,7 +1505,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 240,
+            "line": 245,
             "description": "Wrapper for xhr.ajax method PUT",
             "itemtype": "method",
             "name": "put",
@@ -1514,7 +1514,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 246,
+            "line": 251,
             "description": "Wrapper for xhr.ajax method DELETE",
             "itemtype": "method",
             "name": "delete",
