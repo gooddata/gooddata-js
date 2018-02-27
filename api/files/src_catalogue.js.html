@@ -51,14 +51,19 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v4.5.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha2</span>
                         <h1 class="file-heading">File: src/catalogue.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
                         import { get, find, omit, cloneDeep } from &#x27;lodash&#x27;;
                         import { post, parseJSON } from &#x27;./xhr&#x27;;
-                        import { mdToExecutionConfiguration } from &#x27;./execution/experimental-executions&#x27;;
+                        import { mdToExecutionDefinitionsAndColumns } from &#x27;./execution/experimental-executions&#x27;;
+                        
+                        import { loadAttributesMap } from &#x27;./utils/attributesMapLoader&#x27;;
+                        import { getAttributesDisplayForms } from &#x27;./utils/visualizationObjectHelper&#x27;;
+                        
+                        export { loadAttributesMap, getAttributesDisplayForms };
                         
                         const REQUEST_DEFAULTS = {
                             types: [&#x27;attribute&#x27;, &#x27;metric&#x27;, &#x27;fact&#x27;],
@@ -72,36 +77,21 @@ title: foobar
                             includeAvailableDateAttributes: true
                         };
                         
-                        const parseCategories = bucketItems =&gt; (
-                            get(bucketItems, &#x27;categories&#x27;).map(({ category }) =&gt; ({
-                                category: {
-                                    ...category,
-                                    displayForm: get(category, &#x27;attribute&#x27;)
-                                }
-                            })
-                            )
-                        );
+                        function bucketItemsToExecConfig(projectId, mdObj, options = {}) {
+                            return mdToExecutionDefinitionsAndColumns(projectId, mdObj, options).then((definitionsAndColumns) =&gt; {
+                                const definitions = get(definitionsAndColumns, &#x27;definitions&#x27;);
                         
-                        function bucketItemsToExecConfig(bucketItems, options = {}) {
-                            const categories = parseCategories(bucketItems);
-                            const executionConfig = mdToExecutionConfiguration({
-                                buckets: {
-                                    ...bucketItems,
-                                    categories
-                                }
-                            }, options);
-                            const definitions = get(executionConfig, &#x27;definitions&#x27;);
+                                return get(definitionsAndColumns, &#x27;columns&#x27;, []).map((column) =&gt; {
+                                    const definition = find(definitions, ({ metricDefinition }) =&gt;
+                                        get(metricDefinition, &#x27;identifier&#x27;) === column
+                                    );
+                                    const maql = get(definition, &#x27;metricDefinition.expression&#x27;);
                         
-                            return get(executionConfig, &#x27;columns&#x27;).map((column) =&gt; {
-                                const definition = find(definitions, ({ metricDefinition }) =&gt;
-                                    get(metricDefinition, &#x27;identifier&#x27;) === column
-                                );
-                                const maql = get(definition, &#x27;metricDefinition.expression&#x27;);
-                        
-                                if (maql) {
-                                    return maql;
-                                }
-                                return column;
+                                    if (maql) {
+                                        return maql;
+                                    }
+                                    return column;
+                                });
                             });
                         }
                         
@@ -150,17 +140,21 @@ title: foobar
                                 ...REQUEST_DEFAULTS,
                                 ...options,
                                 ...getRequiredDataSets(options)
-                            }, [&#x27;dataSetIdentifier&#x27;, &#x27;returnAllDateDataSets&#x27;]);
+                            }, [
+                                &#x27;dataSetIdentifier&#x27;,
+                                &#x27;returnAllDateDataSets&#x27;,
+                                &#x27;attributesMap&#x27;
+                            ]);
                         
-                            let bucketItems = get(cloneDeep(options), &#x27;bucketItems.buckets&#x27;);
-                            if (bucketItems) {
-                                bucketItems = bucketItemsToExecConfig(bucketItems);
-                                return loadCatalog(
-                                    projectId,
-                                    {
+                            const mdObj = get(cloneDeep(options), &#x27;bucketItems&#x27;);
+                            const attributesMap = get(options, &#x27;attributesMap&#x27;);
+                            const hasBuckets = get(mdObj, &#x27;buckets&#x27;) !== undefined;
+                            if (hasBuckets) {
+                                return bucketItemsToExecConfig(projectId, mdObj, { attributesMap }).then(bucketItems =&gt;
+                                    loadCatalog(projectId, {
                                         ...request,
                                         bucketItems
-                                    }
+                                    })
                                 );
                             }
                         
@@ -176,28 +170,29 @@ title: foobar
                         }
                         
                         export function loadDateDataSets(projectId, options) {
-                            let bucketItems = get(cloneDeep(options), &#x27;bucketItems.buckets&#x27;);
+                            const mdObj = get(cloneDeep(options), &#x27;bucketItems&#x27;);
+                            const bucketItemsPromise = mdObj ?
+                                bucketItemsToExecConfig(projectId, mdObj, { removeDateItems: true, attributesMap: get(options, &#x27;attributesMap&#x27;) }) :
+                                Promise.resolve();
                         
-                            if (bucketItems) {
-                                bucketItems = bucketItemsToExecConfig(bucketItems, { removeDateItems: true });
-                            }
+                            return bucketItemsPromise.then((bucketItems) =&gt; {
+                                const omittedOptions = [&#x27;filter&#x27;, &#x27;types&#x27;, &#x27;paging&#x27;, &#x27;dataSetIdentifier&#x27;, &#x27;returnAllDateDataSets&#x27;, &#x27;returnAllRelatedDateDataSets&#x27;, &#x27;attributesMap&#x27;];
+                                // includeObjectsWithTags has higher priority than excludeObjectsWithTags,
+                                // so when present omit excludeObjectsWithTags
+                                if (options.includeObjectsWithTags) {
+                                    omittedOptions.push(&#x27;excludeObjectsWithTags&#x27;);
+                                }
                         
-                            const omittedOptions = [&#x27;filter&#x27;, &#x27;types&#x27;, &#x27;paging&#x27;, &#x27;dataSetIdentifier&#x27;, &#x27;returnAllDateDataSets&#x27;, &#x27;returnAllRelatedDateDataSets&#x27;];
-                            // includeObjectsWithTags has higher priority than excludeObjectsWithTags,
-                            // so when present omit excludeObjectsWithTags
-                            if (options.includeObjectsWithTags) {
-                                omittedOptions.push(&#x27;excludeObjectsWithTags&#x27;);
-                            }
+                                const request = omit({
+                                    ...LOAD_DATE_DATASET_DEFAULTS,
+                                    ...REQUEST_DEFAULTS,
+                                    ...options,
+                                    ...getRequiredDataSets(options),
+                                    bucketItems
+                                }, omittedOptions);
                         
-                            const request = omit({
-                                ...LOAD_DATE_DATASET_DEFAULTS,
-                                ...REQUEST_DEFAULTS,
-                                ...options,
-                                ...getRequiredDataSets(options),
-                                bucketItems
-                            }, omittedOptions);
-                        
-                            return requestDateDataSets(projectId, request);
+                                return requestDateDataSets(projectId, request);
+                            });
                         }
                         
                             </pre>

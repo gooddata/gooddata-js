@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "4.5.0",
+        "version": "5.0.0-alpha2",
         "url": ""
     },
     "files": {
@@ -415,7 +415,7 @@
         },
         {
             "file": "src/execution/experimental-executions.js",
-            "line": 113,
+            "line": 122,
             "description": "For the given projectId it returns table structure with the given\nelements in column headers.",
             "itemtype": "method",
             "name": "getData",
@@ -468,7 +468,7 @@
         },
         {
             "file": "src/catalogue.js",
-            "line": 50,
+            "line": 40,
             "description": "Convert specific params in options to \"requiredDataSets\" structure. For more details look into\nres file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res",
             "params": [
                 {
@@ -1525,7 +1525,7 @@
     "warnings": [
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " src/catalogue.js:50"
+            "line": " src/catalogue.js:40"
         },
         {
             "message": "replacing incorrect tag: returns with return",
@@ -1537,7 +1537,7 @@
         },
         {
             "message": "Missing item type\nConvert specific params in options to \"requiredDataSets\" structure. For more details look into\nres file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res",
-            "line": " src/catalogue.js:50"
+            "line": " src/catalogue.js:40"
         },
         {
             "message": "Missing item type\nGet attribute elements with their labels and uris.",
