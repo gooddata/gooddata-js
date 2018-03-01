@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "5.0.0-alpha2",
+        "version": "5.0.0-alpha3",
         "url": ""
     },
     "files": {
@@ -102,12 +102,8 @@
         },
         "src/user.js": {
             "name": "src/user.js",
-            "modules": {
-                "user": 1
-            },
-            "classes": {
-                "user": 1
-            },
+            "modules": {},
+            "classes": {},
             "fors": {},
             "namespaces": {}
         },
@@ -146,7 +142,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/execution.js",
-            "line": 5,
+            "line": 6,
             "description": "Execution endpoints"
         },
         "admin": {
@@ -202,7 +198,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/metadata.js",
-            "line": 12,
+            "line": 11,
             "description": "Functions for working with metadata objects"
         },
         "project": {
@@ -216,21 +212,8 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/project.js",
-            "line": 5,
+            "line": 4,
             "description": "Functions for working with projects"
-        },
-        "user": {
-            "name": "user",
-            "submodules": {},
-            "elements": {},
-            "classes": {
-                "user": 1
-            },
-            "fors": {},
-            "namespaces": {},
-            "tag": "module",
-            "file": "src/user.js",
-            "line": 4
         },
         "util": {
             "name": "util",
@@ -243,7 +226,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/util.js",
-            "line": 7,
+            "line": 6,
             "description": "Utility methods. Mostly private"
         },
         "xhr": {
@@ -257,7 +240,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/xhr.js",
-            "line": 14,
+            "line": 13,
             "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
         }
     },
@@ -272,7 +255,7 @@
             "extension_for": [],
             "module": "execution",
             "file": "src/execution.js",
-            "line": 5,
+            "line": 6,
             "description": "Execution endpoints"
         },
         "admin": {
@@ -328,7 +311,7 @@
             "module": "metadata",
             "namespace": "",
             "file": "src/metadata.js",
-            "line": 12,
+            "line": 11,
             "description": "Functions for working with metadata objects"
         },
         "project": {
@@ -342,21 +325,8 @@
             "module": "project",
             "namespace": "",
             "file": "src/project.js",
-            "line": 5,
+            "line": 4,
             "description": "Functions for working with projects"
-        },
-        "user": {
-            "name": "user",
-            "shortname": "user",
-            "classitems": [],
-            "plugins": [],
-            "extensions": [],
-            "plugin_for": [],
-            "extension_for": [],
-            "module": "user",
-            "namespace": "",
-            "file": "src/user.js",
-            "line": 4
         },
         "util": {
             "name": "util",
@@ -369,7 +339,7 @@
             "module": "util",
             "namespace": "",
             "file": "src/util.js",
-            "line": 7,
+            "line": 6,
             "description": "Utility methods. Mostly private"
         },
         "xhr": {
@@ -383,7 +353,7 @@
             "module": "xhr",
             "namespace": "",
             "file": "src/xhr.js",
-            "line": 14,
+            "line": 13,
             "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
         }
     },
@@ -415,7 +385,7 @@
         },
         {
             "file": "src/execution/experimental-executions.js",
-            "line": 122,
+            "line": 537,
             "description": "For the given projectId it returns table structure with the given\nelements in column headers.",
             "itemtype": "method",
             "name": "getData",
@@ -468,7 +438,7 @@
         },
         {
             "file": "src/catalogue.js",
-            "line": 40,
+            "line": 20,
             "description": "Convert specific params in options to \"requiredDataSets\" structure. For more details look into\nres file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res",
             "params": [
                 {
@@ -485,7 +455,7 @@
         },
         {
             "file": "src/config.js",
-            "line": 19,
+            "line": 18,
             "description": "Sets custom domain. Parameter is url which has always to be https://\n(if you don't provide it, we will do it for you).\n\nRegExp inspired taken from\nhttps://github.com/jarib/google-closure-library/blob/master/closure/goog/string/linkify.js",
             "params": [
                 {
@@ -501,7 +471,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 19,
+            "line": 18,
             "description": "Load all objects with given uris\n(use bulk loading instead of getting objects one by one)",
             "itemtype": "method",
             "name": "getObjects",
@@ -526,7 +496,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 57,
+            "line": 56,
             "description": "Loads all objects by query (fetches all pages, one by one)",
             "itemtype": "method",
             "name": "getObjectsByQuery",
@@ -551,7 +521,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 85,
+            "line": 83,
             "description": "Get MD objects from using2 resource. Include only objects of given types\nand take care about fetching only nearest objects if requested.",
             "itemtype": "method",
             "name": "getObjectUsing",
@@ -581,7 +551,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 123,
+            "line": 121,
             "description": "Get MD objects from using2 resource. Include only objects of given types\nand take care about fetching only nearest objects if requested.",
             "itemtype": "method",
             "name": "getObjectUsingMany",
@@ -611,7 +581,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 161,
+            "line": 159,
             "description": "Returns all visualizations metadata in a project specified by projectId param",
             "itemtype": "method",
             "name": "getVisualizations",
@@ -631,7 +601,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 172,
+            "line": 170,
             "description": "Returns all attributes in a project specified by projectId param",
             "itemtype": "method",
             "name": "getAttributes",
@@ -651,7 +621,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 183,
+            "line": 181,
             "description": "Returns all dimensions in a project specified by projectId param",
             "itemtype": "method",
             "name": "getDimensions",
@@ -674,7 +644,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 195,
+            "line": 193,
             "description": "Returns project folders. Folders can be of specific types and you can specify\nthe type you need by passing and optional `type` parameter",
             "itemtype": "method",
             "name": "getFolders",
@@ -699,7 +669,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 229,
+            "line": 227,
             "description": "Returns all facts in a project specified by the given projectId",
             "itemtype": "method",
             "name": "getFacts",
@@ -719,7 +689,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 240,
+            "line": 238,
             "description": "Returns all metrics in a project specified by the given projectId",
             "itemtype": "method",
             "name": "getMetrics",
@@ -739,7 +709,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 251,
+            "line": 249,
             "description": "Returns all metrics that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given attributes",
             "itemtype": "method",
             "name": "getAvailableMetrics",
@@ -768,7 +738,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 269,
+            "line": 267,
             "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
             "itemtype": "method",
             "name": "getAvailableAttributes",
@@ -797,7 +767,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 287,
+            "line": 285,
             "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
             "itemtype": "method",
             "name": "getAvailableFacts",
@@ -826,7 +796,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 305,
+            "line": 303,
             "description": "Get details of a metadata object specified by its uri",
             "itemtype": "method",
             "name": "getObjectDetails",
@@ -845,7 +815,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 316,
+            "line": 314,
             "description": "Get folders with items.\nReturns array of folders, each having a title and items property which is an array of\ncorresponding items. Each item is either a metric or attribute, keeping its original\nverbose structure.",
             "itemtype": "method",
             "name": "getFoldersWithItems",
@@ -865,7 +835,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 459,
+            "line": 456,
             "description": "Get identifier of a metadata object identified by its uri",
             "itemtype": "method",
             "name": "getObjectIdentifier",
@@ -884,7 +854,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 485,
+            "line": 482,
             "description": "Get uri of an metadata object, specified by its identifier and project id it belongs to",
             "itemtype": "method",
             "name": "getObjectUri",
@@ -908,7 +878,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 510,
+            "line": 507,
             "description": "Get uris specified by identifiers",
             "itemtype": "method",
             "name": "getUrisFromIdentifiers",
@@ -933,7 +903,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 528,
+            "line": 525,
             "description": "Get identifiers specified by uris",
             "itemtype": "method",
             "name": "getIdentifiersFromUris",
@@ -958,7 +928,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 546,
+            "line": 543,
             "description": "Get attribute elements with their labels and uris.",
             "params": [
                 {
@@ -991,7 +961,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 569,
+            "line": 566,
             "description": "Get valid elements of an attribute, specified by its identifier and project id it belongs to",
             "itemtype": "method",
             "name": "getValidElements",
@@ -1003,7 +973,7 @@
                 },
                 {
                     "name": "id",
-                    "description": "display form identifier of the metadata object"
+                    "description": "display form id of the metadata object"
                 },
                 {
                     "name": "options",
@@ -1020,7 +990,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 602,
+            "line": 599,
             "description": "Delete object",
             "experimental": "",
             "itemtype": "method",
@@ -1037,7 +1007,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 613,
+            "line": 610,
             "description": "Create object",
             "experimental": "",
             "itemtype": "method",
@@ -1059,7 +1029,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 639,
+            "line": 636,
             "description": "LDM manage",
             "experimental": "",
             "itemtype": "method",
@@ -1086,7 +1056,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 662,
+            "line": 659,
             "description": "ETL pull",
             "experimental": "",
             "itemtype": "method",
@@ -1113,7 +1083,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 13,
+            "line": 40,
             "description": "Get current project id",
             "itemtype": "method",
             "name": "getCurrentProjectId",
@@ -1126,7 +1096,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 31,
+            "line": 58,
             "description": "Fetches projects available for the user represented by the given profileId",
             "itemtype": "method",
             "name": "getProjects",
@@ -1146,7 +1116,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 44,
+            "line": 71,
             "description": "Fetches all datasets for the given project",
             "itemtype": "method",
             "name": "getDatasets",
@@ -1166,7 +1136,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 76,
+            "line": 82,
             "description": "Fetches a chart color palette for a project represented by the given\nprojectId parameter.",
             "itemtype": "method",
             "name": "getColorPalette",
@@ -1186,7 +1156,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 103,
+            "line": 109,
             "description": "Sets given colors as a color palette for a given project.",
             "itemtype": "method",
             "name": "setColorPalette",
@@ -1207,7 +1177,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 123,
+            "line": 129,
             "description": "Gets current timezone and its offset. Example output:\n\n    {\n        id: 'Europe/Prague',\n        displayName: 'Central European Time',\n        currentOffsetMs: 3600000\n    }",
             "itemtype": "method",
             "name": "getTimezone",
@@ -1223,7 +1193,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 162,
+            "line": 161,
             "description": "Create project\nNote: returns a promise which is resolved when the project creation is finished",
             "experimental": "",
             "itemtype": "method",
@@ -1254,7 +1224,7 @@
         },
         {
             "file": "src/project.js",
-            "line": 206,
+            "line": 205,
             "description": "Delete project",
             "itemtype": "method",
             "name": "deleteProject",
@@ -1270,7 +1240,7 @@
         },
         {
             "file": "src/user.js",
-            "line": 9,
+            "line": 4,
             "description": "Find out whether a user is logged in",
             "return": {
                 "description": "resolves with true if user logged in, false otherwise",
@@ -1278,12 +1248,12 @@
             },
             "itemtype": "method",
             "name": "isLoggedIn",
-            "class": "user",
-            "module": "user"
+            "class": "util",
+            "module": "project"
         },
         {
             "file": "src/user.js",
-            "line": 36,
+            "line": 30,
             "description": "This function provides an authentication entry point to the GD API. It is needed to authenticate\nby calling this function prior any other API calls. After providing valid credentials\nevery subsequent API call in a current session will be authenticated.",
             "itemtype": "method",
             "name": "login",
@@ -1299,12 +1269,12 @@
                     "type": "String"
                 }
             ],
-            "class": "user",
-            "module": "user"
+            "class": "util",
+            "module": "project"
         },
         {
             "file": "src/user.js",
-            "line": 59,
+            "line": 53,
             "description": "This function provides an authentication entry point to the GD API via SSO\nhttps://help.gooddata.com/display/developer/GoodData+PGP+Single+Sign-On",
             "itemtype": "method",
             "name": "loginSso",
@@ -1325,21 +1295,21 @@
                     "type": "String"
                 }
             ],
-            "class": "user",
-            "module": "user"
+            "class": "util",
+            "module": "project"
         },
         {
             "file": "src/user.js",
-            "line": 73,
+            "line": 67,
             "description": "Logs out current user",
             "itemtype": "method",
             "name": "logout",
-            "class": "user",
-            "module": "user"
+            "class": "util",
+            "module": "project"
         },
         {
             "file": "src/user.js",
-            "line": 94,
+            "line": 88,
             "description": "Updates user's profile settings",
             "itemtype": "method",
             "name": "updateProfileSettings",
@@ -1355,30 +1325,30 @@
                     "type": "Object"
                 }
             ],
-            "class": "user",
-            "module": "user"
+            "class": "util",
+            "module": "project"
         },
         {
             "file": "src/user.js",
-            "line": 106,
+            "line": 100,
             "description": "Returns info about currently logged in user from bootstrap resource",
             "itemtype": "method",
             "name": "getAccountInfo",
-            "class": "user",
-            "module": "user"
+            "class": "util",
+            "module": "project"
         },
         {
             "file": "src/user.js",
-            "line": 127,
+            "line": 121,
             "description": "Returns the feature flags valid for the currently logged in user.",
             "itemtype": "method",
             "name": "getFeatureFlags",
-            "class": "user",
-            "module": "user"
+            "class": "util",
+            "module": "project"
         },
         {
             "file": "src/util.js",
-            "line": 15,
+            "line": 14,
             "description": "Create getter function for accessing nested objects",
             "params": [
                 {
@@ -1396,7 +1366,7 @@
         },
         {
             "file": "src/util.js",
-            "line": 24,
+            "line": 23,
             "description": "Helper for polling",
             "params": [
                 {
@@ -1422,7 +1392,7 @@
         },
         {
             "file": "src/util.js",
-            "line": 55,
+            "line": 54,
             "description": "Builds query string from plain object\n(Refactored from admin/routes.js)",
             "params": [
                 {
@@ -1440,20 +1410,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 31,
-            "description": "Back compatible method for setting common XHR settings\n\nUsually in our apps we used beforeSend ajax callback to set the X-GDC-REQUEST header with unique ID.",
-            "params": [
-                {
-                    "name": "settings",
-                    "description": "object XHR settings as"
-                }
-            ],
-            "class": "xhr",
-            "module": "xhr"
-        },
-        {
-            "file": "src/xhr.js",
-            "line": 142,
+            "line": 58,
             "params": [
                 {
                     "name": "response",
@@ -1470,7 +1427,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 148,
+            "line": 64,
             "params": [
                 {
                     "name": "response",
@@ -1487,7 +1444,20 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 229,
+            "line": 121,
+            "description": "Back compatible method for setting common XHR settings\n\nUsually in our apps we used beforeSend ajax callback to set the X-GDC-REQUEST header with unique ID.",
+            "params": [
+                {
+                    "name": "settings",
+                    "description": "object XHR settings as"
+                }
+            ],
+            "class": "xhr",
+            "module": "xhr"
+        },
+        {
+            "file": "src/xhr.js",
+            "line": 220,
             "description": "Wrapper for xhr.ajax method GET",
             "itemtype": "method",
             "name": "get",
@@ -1496,7 +1466,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 239,
+            "line": 237,
             "description": "Wrapper for xhr.ajax method POST",
             "itemtype": "method",
             "name": "post",
@@ -1505,7 +1475,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 245,
+            "line": 243,
             "description": "Wrapper for xhr.ajax method PUT",
             "itemtype": "method",
             "name": "put",
@@ -1514,7 +1484,7 @@
         },
         {
             "file": "src/xhr.js",
-            "line": 251,
+            "line": 249,
             "description": "Wrapper for xhr.ajax method DELETE",
             "itemtype": "method",
             "name": "delete",
@@ -1525,11 +1495,11 @@
     "warnings": [
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " src/catalogue.js:40"
+            "line": " src/catalogue.js:20"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " src/util.js:55"
+            "line": " src/util.js:54"
         },
         {
             "message": "Missing item type\nReturn promise that will resolve after `ms` miliseconds",
@@ -1537,31 +1507,31 @@
         },
         {
             "message": "Missing item type\nConvert specific params in options to \"requiredDataSets\" structure. For more details look into\nres file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res",
-            "line": " src/catalogue.js:40"
+            "line": " src/catalogue.js:20"
         },
         {
             "message": "Missing item type\nGet attribute elements with their labels and uris.",
-            "line": " src/metadata.js:546"
+            "line": " src/metadata.js:543"
         },
         {
             "message": "Missing item type\nHelper for polling",
-            "line": " src/util.js:24"
+            "line": " src/util.js:23"
         },
         {
             "message": "Missing item type\nBuilds query string from plain object\n(Refactored from admin/routes.js)",
-            "line": " src/util.js:55"
+            "line": " src/util.js:54"
+        },
+        {
+            "message": "Missing item type",
+            "line": " src/xhr.js:58"
+        },
+        {
+            "message": "Missing item type",
+            "line": " src/xhr.js:64"
         },
         {
             "message": "Missing item type\nBack compatible method for setting common XHR settings\n\nUsually in our apps we used beforeSend ajax callback to set the X-GDC-REQUEST header with unique ID.",
-            "line": " src/xhr.js:31"
-        },
-        {
-            "message": "Missing item type",
-            "line": " src/xhr.js:142"
-        },
-        {
-            "message": "Missing item type",
-            "line": " src/xhr.js:148"
+            "line": " src/xhr.js:121"
         }
     ]
 }

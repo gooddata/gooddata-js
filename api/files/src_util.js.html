@@ -23,7 +23,6 @@ title: foobar
                                         <li><a href="../modules/metadata.html">metadata</a></li>
                                         <li><a href="../modules/project.html">project</a></li>
                                         <li><a href="../modules/sdk.html">sdk</a></li>
-                                        <li><a href="../modules/user.html">user</a></li>
                                         <li><a href="../modules/util.html">util</a></li>
                                         <li><a href="../modules/xhr.html">xhr</a></li>
                                     </ul>
@@ -36,7 +35,6 @@ title: foobar
                                         <li><a href="../classes/metadata.html">metadata</a></li>
                                         <li><a href="../classes/project.html">project</a></li>
                                         <li><a href="../classes/sdk.html">sdk</a></li>
-                                        <li><a href="../classes/user.html">user</a></li>
                                         <li><a href="../classes/util.html">util</a></li>
                                         <li><a href="../classes/xhr.html">xhr</a></li>
                                     </ul>
@@ -51,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha2</span>
+                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha3</span>
                         <h1 class="file-heading">File: src/util.js</h1>
                         
                         <div class="file">
@@ -59,7 +57,6 @@ title: foobar
                         // Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
                         
                         import { get } from &#x27;lodash&#x27;;
-                        import { get as xhrGet } from &#x27;./xhr&#x27;;
                         import { delay } from &#x27;./utils/promise&#x27;;
                         
                         /**
@@ -87,7 +84,7 @@ title: foobar
                          * @param {Object} options for polling (maxAttempts, pollStep)
                          * @private
                          */
-                        export const handlePolling = (uri, isPollingDone, options = {}) =&gt; {
+                        export const handlePolling = (xhrGet, uri, isPollingDone, options = {}) =&gt; {
                             const {
                                 attempts = 0,
                                 maxAttempts = 50,
@@ -101,7 +98,7 @@ title: foobar
                                 return isPollingDone(response) ?
                                     Promise.resolve(response) :
                                     delay(pollStep).then(() =&gt; {
-                                        return handlePolling(uri, isPollingDone, {
+                                        return handlePolling(xhrGet, uri, isPollingDone, {
                                             ...options,
                                             attempts: attempts + 1
                                         });

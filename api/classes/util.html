@@ -23,7 +23,6 @@ title: foobar
                                         <li><a href="../modules/metadata.html">metadata</a></li>
                                         <li><a href="../modules/project.html">project</a></li>
                                         <li><a href="../modules/sdk.html">sdk</a></li>
-                                        <li><a href="../modules/user.html">user</a></li>
                                         <li><a href="../modules/util.html">util</a></li>
                                         <li><a href="../modules/xhr.html">xhr</a></li>
                                     </ul>
@@ -36,7 +35,6 @@ title: foobar
                                         <li><a href="../classes/metadata.html">metadata</a></li>
                                         <li><a href="../classes/project.html">project</a></li>
                                         <li><a href="../classes/sdk.html">sdk</a></li>
-                                        <li><a href="../classes/user.html">user</a></li>
                                         <li><a href="../classes/util.html">util</a></li>
                                         <li><a href="../classes/xhr.html">xhr</a></li>
                                     </ul>
@@ -51,13 +49,13 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha2</span>
+                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha3</span>
                         <h1>util Class</h1>
                         <div class="meta">
                         
                         
                                 <div class="foundat">
-                                    <strong>Defined in:</strong> <a href="../files/src_util.js.html#l7"><code>src&#x2F;util.js:7</code></a>
+                                    <strong>Defined in:</strong> <a href="../files/src_util.js.html#l6"><code>src&#x2F;util.js:6</code></a>
                                 </div>
                         
                                     <strong>Module:</strong> <a href="../modules/util.html">util</a>
@@ -108,8 +106,36 @@ title: foobar
                                             <h3>Methods</h3>
                         
                                             <ul class="index-list methods">
+                                                    <li class="index-item method">
+                                                        <a href="#method_getAccountInfo">getAccountInfo</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_getFeatureFlags">getFeatureFlags</a>
+                        
+                                                    </li>
                                                     <li class="index-item method private">
                                                         <a href="#method_getIn">getIn</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_isLoggedIn">isLoggedIn</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_login">login</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_loginSso">loginSso</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_logout">logout</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_updateProfileSettings">updateProfileSettings</a>
                         
                                                     </li>
                                             </ul>
@@ -143,6 +169,68 @@ title: foobar
                                             </div>
                                         
                         
+                                            <div id="method_getAccountInfo" class="method item">
+                                                <h3 class="name"><code>getAccountInfo</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.js.html#l100"><code>src&#x2F;user.js:100</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Returns info about currently logged in user from bootstrap resource</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                            
+                                            </div>
+                                            <div id="method_getFeatureFlags" class="method item">
+                                                <h3 class="name"><code>getFeatureFlags</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.js.html#l121"><code>src&#x2F;user.js:121</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Returns the feature flags valid for the currently logged in user.</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                            
+                                            </div>
                                             <div id="method_getIn" class="method item private">
                                                 <h3 class="name"><code>getIn</code></h3>
                                             
@@ -165,7 +253,7 @@ title: foobar
                                                 <div class="meta">
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_util.js.html#l15"><code>src&#x2F;util.js:15</code></a>
+                                                    <a href="../files/src_util.js.html#l14"><code>src&#x2F;util.js:14</code></a>
                                                     </p>
                                             
                                             
@@ -189,6 +277,298 @@ title: foobar
                                                                 <div class="param-description">
                                                                     <p>Target path to nested object</p>
                                             
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                            
+                                            </div>
+                                            <div id="method_isLoggedIn" class="method item">
+                                                <h3 class="name"><code>isLoggedIn</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                                    <span class="returns-inline">
+                                                        <span class="type">Promise</span>
+                                                    </span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.js.html#l4"><code>src&#x2F;user.js:4</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Find out whether a user is logged in</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                                    <div class="returns">
+                                                        <h4>Returns</h4>
+                                            
+                                                        <div class="returns-description">
+                                                                    <span class="type">Promise</span>:
+                                                                <p>resolves with true if user logged in, false otherwise</p>
+                                            
+                                                        </div>
+                                                    </div>
+                                            
+                                            </div>
+                                            <div id="method_login" class="method item">
+                                                <h3 class="name"><code>login</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>username</code>
+                                                            </li>
+                                                            <li class="arg">
+                                                                    <code>password</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.js.html#l30"><code>src&#x2F;user.js:30</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>This function provides an authentication entry point to the GD API. It is needed to authenticate
+                                            by calling this function prior any other API calls. After providing valid credentials
+                                            every subsequent API call in a current session will be authenticated.</p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">username</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
+                                                                </div>
+                                            
+                                                            </li>
+                                                            <li class="param">
+                                                                    <code class="param-name">password</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                            
+                                            </div>
+                                            <div id="method_loginSso" class="method item">
+                                                <h3 class="name"><code>loginSso</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>sessionId</code>
+                                                            </li>
+                                                            <li class="arg">
+                                                                    <code>serverUrl</code>
+                                                            </li>
+                                                            <li class="arg">
+                                                                    <code>targetUrl</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.js.html#l53"><code>src&#x2F;user.js:53</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>This function provides an authentication entry point to the GD API via SSO
+                                            <a href="https://help.gooddata.com/display/developer/GoodData+PGP+Single+Sign-On">https://help.gooddata.com/display/developer/GoodData+PGP+Single+Sign-On</a></p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">sessionId</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <p>PGP message</p>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                            <li class="param">
+                                                                    <code class="param-name">serverUrl</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
+                                                                </div>
+                                            
+                                                            </li>
+                                                            <li class="param">
+                                                                    <code class="param-name">targetUrl</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                            
+                                            </div>
+                                            <div id="method_logout" class="method item">
+                                                <h3 class="name"><code>logout</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.js.html#l67"><code>src&#x2F;user.js:67</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Logs out current user</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                            
+                                            </div>
+                                            <div id="method_updateProfileSettings" class="method item">
+                                                <h3 class="name"><code>updateProfileSettings</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>profileId</code>
+                                                            </li>
+                                                            <li class="arg">
+                                                                    <code>profileSetting</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.js.html#l88"><code>src&#x2F;user.js:88</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Updates user's profile settings</p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">profileId</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <ul>
+                                            <li>User profile identifier</li>
+                                            </ul>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                            <li class="param">
+                                                                    <code class="param-name">profileSetting</code>
+                                                                    <span class="type">Object</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
                                                                 </div>
                                             
                                                             </li>

@@ -23,7 +23,6 @@ title: foobar
                                         <li><a href="../modules/metadata.html">metadata</a></li>
                                         <li><a href="../modules/project.html">project</a></li>
                                         <li><a href="../modules/sdk.html">sdk</a></li>
-                                        <li><a href="../modules/user.html">user</a></li>
                                         <li><a href="../modules/util.html">util</a></li>
                                         <li><a href="../modules/xhr.html">xhr</a></li>
                                     </ul>
@@ -36,7 +35,6 @@ title: foobar
                                         <li><a href="../classes/metadata.html">metadata</a></li>
                                         <li><a href="../classes/project.html">project</a></li>
                                         <li><a href="../classes/sdk.html">sdk</a></li>
-                                        <li><a href="../classes/user.html">user</a></li>
                                         <li><a href="../classes/util.html">util</a></li>
                                         <li><a href="../classes/xhr.html">xhr</a></li>
                                     </ul>
@@ -51,20 +49,20 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha2</span>
+                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha3</span>
                         <h1 class="file-heading">File: src/gooddata.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
                         // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
-                        import * as xhr from &#x27;./xhr&#x27;;
-                        import * as user from &#x27;./user&#x27;;
-                        import * as md from &#x27;./metadata&#x27;;
-                        import execution from &#x27;./execution&#x27;;
-                        import * as project from &#x27;./project&#x27;;
-                        import * as config from &#x27;./config&#x27;;
-                        import * as catalogue from &#x27;./catalogue&#x27;;
-                        import admin from &#x27;./admin&#x27;;
+                        import { createModule as xhrFactory } from &#x27;./xhr&#x27;;
+                        import { createModule as userFactory } from &#x27;./user&#x27;;
+                        import { createModule as metadataFactory } from &#x27;./metadata&#x27;;
+                        import { createModule as executionFactory } from &#x27;./execution&#x27;;
+                        import { createModule as projectFactory } from &#x27;./project&#x27;;
+                        import { createModule as configFactory } from &#x27;./config&#x27;;
+                        import { createModule as catalogueFactory } from &#x27;./catalogue&#x27;;
+                        import { createModule as adminFactory } from &#x27;./admin&#x27;;
                         
                         /**
                          * # JS SDK
@@ -83,10 +81,37 @@ title: foobar
                          * @module sdk
                          * @class sdk
                          */
-                        const gooddata = { config, xhr, user, md, execution, project, catalogue, admin };
-                        export default gooddata;
-                        module.exports = gooddata;
                         
+                        function factory(options = {}) {
+                            const config = configFactory();
+                            if (options.domain) {
+                                config.setCustomDomain(options.domain);
+                            }
+                            const xhr = xhrFactory(config);
+                            const md = metadataFactory(xhr);
+                            const execution = executionFactory(xhr, md);
+                            return {
+                                config,
+                                xhr,
+                                user: userFactory(xhr),
+                                md,
+                                execution,
+                                project: projectFactory(xhr),
+                                catalogue: catalogueFactory(xhr, execution),
+                                admin: adminFactory(xhr)
+                            };
+                        }
+                        
+                        let defaultInstance; // eslint-disable-line import/no-mutable-exports
+                        if (!defaultInstance) {
+                            defaultInstance = factory();
+                        }
+                        
+                        export {
+                            factory
+                        };
+                        
+                        export default defaultInstance;
                         
                             </pre>
                         </div>

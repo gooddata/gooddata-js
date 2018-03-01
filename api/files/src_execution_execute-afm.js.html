@@ -23,7 +23,6 @@ title: foobar
                                         <li><a href="../modules/metadata.html">metadata</a></li>
                                         <li><a href="../modules/project.html">project</a></li>
                                         <li><a href="../modules/sdk.html">sdk</a></li>
-                                        <li><a href="../modules/user.html">user</a></li>
                                         <li><a href="../modules/util.html">util</a></li>
                                         <li><a href="../modules/xhr.html">xhr</a></li>
                                     </ul>
@@ -36,7 +35,6 @@ title: foobar
                                         <li><a href="../classes/metadata.html">metadata</a></li>
                                         <li><a href="../classes/project.html">project</a></li>
                                         <li><a href="../classes/sdk.html">sdk</a></li>
-                                        <li><a href="../classes/user.html">user</a></li>
                                         <li><a href="../classes/util.html">util</a></li>
                                         <li><a href="../classes/xhr.html">xhr</a></li>
                                     </ul>
@@ -51,7 +49,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha2</span>
+                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha3</span>
                         <h1 class="file-heading">File: src/execution/execute-afm.js</h1>
                         
                         <div class="file">
@@ -60,7 +58,6 @@ title: foobar
                         import { get, clone } from &#x27;lodash&#x27;;
                         import invariant from &#x27;invariant&#x27;;
                         import qs from &#x27;qs&#x27;;
-                        import { ajax, post, parseJSON } from &#x27;../xhr&#x27;;
                         
                         const PAGE_SIZE = 500;
                         const DEFAULT_DIMENSION_COUNT = 2;
@@ -74,22 +71,6 @@ title: foobar
                         
                         function getLimit(offset) {
                             return Array(offset.length).fill(PAGE_SIZE);
-                        }
-                        
-                        function fetchExecutionResult(pollingUri, offset) {
-                            const [uriPart, queryPart] = pollingUri.split(/\?(.+)/);
-                            const query = {
-                                ...qs.parse(queryPart),
-                                limit: getLimit(offset).join(&#x27;,&#x27;),
-                                offset: offset.join(&#x27;,&#x27;)
-                            };
-                            const finalPollingUri = uriPart + qs.stringify(query, { addQueryPrefix: true });
-                            return ajax(finalPollingUri, { method: &#x27;GET&#x27; }).then((r) =&gt; {
-                                if (r.status === 204) {
-                                    return null;
-                                }
-                                return r.json();
-                            });
                         }
                         
                         // works only for one or two dimensions
@@ -137,47 +118,67 @@ title: foobar
                             return false;
                         }
                         
-                        function getOnePage(pollingUri, offset, prevResult = null) {
-                            return fetchExecutionResult(pollingUri, offset).then((executionResult) =&gt; {
-                                if (executionResult === null) {
-                                    return null;
-                                }
-                        
-                                const newResult = prevResult ? mergePageData(prevResult, executionResult) : executionResult;
-                        
-                                const nextOffset = nextPageOffset(executionResult.executionResult.paging);
-                                return nextOffset
-                                    ? getOnePage(pollingUri, nextOffset, newResult)
-                                    : newResult;
-                            });
-                        }
-                        
-                        /**
-                         * Execute AFM and fetch data results
-                         *
-                         * @method executeAfm
-                         * @param {String} projectId - GD project identifier
-                         * @param {Object} execution - See https://github.com/gooddata/gooddata-typings/blob/master/index.ts#L4
-                         *
-                         * @return {Object} Structure with &#x60;executionResult&#x60; and &#x60;executionResponse&#x60; -
-                         *  See https://github.com/gooddata/gooddata-typings/blob/master/index.ts#L294
-                         */
-                        export default function executeAfm(projectId, execution) {
-                            const dimensionality = getDimensionality(execution);
-                            invariant(dimensionality &lt;= 2, &#x27;executeAfm does not support more than 2 dimensions&#x27;);
-                        
-                            return post(&#x60;/gdc/app/projects/${projectId}/executeAfm&#x60;, { body: JSON.stringify(execution) })
-                                .then(parseJSON)
-                                .then((executionResponse) =&gt; {
-                                    const offset = Array(dimensionality).fill(0); // offset holds information on dimensionality
-                                    const pollingUri = executionResponse.executionResponse.links.executionResult;
-                                    return getOnePage(pollingUri, offset).then((executionResult) =&gt; {
-                                        return {
-                                            executionResponse,
-                                            executionResult
-                                        };
-                                    });
+                        export function createModule(xhr) {
+                            function fetchExecutionResult(pollingUri, offset) {
+                                const [uriPart, queryPart] = pollingUri.split(/\?(.+)/);
+                                const query = {
+                                    ...qs.parse(queryPart),
+                                    limit: getLimit(offset).join(&#x27;,&#x27;),
+                                    offset: offset.join(&#x27;,&#x27;)
+                                };
+                                const finalPollingUri = uriPart + qs.stringify(query, { addQueryPrefix: true });
+                                return xhr.ajax(finalPollingUri, { method: &#x27;GET&#x27; }).then((r) =&gt; {
+                                    if (r.status === 204) {
+                                        return null;
+                                    }
+                                    return r.json();
                                 });
+                            }
+                        
+                            function getOnePage(pollingUri, offset, prevResult = null) {
+                                return fetchExecutionResult(pollingUri, offset).then((executionResult) =&gt; {
+                                    if (executionResult === null) {
+                                        return null;
+                                    }
+                        
+                                    const newResult = prevResult ? mergePageData(prevResult, executionResult) : executionResult;
+                        
+                                    const nextOffset = nextPageOffset(executionResult.executionResult.paging);
+                                    return nextOffset
+                                        ? getOnePage(pollingUri, nextOffset, newResult)
+                                        : newResult;
+                                });
+                            }
+                        
+                            /**
+                             * Execute AFM and fetch data results
+                             *
+                             * @method executeAfm
+                             * @param {String} projectId - GD project identifier
+                             * @param {Object} execution - See https://github.com/gooddata/gooddata-typings/blob/master/index.ts#L4
+                             *
+                             * @return {Object} Structure with &#x60;executionResult&#x60; and &#x60;executionResponse&#x60; -
+                             *  See https://github.com/gooddata/gooddata-typings/blob/master/index.ts#L294
+                             */
+                            function executeAfm(projectId, execution) {
+                                const dimensionality = getDimensionality(execution);
+                                invariant(dimensionality &lt;= 2, &#x27;executeAfm does not support more than 2 dimensions&#x27;);
+                        
+                                return xhr.post(&#x60;/gdc/app/projects/${projectId}/executeAfm&#x60;, { body: JSON.stringify(execution) })
+                                    .then(xhr.parseJSON)
+                                    .then((executionResponse) =&gt; {
+                                        const offset = Array(dimensionality).fill(0); // offset holds information on dimensionality
+                                        const pollingUri = executionResponse.executionResponse.links.executionResult;
+                                        return getOnePage(pollingUri, offset).then((executionResult) =&gt; {
+                                            return {
+                                                executionResponse,
+                                                executionResult
+                                            };
+                                        });
+                                    });
+                            }
+                        
+                            return executeAfm;
                         }
                         
                             </pre>

@@ -7,7 +7,6 @@ YUI.add("yuidoc-meta", function(Y) {
         "metadata",
         "project",
         "sdk",
-        "user",
         "util",
         "xhr"
     ],
@@ -18,7 +17,6 @@ YUI.add("yuidoc-meta", function(Y) {
         "metadata",
         "project",
         "sdk",
-        "user",
         "util",
         "xhr"
     ],
@@ -52,10 +50,6 @@ YUI.add("yuidoc-meta", function(Y) {
             "displayName": "sdk",
             "name": "sdk",
             "description": "# JS SDK\nHere is a set of functions that mostly are a thin wraper over the [GoodData API](https://developer.gooddata.com/api).\nBefore calling any of those functions, you need to authenticate with a valid GoodData\nuser credentials. After that, every subsequent call in the current session is authenticated.\nYou can find more about the GD authentication mechanism here.\n\n## GD Authentication Mechansim\nIn this JS SDK library we provide you with a simple `login(username, passwd)` function\nthat does the magic for you.\nTo fully understand the authentication mechansim, please read\n[Authentication via API article](http://developer.gooddata.com/article/authentication-via-api)\non [GoodData Developer Portal](http://developer.gooddata.com/)"
-        },
-        {
-            "displayName": "user",
-            "name": "user"
         },
         {
             "displayName": "util",
