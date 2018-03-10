@@ -23,6 +23,7 @@ title: foobar
                                         <li><a href="../modules/metadata.html">metadata</a></li>
                                         <li><a href="../modules/project.html">project</a></li>
                                         <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/user.html">user</a></li>
                                         <li><a href="../modules/util.html">util</a></li>
                                         <li><a href="../modules/xhr.html">xhr</a></li>
                                     </ul>
@@ -35,6 +36,7 @@ title: foobar
                                         <li><a href="../classes/metadata.html">metadata</a></li>
                                         <li><a href="../classes/project.html">project</a></li>
                                         <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/user.html">user</a></li>
                                         <li><a href="../classes/util.html">util</a></li>
                                         <li><a href="../classes/xhr.html">xhr</a></li>
                                     </ul>
@@ -49,7 +51,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha3</span>
+                        <strong>gooddata-js</strong> <span class="version">v5.0.0</span>
                         <h1 class="file-heading">File: src/config.js</h1>
                         
                         <div class="file">
@@ -69,45 +71,36 @@ title: foobar
                         
                         const URL_REGEXP = &#x27;(?:(https)://+|(www\\.)?)\\w[:;,\\.?\\[\\]\\w/~%&amp;=+#-@!]*&#x27;;
                         
-                        export function createModule() {
-                            let domain;
-                            /**
-                             * Sets custom domain. Parameter is url which has always to be https://
-                             * (if you don&#x27;t provide it, we will do it for you).
-                             *
-                             * RegExp inspired taken from
-                             * https://github.com/jarib/google-closure-library/blob/master/closure/goog/string/linkify.js
-                             * @param {String|null} d valid domain starting with https:// or null for removing
-                             * @method setCustomDomain
-                             */
-                            function setCustomDomain(d) {
-                                const sanitizedDomain = d || &#x27;&#x27;;
-                                const link = sanitizedDomain.match(URL_REGEXP);
+                        // TODO - fix this
+                        export let domain; // eslint-disable-line import/no-mutable-exports
                         
-                                if (d === null) {
-                                    domain = undefined;
-                                    return;
-                                }
+                        /**
+                         * Sets custom domain. Parameter is url which has always to be https://
+                         * (if you don&#x27;t provide it, we will do it for you).
+                         *
+                         * RegExp inspired taken from
+                         * https://github.com/jarib/google-closure-library/blob/master/closure/goog/string/linkify.js
+                         * @param {String|null} d valid domain starting with https:// or null for removing
+                         * @method setCustomDomain
+                         */
+                        export function setCustomDomain(d) {
+                            const sanitizedDomain = d || &#x27;&#x27;;
+                            const link = sanitizedDomain.match(URL_REGEXP);
                         
-                                if (!link) {
-                                    throw new Error(&#x60;${d} is not a valid url&#x60;);
-                                }
-                        
-                                // ensure https:// prefix
-                                // and strip possible trailing /
-                                domain = &#x60;https://${link[0]
-                                    .replace(/^https:\/\//, &#x27;&#x27;)
-                                    .replace(/\/$/, &#x27;&#x27;)}&#x60;;
+                            if (d === null) {
+                                domain = undefined;
+                                return;
                             }
                         
-                            function getDomain() {
-                                return domain;
+                            if (!link) {
+                                throw new Error(&#x60;${d} is not a valid url&#x60;);
                             }
                         
-                            return {
-                                setCustomDomain,
-                                getDomain
-                            };
+                            // ensure https:// prefix
+                            // and strip possible trailing /
+                            domain = &#x60;https://${link[0]
+                                     .replace(/^https:\/\//, &#x27;&#x27;)
+                                     .replace(/\/$/, &#x27;&#x27;)}&#x60;;
                         }
                         
                             </pre>

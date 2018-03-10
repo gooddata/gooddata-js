@@ -52,22 +52,21 @@ title: foobar
                 <div id="docs-main">
                     <div class="content">
                         <strong>gooddata-js</strong> <span class="version">v5.0.0</span>
-                        <h1>project Class</h1>
+                        <h1>user Class</h1>
                         <div class="meta">
                         
                         
                                 <div class="foundat">
-                                    <strong>Defined in:</strong> <a href="../files/src_project.js.html#l5"><code>src&#x2F;project.js:5</code></a>
+                                    <strong>Defined in:</strong> <a href="../files/src_user.js.html#l4"><code>src&#x2F;user.js:4</code></a>
                                 </div>
                         
-                                    <strong>Module:</strong> <a href="../modules/project.html">project</a>
+                                    <strong>Module:</strong> <a href="../modules/user.html">user</a>
                         
                         </div>
                         
                         
                         <div class="intro">
-                            <p>Functions for working with projects</p>
-                        
+                            
                         </div>
                         
                         
@@ -109,35 +108,31 @@ title: foobar
                         
                                             <ul class="index-list methods">
                                                     <li class="index-item method">
-                                                        <a href="#method_createProject">createProject</a>
+                                                        <a href="#method_getAccountInfo">getAccountInfo</a>
                         
                                                     </li>
                                                     <li class="index-item method">
-                                                        <a href="#method_deleteProject">deleteProject</a>
+                                                        <a href="#method_getFeatureFlags">getFeatureFlags</a>
                         
                                                     </li>
                                                     <li class="index-item method">
-                                                        <a href="#method_getColorPalette">getColorPalette</a>
+                                                        <a href="#method_isLoggedIn">isLoggedIn</a>
                         
                                                     </li>
                                                     <li class="index-item method">
-                                                        <a href="#method_getCurrentProjectId">getCurrentProjectId</a>
+                                                        <a href="#method_login">login</a>
                         
                                                     </li>
                                                     <li class="index-item method">
-                                                        <a href="#method_getDatasets">getDatasets</a>
+                                                        <a href="#method_loginSso">loginSso</a>
                         
                                                     </li>
                                                     <li class="index-item method">
-                                                        <a href="#method_getProjects">getProjects</a>
+                                                        <a href="#method_logout">logout</a>
                         
                                                     </li>
                                                     <li class="index-item method">
-                                                        <a href="#method_getTimezone">getTimezone</a>
-                        
-                                                    </li>
-                                                    <li class="index-item method">
-                                                        <a href="#method_setColorPalette">setColorPalette</a>
+                                                        <a href="#method_updateProfileSettings">updateProfileSettings</a>
                         
                                                     </li>
                                             </ul>
@@ -171,108 +166,10 @@ title: foobar
                                             </div>
                                         
                         
-                                            <div id="method_createProject" class="method item">
-                                                <h3 class="name"><code>createProject</code></h3>
+                                            <div id="method_getAccountInfo" class="method item">
+                                                <h3 class="name"><code>getAccountInfo</code></h3>
                                             
-                                                    <div class="args">
-                                                        <span class="paren">(</span><ul class="args-list inline commas">
-                                                            <li class="arg">
-                                                                    <code>title</code>
-                                                            </li>
-                                                            <li class="arg">
-                                                                    <code>authorizationToken</code>
-                                                            </li>
-                                                            <li class="arg">
-                                                                    <code>options</code>
-                                                            </li>
-                                                        </ul><span class="paren">)</span>
-                                                    </div>
-                                            
-                                                    <span class="returns-inline">
-                                                        <span class="type">Object</span>
-                                                    </span>
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                                <div class="meta">
-                                                            <p>
-                                                            Defined in
-                                                    <a href="../files/src_project.js.html#l162"><code>src&#x2F;project.js:162</code></a>
-                                                    </p>
-                                            
-                                            
-                                            
-                                                </div>
-                                            
-                                                <div class="description">
-                                                    <p>Create project
-                                            Note: returns a promise which is resolved when the project creation is finished</p>
-                                            
-                                                </div>
-                                            
-                                                    <div class="params">
-                                                        <h4>Parameters</h4>
-                                            
-                                                        <ul class="params-list">
-                                                            <li class="param">
-                                                                    <code class="param-name">title</code>
-                                                                    <span class="type">String</span>
-                                            
-                                            
-                                                                <div class="param-description">
-                                                                     
-                                                                </div>
-                                            
-                                                            </li>
-                                                            <li class="param">
-                                                                    <code class="param-name">authorizationToken</code>
-                                                                    <span class="type">String</span>
-                                            
-                                            
-                                                                <div class="param-description">
-                                                                     
-                                                                </div>
-                                            
-                                                            </li>
-                                                            <li class="param">
-                                                                    <code class="param-name">options</code>
-                                                                    <span class="type">Object</span>
-                                            
-                                            
-                                                                <div class="param-description">
-                                                                    <p>for project creation (summary, projectTemplate, ...)</p>
-                                            
-                                                                </div>
-                                            
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                            
-                                                    <div class="returns">
-                                                        <h4>Returns</h4>
-                                            
-                                                        <div class="returns-description">
-                                                                    <span class="type">Object</span>:
-                                                                <p>created project object</p>
-                                            
-                                                        </div>
-                                                    </div>
-                                            
-                                            </div>
-                                            <div id="method_deleteProject" class="method item">
-                                                <h3 class="name"><code>deleteProject</code></h3>
-                                            
-                                                    <div class="args">
-                                                        <span class="paren">(</span><ul class="args-list inline commas">
-                                                            <li class="arg">
-                                                                    <code>projectId</code>
-                                                            </li>
-                                                        </ul><span class="paren">)</span>
-                                                    </div>
+                                                    <span class="paren">()</span>
                                             
                                             
                                             
@@ -284,7 +181,7 @@ title: foobar
                                                 <div class="meta">
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_project.js.html#l206"><code>src&#x2F;project.js:206</code></a>
+                                                    <a href="../files/src_user.js.html#l106"><code>src&#x2F;user.js:106</code></a>
                                                     </p>
                                             
                                             
@@ -292,43 +189,18 @@ title: foobar
                                                 </div>
                                             
                                                 <div class="description">
-                                                    <p>Delete project</p>
+                                                    <p>Returns info about currently logged in user from bootstrap resource</p>
                                             
                                                 </div>
                                             
-                                                    <div class="params">
-                                                        <h4>Parameters</h4>
-                                            
-                                                        <ul class="params-list">
-                                                            <li class="param">
-                                                                    <code class="param-name">projectId</code>
-                                                                    <span class="type">String</span>
-                                            
-                                            
-                                                                <div class="param-description">
-                                                                     
-                                                                </div>
-                                            
-                                                            </li>
-                                                        </ul>
-                                                    </div>
                                             
                                             
                                             </div>
-                                            <div id="method_getColorPalette" class="method item">
-                                                <h3 class="name"><code>getColorPalette</code></h3>
+                                            <div id="method_getFeatureFlags" class="method item">
+                                                <h3 class="name"><code>getFeatureFlags</code></h3>
                                             
-                                                    <div class="args">
-                                                        <span class="paren">(</span><ul class="args-list inline commas">
-                                                            <li class="arg">
-                                                                    <code>projectId</code>
-                                                            </li>
-                                                        </ul><span class="paren">)</span>
-                                                    </div>
+                                                    <span class="paren">()</span>
                                             
-                                                    <span class="returns-inline">
-                                                        <span class="type">Array</span>
-                                                    </span>
                                             
                                             
                                             
@@ -339,7 +211,7 @@ title: foobar
                                                 <div class="meta">
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_project.js.html#l76"><code>src&#x2F;project.js:76</code></a>
+                                                    <a href="../files/src_user.js.html#l127"><code>src&#x2F;user.js:127</code></a>
                                                     </p>
                                             
                                             
@@ -347,50 +219,20 @@ title: foobar
                                                 </div>
                                             
                                                 <div class="description">
-                                                    <p>Fetches a chart color palette for a project represented by the given
-                                            projectId parameter.</p>
+                                                    <p>Returns the feature flags valid for the currently logged in user.</p>
                                             
                                                 </div>
                                             
-                                                    <div class="params">
-                                                        <h4>Parameters</h4>
                                             
-                                                        <ul class="params-list">
-                                                            <li class="param">
-                                                                    <code class="param-name">projectId</code>
-                                                                    <span class="type">String</span>
-                                            
-                                            
-                                                                <div class="param-description">
-                                                                    <ul>
-                                            <li>A project identifier</li>
-                                            </ul>
-                                            
-                                                                </div>
-                                            
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                            
-                                                    <div class="returns">
-                                                        <h4>Returns</h4>
-                                            
-                                                        <div class="returns-description">
-                                                                    <span class="type">Array</span>:
-                                                                <p>An array of objects with r, g, b fields representing a project's
-                                            color palette</p>
-                                            
-                                                        </div>
-                                                    </div>
                                             
                                             </div>
-                                            <div id="method_getCurrentProjectId" class="method item">
-                                                <h3 class="name"><code>getCurrentProjectId</code></h3>
+                                            <div id="method_isLoggedIn" class="method item">
+                                                <h3 class="name"><code>isLoggedIn</code></h3>
                                             
                                                     <span class="paren">()</span>
                                             
                                                     <span class="returns-inline">
-                                                        <span class="type">String</span>
+                                                        <span class="type">Promise</span>
                                                     </span>
                                             
                                             
@@ -402,7 +244,7 @@ title: foobar
                                                 <div class="meta">
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_project.js.html#l13"><code>src&#x2F;project.js:13</code></a>
+                                                    <a href="../files/src_user.js.html#l9"><code>src&#x2F;user.js:9</code></a>
                                                     </p>
                                             
                                             
@@ -410,7 +252,7 @@ title: foobar
                                                 </div>
                                             
                                                 <div class="description">
-                                                    <p>Get current project id</p>
+                                                    <p>Find out whether a user is logged in</p>
                                             
                                                 </div>
                                             
@@ -419,27 +261,27 @@ title: foobar
                                                         <h4>Returns</h4>
                                             
                                                         <div class="returns-description">
-                                                                    <span class="type">String</span>:
-                                                                <p>current project identifier</p>
+                                                                    <span class="type">Promise</span>:
+                                                                <p>resolves with true if user logged in, false otherwise</p>
                                             
                                                         </div>
                                                     </div>
                                             
                                             </div>
-                                            <div id="method_getDatasets" class="method item">
-                                                <h3 class="name"><code>getDatasets</code></h3>
+                                            <div id="method_login" class="method item">
+                                                <h3 class="name"><code>login</code></h3>
                                             
                                                     <div class="args">
                                                         <span class="paren">(</span><ul class="args-list inline commas">
                                                             <li class="arg">
-                                                                    <code>projectId</code>
+                                                                    <code>username</code>
+                                                            </li>
+                                                            <li class="arg">
+                                                                    <code>password</code>
                                                             </li>
                                                         </ul><span class="paren">)</span>
                                                     </div>
                                             
-                                                    <span class="returns-inline">
-                                                        <span class="type">Array</span>
-                                                    </span>
                                             
                                             
                                             
@@ -450,7 +292,7 @@ title: foobar
                                                 <div class="meta">
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_project.js.html#l44"><code>src&#x2F;project.js:44</code></a>
+                                                    <a href="../files/src_user.js.html#l36"><code>src&#x2F;user.js:36</code></a>
                                                     </p>
                                             
                                             
@@ -458,7 +300,9 @@ title: foobar
                                                 </div>
                                             
                                                 <div class="description">
-                                                    <p>Fetches all datasets for the given project</p>
+                                                    <p>This function provides an authentication entry point to the GD API. It is needed to authenticate
+                                            by calling this function prior any other API calls. After providing valid credentials
+                                            every subsequent API call in a current session will be authenticated.</p>
                                             
                                                 </div>
                                             
@@ -467,46 +311,154 @@ title: foobar
                                             
                                                         <ul class="params-list">
                                                             <li class="param">
-                                                                    <code class="param-name">projectId</code>
+                                                                    <code class="param-name">username</code>
                                                                     <span class="type">String</span>
                                             
                                             
                                                                 <div class="param-description">
-                                                                    <ul>
-                                            <li>GD project identifier</li>
-                                            </ul>
+                                                                     
+                                                                </div>
                                             
+                                                            </li>
+                                                            <li class="param">
+                                                                    <code class="param-name">password</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
                                                                 </div>
                                             
                                                             </li>
                                                         </ul>
                                                     </div>
                                             
-                                                    <div class="returns">
-                                                        <h4>Returns</h4>
-                                            
-                                                        <div class="returns-description">
-                                                                    <span class="type">Array</span>:
-                                                                <p>An array of objects containing datasets metadata</p>
-                                            
-                                                        </div>
-                                                    </div>
                                             
                                             </div>
-                                            <div id="method_getProjects" class="method item">
-                                                <h3 class="name"><code>getProjects</code></h3>
+                                            <div id="method_loginSso" class="method item">
+                                                <h3 class="name"><code>loginSso</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>sessionId</code>
+                                                            </li>
+                                                            <li class="arg">
+                                                                    <code>serverUrl</code>
+                                                            </li>
+                                                            <li class="arg">
+                                                                    <code>targetUrl</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.js.html#l59"><code>src&#x2F;user.js:59</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>This function provides an authentication entry point to the GD API via SSO
+                                            <a href="https://help.gooddata.com/display/developer/GoodData+PGP+Single+Sign-On">https://help.gooddata.com/display/developer/GoodData+PGP+Single+Sign-On</a></p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">sessionId</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <p>PGP message</p>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                            <li class="param">
+                                                                    <code class="param-name">serverUrl</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
+                                                                </div>
+                                            
+                                                            </li>
+                                                            <li class="param">
+                                                                    <code class="param-name">targetUrl</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                            
+                                            </div>
+                                            <div id="method_logout" class="method item">
+                                                <h3 class="name"><code>logout</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.js.html#l73"><code>src&#x2F;user.js:73</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Logs out current user</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                            
+                                            </div>
+                                            <div id="method_updateProfileSettings" class="method item">
+                                                <h3 class="name"><code>updateProfileSettings</code></h3>
                                             
                                                     <div class="args">
                                                         <span class="paren">(</span><ul class="args-list inline commas">
                                                             <li class="arg">
                                                                     <code>profileId</code>
                                                             </li>
+                                                            <li class="arg">
+                                                                    <code>profileSetting</code>
+                                                            </li>
                                                         </ul><span class="paren">)</span>
                                                     </div>
                                             
-                                                    <span class="returns-inline">
-                                                        <span class="type">Array</span>
-                                                    </span>
                                             
                                             
                                             
@@ -517,7 +469,7 @@ title: foobar
                                                 <div class="meta">
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_project.js.html#l31"><code>src&#x2F;project.js:31</code></a>
+                                                    <a href="../files/src_user.js.html#l94"><code>src&#x2F;user.js:94</code></a>
                                                     </p>
                                             
                                             
@@ -525,7 +477,7 @@ title: foobar
                                                 </div>
                                             
                                                 <div class="description">
-                                                    <p>Fetches projects available for the user represented by the given profileId</p>
+                                                    <p>Updates user's profile settings</p>
                                             
                                                 </div>
                                             
@@ -546,144 +498,13 @@ title: foobar
                                                                 </div>
                                             
                                                             </li>
-                                                        </ul>
-                                                    </div>
-                                            
-                                                    <div class="returns">
-                                                        <h4>Returns</h4>
-                                            
-                                                        <div class="returns-description">
-                                                                    <span class="type">Array</span>:
-                                                                <p>An Array of projects</p>
-                                            
-                                                        </div>
-                                                    </div>
-                                            
-                                            </div>
-                                            <div id="method_getTimezone" class="method item">
-                                                <h3 class="name"><code>getTimezone</code></h3>
-                                            
-                                                    <div class="args">
-                                                        <span class="paren">(</span><ul class="args-list inline commas">
-                                                            <li class="arg">
-                                                                    <code>projectId</code>
-                                                            </li>
-                                                        </ul><span class="paren">)</span>
-                                                    </div>
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                                <div class="meta">
-                                                            <p>
-                                                            Defined in
-                                                    <a href="../files/src_project.js.html#l123"><code>src&#x2F;project.js:123</code></a>
-                                                    </p>
-                                            
-                                            
-                                            
-                                                </div>
-                                            
-                                                <div class="description">
-                                                    <p>Gets current timezone and its offset. Example output:</p>
-                                            <pre class="code prettyprint"><code>{
-                                                id: 'Europe/Prague',
-                                                displayName: 'Central European Time',
-                                                currentOffsetMs: 3600000
-                                            }</code></pre>
-                                            
-                                                </div>
-                                            
-                                                    <div class="params">
-                                                        <h4>Parameters</h4>
-                                            
-                                                        <ul class="params-list">
                                                             <li class="param">
-                                                                    <code class="param-name">projectId</code>
-                                                                    <span class="type">String</span>
+                                                                    <code class="param-name">profileSetting</code>
+                                                                    <span class="type">Object</span>
                                             
                                             
                                                                 <div class="param-description">
-                                                                    <ul>
-                                            <li>GD project identifier</li>
-                                            </ul>
-                                            
-                                                                </div>
-                                            
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                            
-                                            
-                                            </div>
-                                            <div id="method_setColorPalette" class="method item">
-                                                <h3 class="name"><code>setColorPalette</code></h3>
-                                            
-                                                    <div class="args">
-                                                        <span class="paren">(</span><ul class="args-list inline commas">
-                                                            <li class="arg">
-                                                                    <code>projectId</code>
-                                                            </li>
-                                                            <li class="arg">
-                                                                    <code>colors</code>
-                                                            </li>
-                                                        </ul><span class="paren">)</span>
-                                                    </div>
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                                <div class="meta">
-                                                            <p>
-                                                            Defined in
-                                                    <a href="../files/src_project.js.html#l103"><code>src&#x2F;project.js:103</code></a>
-                                                    </p>
-                                            
-                                            
-                                            
-                                                </div>
-                                            
-                                                <div class="description">
-                                                    <p>Sets given colors as a color palette for a given project.</p>
-                                            
-                                                </div>
-                                            
-                                                    <div class="params">
-                                                        <h4>Parameters</h4>
-                                            
-                                                        <ul class="params-list">
-                                                            <li class="param">
-                                                                    <code class="param-name">projectId</code>
-                                                                    <span class="type">String</span>
-                                            
-                                            
-                                                                <div class="param-description">
-                                                                    <ul>
-                                            <li>GD project identifier</li>
-                                            </ul>
-                                            
-                                                                </div>
-                                            
-                                                            </li>
-                                                            <li class="param">
-                                                                    <code class="param-name">colors</code>
-                                                                    <span class="type">Array</span>
-                                            
-                                            
-                                                                <div class="param-description">
-                                                                    <ul>
-                                            <li>An array of colors that we want to use within the project.
-                                            Each color should be an object with r, g, b fields.</li>
-                                            </ul>
-                                            
+                                                                     
                                                                 </div>
                                             
                                                             </li>

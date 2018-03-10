@@ -23,6 +23,7 @@ title: foobar
                                         <li><a href="../modules/metadata.html">metadata</a></li>
                                         <li><a href="../modules/project.html">project</a></li>
                                         <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/user.html">user</a></li>
                                         <li><a href="../modules/util.html">util</a></li>
                                         <li><a href="../modules/xhr.html">xhr</a></li>
                                     </ul>
@@ -35,6 +36,7 @@ title: foobar
                                         <li><a href="../classes/metadata.html">metadata</a></li>
                                         <li><a href="../classes/project.html">project</a></li>
                                         <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/user.html">user</a></li>
                                         <li><a href="../classes/util.html">util</a></li>
                                         <li><a href="../classes/xhr.html">xhr</a></li>
                                     </ul>
@@ -49,15 +51,14 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha3</span>
+                        <strong>gooddata-js</strong> <span class="version">v5.0.0</span>
                         <h1 class="file-heading">File: src/execution.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
                         // Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
-                        import { createModule as experimentalExecutionsFactory } from &#x27;./execution/experimental-executions&#x27;;
-                        import { createModule as loadAttributesMapFactory } from &#x27;./utils/attributesMapLoader&#x27;;
-                        import { createModule as executeAfmFactory } from &#x27;./execution/execute-afm&#x27;;
+                        import { getData } from &#x27;./execution/experimental-executions&#x27;;
+                        import executeAfm from &#x27;./execution/execute-afm&#x27;;
                         
                         /**
                          * Execution endpoints
@@ -66,18 +67,10 @@ title: foobar
                          * @class execution
                          *
                          */
-                        export function createModule(xhr, md) {
-                            const loadAttributesMap = loadAttributesMapFactory(md);
-                            const {
-                                getData,
-                                mdToExecutionDefinitionsAndColumns
-                            } = experimentalExecutionsFactory(xhr, loadAttributesMap);
-                            return {
-                                getData,
-                                mdToExecutionDefinitionsAndColumns,
-                                executeAfm: executeAfmFactory(xhr)
-                            };
-                        }
+                        export default {
+                            getData,
+                            executeAfm
+                        };
                         
                             </pre>
                         </div>

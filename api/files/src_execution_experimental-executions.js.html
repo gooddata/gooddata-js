@@ -23,6 +23,7 @@ title: foobar
                                         <li><a href="../modules/metadata.html">metadata</a></li>
                                         <li><a href="../modules/project.html">project</a></li>
                                         <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/user.html">user</a></li>
                                         <li><a href="../modules/util.html">util</a></li>
                                         <li><a href="../modules/xhr.html">xhr</a></li>
                                     </ul>
@@ -35,6 +36,7 @@ title: foobar
                                         <li><a href="../classes/metadata.html">metadata</a></li>
                                         <li><a href="../classes/project.html">project</a></li>
                                         <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/user.html">user</a></li>
                                         <li><a href="../classes/util.html">util</a></li>
                                         <li><a href="../classes/xhr.html">xhr</a></li>
                                     </ul>
@@ -49,7 +51,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha3</span>
+                        <strong>gooddata-js</strong> <span class="version">v5.0.0</span>
                         <h1 class="file-heading">File: src/execution/experimental-executions.js</h1>
                         
                         <div class="file">
@@ -74,9 +76,16 @@ title: foobar
                             set
                         } from &#x27;lodash&#x27;;
                         
+                        import {
+                            ajax,
+                            post,
+                            parseJSON
+                        } from &#x27;../xhr&#x27;;
+                        
                         import Rules from &#x27;../utils/rules&#x27;;
                         import { sortDefinitions } from &#x27;../utils/definitions&#x27;;
                         import {
+                            loadAttributesMap,
                             getMissingUrisInAttributesMap
                         } from &#x27;../utils/attributesMapLoader&#x27;;
                         import {
@@ -114,6 +123,117 @@ title: foobar
                                 warnings: []
                             }
                         };
+                        
+                        function loadExtendedDataResults(uri, settings, prevResult = emptyResult) {
+                            return new Promise((resolve, reject) =&gt; {
+                                ajax(uri, settings)
+                                    .then((r) =&gt; {
+                                        if (r.status === 204) {
+                                            return {
+                                                status: r.status,
+                                                result: &#x27;&#x27;
+                                            };
+                                        }
+                        
+                                        return r.json().then((result) =&gt; {
+                                            return {
+                                                status: r.status,
+                                                result
+                                            };
+                                        });
+                                    })
+                                    .then(({ status, result }) =&gt; {
+                                        const values = [
+                                            ...get(prevResult, &#x27;extendedTabularDataResult.values&#x27;, []),
+                                            ...get(result, &#x27;extendedTabularDataResult.values&#x27;, [])
+                                        ];
+                        
+                                        const warnings = [
+                                            ...get(prevResult, &#x27;extendedTabularDataResult.warnings&#x27;, []),
+                                            ...get(result, &#x27;extendedTabularDataResult.warnings&#x27;, [])
+                                        ];
+                        
+                                        const updatedResult = merge({}, prevResult, {
+                                            extendedTabularDataResult: {
+                                                values,
+                                                warnings
+                                            }
+                                        });
+                        
+                                        const nextUri = get(result, &#x27;extendedTabularDataResult.paging.next&#x27;);
+                                        if (nextUri) {
+                                            resolve(loadExtendedDataResults(nextUri, settings, updatedResult));
+                                        } else {
+                                            resolve({ status, result: updatedResult });
+                                        }
+                                    }, reject);
+                            });
+                        }
+                        
+                        /**
+                         * Module for execution on experimental execution resource
+                         *
+                         * @class execution
+                         * @module execution
+                         */
+                        
+                        /**
+                         * For the given projectId it returns table structure with the given
+                         * elements in column headers.
+                         *
+                         * @method getData
+                         * @param {String} projectId - GD project identifier
+                         * @param {Array} columns - An array of attribute or metric identifiers.
+                         * @param {Object} executionConfiguration - Execution configuration - can contain for example
+                         *                 property &quot;where&quot; containing query-like filters
+                         *                 property &quot;orderBy&quot; contains array of sorted properties to order in form
+                         *                      [{column: &#x27;identifier&#x27;, direction: &#x27;asc|desc&#x27;}]
+                         * @param {Object} settings - Supports additional settings accepted by the underlying
+                         *                             xhr.ajax() calls
+                         *
+                         * @return {Object} Structure with &#x60;headers&#x60; and &#x60;rawData&#x60; keys filled with values from execution.
+                         */
+                        export function getData(projectId, columns, executionConfiguration = {}, settings = {}) {
+                            const executedReport = {
+                                isLoaded: false
+                            };
+                        
+                            // Create request and result structures
+                            const request = {
+                                execution: { columns }
+                            };
+                            // enrich configuration with supported properties such as
+                            // where clause with query-like filters
+                            [&#x27;where&#x27;, &#x27;orderBy&#x27;, &#x27;definitions&#x27;].forEach((property) =&gt; {
+                                if (executionConfiguration[property]) {
+                                    request.execution[property] = executionConfiguration[property];
+                                }
+                            });
+                        
+                            // Execute request
+                            return post(&#x60;/gdc/internal/projects/${projectId}/experimental/executions&#x60;, {
+                                ...settings,
+                                body: JSON.stringify(request)
+                            })
+                                .then(parseJSON)
+                                .then((result) =&gt; {
+                                    executedReport.headers = wrapMeasureIndexesFromMappings(
+                                        get(executionConfiguration, &#x27;metricMappings&#x27;), get(result, [&#x27;executionResult&#x27;, &#x27;headers&#x27;], []));
+                        
+                                    // Start polling on url returned in the executionResult for tabularData
+                                    return loadExtendedDataResults(result.executionResult.extendedTabularDataResult, settings);
+                                })
+                                .then((r) =&gt; {
+                                    const { result, status } = r;
+                        
+                                    return Object.assign({}, executedReport, {
+                                        rawData: get(result, &#x27;extendedTabularDataResult.values&#x27;, []),
+                                        warnings: get(result, &#x27;extendedTabularDataResult.warnings&#x27;, []),
+                                        isLoaded: true,
+                                        isEmpty: status === 204
+                                    });
+                                });
+                        }
                         
                         const MAX_TITLE_LENGTH = 1000;
                         
@@ -496,6 +616,18 @@ title: foobar
                             return factory;
                         }
                         
+                        function getAttributesMap(options, displayFormUris, projectId) {
+                            const attributesMap = get(options, &#x27;attributesMap&#x27;, {});
+                        
+                            const missingUris = getMissingUrisInAttributesMap(displayFormUris, attributesMap);
+                            return loadAttributesMap(projectId, missingUris).then((result) =&gt; {
+                                return {
+                                    ...attributesMap,
+                                    ...result
+                                };
+                            });
+                        }
+                        
                         function getExecutionDefinitionsAndColumns(mdObj, options, attributesMap) {
                             const measures = getMeasures(mdObj);
                             let attributes = getAttributes(mdObj);
@@ -515,144 +647,14 @@ title: foobar
                             };
                         }
                         
-                        export function createModule(xhr, loadAttributesMap) {
-                            function getAttributesMap(options, displayFormUris, projectId) {
-                                const attributesMap = get(options, &#x27;attributesMap&#x27;, {});
+                        export const mdToExecutionDefinitionsAndColumns = (projectId, mdObj, options = {}) =&gt; {
+                            const allDfUris = getAttributesDisplayForms(mdObj);
+                            const attributesMapPromise = getAttributesMap(options, allDfUris, projectId);
                         
-                                const missingUris = getMissingUrisInAttributesMap(displayFormUris, attributesMap);
-                                return loadAttributesMap(projectId, missingUris).then((result) =&gt; {
-                                    return {
-                                        ...attributesMap,
-                                        ...result
-                                    };
-                                });
-                            }
-                        
-                            function mdToExecutionDefinitionsAndColumns(projectId, mdObj, options = {}) {
-                                const allDfUris = getAttributesDisplayForms(mdObj);
-                                const attributesMapPromise = getAttributesMap(options, allDfUris, projectId);
-                        
-                                return attributesMapPromise.then((attributesMap) =&gt; {
-                                    return getExecutionDefinitionsAndColumns(mdObj, options, attributesMap);
-                                });
-                            }
-                        
-                            function loadExtendedDataResults(uri, settings, prevResult = emptyResult) {
-                                return new Promise((resolve, reject) =&gt; {
-                                    xhr.ajax(uri, settings)
-                                        .then((r) =&gt; {
-                                            if (r.status === 204) {
-                                                return {
-                                                    status: r.status,
-                                                    result: &#x27;&#x27;
-                                                };
-                                            }
-                        
-                                            return r.json().then((result) =&gt; {
-                                                return {
-                                                    status: r.status,
-                                                    result
-                                                };
-                                            });
-                                        })
-                                        .then(({ status, result }) =&gt; {
-                                            const values = [
-                                                ...get(prevResult, &#x27;extendedTabularDataResult.values&#x27;, []),
-                                                ...get(result, &#x27;extendedTabularDataResult.values&#x27;, [])
-                                            ];
-                        
-                                            const warnings = [
-                                                ...get(prevResult, &#x27;extendedTabularDataResult.warnings&#x27;, []),
-                                                ...get(result, &#x27;extendedTabularDataResult.warnings&#x27;, [])
-                                            ];
-                        
-                                            const updatedResult = merge({}, prevResult, {
-                                                extendedTabularDataResult: {
-                                                    values,
-                                                    warnings
-                                                }
-                                            });
-                        
-                                            const nextUri = get(result, &#x27;extendedTabularDataResult.paging.next&#x27;);
-                                            if (nextUri) {
-                                                resolve(loadExtendedDataResults(nextUri, settings, updatedResult));
-                                            } else {
-                                                resolve({ status, result: updatedResult });
-                                            }
-                                        }, reject);
-                                });
-                            }
-                        
-                            /**
-                             * Module for execution on experimental execution resource
-                             *
-                             * @class execution
-                             * @module execution
-                             */
-                        
-                            /**
-                             * For the given projectId it returns table structure with the given
-                             * elements in column headers.
-                             *
-                             * @method getData
-                             * @param {String} projectId - GD project identifier
-                             * @param {Array} columns - An array of attribute or metric identifiers.
-                             * @param {Object} executionConfiguration - Execution configuration - can contain for example
-                             *                 property &quot;where&quot; containing query-like filters
-                             *                 property &quot;orderBy&quot; contains array of sorted properties to order in form
-                             *                      [{column: &#x27;identifier&#x27;, direction: &#x27;asc|desc&#x27;}]
-                             * @param {Object} settings - Supports additional settings accepted by the underlying
-                             *                             xhr.ajax() calls
-                             *
-                             * @return {Object} Structure with &#x60;headers&#x60; and &#x60;rawData&#x60; keys filled with values from execution.
-                             */
-                            function getData(projectId, columns, executionConfiguration = {}, settings = {}) {
-                                const executedReport = {
-                                    isLoaded: false
-                                };
-                        
-                                // Create request and result structures
-                                const request = {
-                                    execution: { columns }
-                                };
-                                // enrich configuration with supported properties such as
-                                // where clause with query-like filters
-                                [&#x27;where&#x27;, &#x27;orderBy&#x27;, &#x27;definitions&#x27;].forEach((property) =&gt; {
-                                    if (executionConfiguration[property]) {
-                                        request.execution[property] = executionConfiguration[property];
-                                    }
-                                });
-                        
-                                // Execute request
-                                return xhr.post(&#x60;/gdc/internal/projects/${projectId}/experimental/executions&#x60;, {
-                                    ...settings,
-                                    body: JSON.stringify(request)
-                                })
-                                    .then(xhr.parseJSON)
-                                    .then((result) =&gt; {
-                                        executedReport.headers = wrapMeasureIndexesFromMappings(
-                                            get(executionConfiguration, &#x27;metricMappings&#x27;), get(result, [&#x27;executionResult&#x27;, &#x27;headers&#x27;], []));
-                        
-                                        // Start polling on url returned in the executionResult for tabularData
-                                        return loadExtendedDataResults(result.executionResult.extendedTabularDataResult, settings);
-                                    })
-                                    .then((r) =&gt; {
-                                        const { result, status } = r;
-                        
-                                        return Object.assign({}, executedReport, {
-                                            rawData: get(result, &#x27;extendedTabularDataResult.values&#x27;, []),
-                                            warnings: get(result, &#x27;extendedTabularDataResult.warnings&#x27;, []),
-                                            isLoaded: true,
-                                            isEmpty: status === 204
-                                        });
-                                    });
-                            }
-                        
-                            return {
-                                getData,
-                                mdToExecutionDefinitionsAndColumns
-                            };
-                        }
+                            return attributesMapPromise.then((attributesMap) =&gt; {
+                                return getExecutionDefinitionsAndColumns(mdObj, options, attributesMap);
+                            });
+                        };
                         
                             </pre>
                         </div>

@@ -23,6 +23,7 @@ title: foobar
                                         <li><a href="../modules/metadata.html">metadata</a></li>
                                         <li><a href="../modules/project.html">project</a></li>
                                         <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/user.html">user</a></li>
                                         <li><a href="../modules/util.html">util</a></li>
                                         <li><a href="../modules/xhr.html">xhr</a></li>
                                     </ul>
@@ -35,6 +36,7 @@ title: foobar
                                         <li><a href="../classes/metadata.html">metadata</a></li>
                                         <li><a href="../classes/project.html">project</a></li>
                                         <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/user.html">user</a></li>
                                         <li><a href="../classes/util.html">util</a></li>
                                         <li><a href="../classes/xhr.html">xhr</a></li>
                                     </ul>
@@ -49,12 +51,13 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v5.0.0-alpha3</span>
+                        <strong>gooddata-js</strong> <span class="version">v5.0.0</span>
                         <h1 class="file-heading">File: src/project.js</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
                         // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
+                        import { post, ajax, del, get, put, parseJSON } from &#x27;./xhr&#x27;;
                         import { getIn, handlePolling } from &#x27;./util&#x27;;
                         
                         /**
@@ -63,6 +66,49 @@ title: foobar
                          * @class project
                          * @module project
                          */
+                        
+                        
+                        /**
+                         * Get current project id
+                         *
+                         * @method getCurrentProjectId
+                         * @return {String} current project identifier
+                         */
+                        export function getCurrentProjectId() {
+                            return get(&#x27;/gdc/app/account/bootstrap&#x27;).then((result) =&gt; {
+                                const currentProject = result.bootstrapResource.current.project;
+                                // handle situation in which current project is missing (e.g. new user)
+                                if (!currentProject) {
+                                    return null;
+                                }
+                        
+                                return result.bootstrapResource.current.project.links.self.split(&#x27;/&#x27;).pop();
+                            });
+                        }
+                        
+                        /**
+                         * Fetches projects available for the user represented by the given profileId
+                         *
+                         * @method getProjects
+                         * @param {String} profileId - User profile identifier
+                         * @return {Array} An Array of projects
+                         */
+                        export function getProjects(profileId) {
+                            return get(&#x60;/gdc/account/profile/${profileId}/projects&#x60;).then((r) =&gt; {
+                                return r.projects.map(p =&gt; p.project);
+                            });
+                        }
+                        
+                        /**
+                         * Fetches all datasets for the given project
+                         *
+                         * @method getDatasets
+                         * @param {String} projectId - GD project identifier
+                         * @return {Array} An array of objects containing datasets metadata
+                         */
+                        export function getDatasets(projectId) {
+                            return get(&#x60;/gdc/md/${projectId}/query/datasets&#x60;).then(getIn(&#x27;query.entries&#x27;));
+                        }
                         
                         const DEFAULT_PALETTE = [
                             { r: 0x2b, g: 0x6b, b: 0xae },
@@ -85,6 +131,85 @@ title: foobar
                             { r: 0xbf, g: 0xbf, b: 0xbf }
                         ];
                         
+                        /**
+                         * Fetches a chart color palette for a project represented by the given
+                         * projectId parameter.
+                         *
+                         * @method getColorPalette
+                         * @param {String} projectId - A project identifier
+                         * @return {Array} An array of objects with r, g, b fields representing a project&#x27;s
+                         * color palette
+                         */
+                        export function getColorPalette(projectId) {
+                            return get(&#x60;/gdc/projects/${projectId}/styleSettings&#x60;).then((result) =&gt; {
+                                return result.styleSettings.chartPalette.map((c) =&gt; {
+                                    return {
+                                        r: c.fill.r,
+                                        g: c.fill.g,
+                                        b: c.fill.b
+                                    };
+                                });
+                            }, (err) =&gt; {
+                                if (err.status === 200) {
+                                    return DEFAULT_PALETTE;
+                                }
+                        
+                                throw new Error(err.statusText);
+                            });
+                        }
+                        
+                        /**
+                         * Sets given colors as a color palette for a given project.
+                         *
+                         * @method setColorPalette
+                         * @param {String} projectId - GD project identifier
+                         * @param {Array} colors - An array of colors that we want to use within the project.
+                         * Each color should be an object with r, g, b fields.
+                         */
+                        export function setColorPalette(projectId, colors) {
+                            return put(&#x60;/gdc/projects/${projectId}/styleSettings&#x60;, {
+                                data: {
+                                    styleSettings: {
+                                        chartPalette: colors.map((fill, idx) =&gt; {
+                                            return { fill, guid: &#x60;guid${idx}&#x60; };
+                                        })
+                                    }
+                                }
+                            });
+                        }
+                        
+                        /**
+                         * Gets current timezone and its offset. Example output:
+                         *
+                         *     {
+                         *         id: &#x27;Europe/Prague&#x27;,
+                         *         displayName: &#x27;Central European Time&#x27;,
+                         *         currentOffsetMs: 3600000
+                         *     }
+                         *
+                         * @method getTimezone
+                         * @param {String} projectId - GD project identifier
+                         */
+                        export function getTimezone(projectId) {
+                            const bootstrapUrl = &#x60;/gdc/app/account/bootstrap?projectId=${projectId}&#x60;;
+                        
+                            return get(bootstrapUrl).then((result) =&gt; {
+                                return result.bootstrapResource.current.timezone;
+                            });
+                        }
+                        
+                        export function setTimezone(projectId, timezone) {
+                            const timezoneServiceUrl = &#x60;/gdc/md/${projectId}/service/timezone&#x60;;
+                            const data = {
+                                service: { timezone }
+                            };
+                        
+                            return ajax(timezoneServiceUrl, {
+                                method: &#x27;POST&#x27;,
+                                body: data
+                            }).then(parseJSON);
+                        }
+                        
                         const isProjectCreated = (project) =&gt; {
                             const projectState = project.content.state;
                         
@@ -92,193 +217,58 @@ title: foobar
                                 projectState === &#x27;DELETED&#x27;;
                         };
                         
-                        export function createModule(xhr) {
-                            /**
-                             * Get current project id
-                             *
-                             * @method getCurrentProjectId
-                             * @return {String} current project identifier
-                             */
-                            function getCurrentProjectId() {
-                                return xhr.get(&#x27;/gdc/app/account/bootstrap&#x27;).then((result) =&gt; {
-                                    const currentProject = result.bootstrapResource.current.project;
-                                    // handle situation in which current project is missing (e.g. new user)
-                                    if (!currentProject) {
-                                        return null;
-                                    }
+                        /**
+                         * Create project
+                         * Note: returns a promise which is resolved when the project creation is finished
+                         *
+                         * @experimental
+                         * @method createProject
+                         * @param {String} title
+                         * @param {String} authorizationToken
+                         * @param {Object} options for project creation (summary, projectTemplate, ...)
+                         * @return {Object} created project object
+                         */
+                        export function createProject(title, authorizationToken, options = {}) {
+                            const {
+                                summary,
+                                projectTemplate,
+                                driver = &#x27;Pg&#x27;,
+                                environment = &#x27;TESTING&#x27;,
+                                guidedNavigation = 1
+                            } = options;
                         
-                                    return result.bootstrapResource.current.project.links.self.split(&#x27;/&#x27;).pop();
-                                });
-                            }
-                        
-                            /**
-                             * Fetches projects available for the user represented by the given profileId
-                             *
-                             * @method getProjects
-                             * @param {String} profileId - User profile identifier
-                             * @return {Array} An Array of projects
-                             */
-                            function getProjects(profileId) {
-                                return xhr.get(&#x60;/gdc/account/profile/${profileId}/projects&#x60;).then((r) =&gt; {
-                                    return r.projects.map(p =&gt; p.project);
-                                });
-                            }
-                        
-                            /**
-                             * Fetches all datasets for the given project
-                             *
-                             * @method getDatasets
-                             * @param {String} projectId - GD project identifier
-                             * @return {Array} An array of objects containing datasets metadata
-                             */
-                            function getDatasets(projectId) {
-                                return xhr.get(&#x60;/gdc/md/${projectId}/query/datasets&#x60;).then(getIn(&#x27;query.entries&#x27;));
-                            }
-                        
-                            /**
-                             * Fetches a chart color palette for a project represented by the given
-                             * projectId parameter.
-                             *
-                             * @method getColorPalette
-                             * @param {String} projectId - A project identifier
-                             * @return {Array} An array of objects with r, g, b fields representing a project&#x27;s
-                             * color palette
-                             */
-                            function getColorPalette(projectId) {
-                                return xhr.get(&#x60;/gdc/projects/${projectId}/styleSettings&#x60;).then((result) =&gt; {
-                                    return result.styleSettings.chartPalette.map((c) =&gt; {
-                                        return {
-                                            r: c.fill.r,
-                                            g: c.fill.g,
-                                            b: c.fill.b
-                                        };
-                                    });
-                                }, (err) =&gt; {
-                                    if (err.status === 200) {
-                                        return DEFAULT_PALETTE;
-                                    }
-                        
-                                    throw new Error(err.statusText);
-                                });
-                            }
-                        
-                            /**
-                             * Sets given colors as a color palette for a given project.
-                             *
-                             * @method setColorPalette
-                             * @param {String} projectId - GD project identifier
-                             * @param {Array} colors - An array of colors that we want to use within the project.
-                             * Each color should be an object with r, g, b fields.
-                             */
-                            function setColorPalette(projectId, colors) {
-                                return xhr.put(&#x60;/gdc/projects/${projectId}/styleSettings&#x60;, {
-                                    data: {
-                                        styleSettings: {
-                                            chartPalette: colors.map((fill, idx) =&gt; {
-                                                return { fill, guid: &#x60;guid${idx}&#x60; };
-                                            })
+                            return post(&#x27;/gdc/projects&#x27;, {
+                                body: JSON.stringify({
+                                    project: {
+                                        content: {
+                                            guidedNavigation,
+                                            driver,
+                                            authorizationToken,
+                                            environment
+                                        },
+                                        meta: {
+                                            title,
+                                            summary,
+                                            projectTemplate
                                         }
                                     }
-                                });
-                            }
-                        
-                            /**
-                             * Gets current timezone and its offset. Example output:
-                             *
-                             *     {
-                             *         id: &#x27;Europe/Prague&#x27;,
-                             *         displayName: &#x27;Central European Time&#x27;,
-                             *         currentOffsetMs: 3600000
-                             *     }
-                             *
-                             * @method getTimezone
-                             * @param {String} projectId - GD project identifier
-                             */
-                            function getTimezone(projectId) {
-                                const bootstrapUrl = &#x60;/gdc/app/account/bootstrap?projectId=${projectId}&#x60;;
-                        
-                                return xhr.get(bootstrapUrl).then((result) =&gt; {
-                                    return result.bootstrapResource.current.timezone;
-                                });
-                            }
-                        
-                            function setTimezone(projectId, timezone) {
-                                const timezoneServiceUrl = &#x60;/gdc/md/${projectId}/service/timezone&#x60;;
-                                const data = {
-                                    service: { timezone }
-                                };
-                        
-                                return xhr.ajax(timezoneServiceUrl, {
-                                    method: &#x27;POST&#x27;,
-                                    body: data
-                                }).then(xhr.parseJSON);
-                            }
-                        
-                            /**
-                             * Create project
-                             * Note: returns a promise which is resolved when the project creation is finished
-                             *
-                             * @experimental
-                             * @method createProject
-                             * @param {String} title
-                             * @param {String} authorizationToken
-                             * @param {Object} options for project creation (summary, projectTemplate, ...)
-                             * @return {Object} created project object
-                             */
-                            function createProject(title, authorizationToken, options = {}) {
-                                const {
-                                    summary,
-                                    projectTemplate,
-                                    driver = &#x27;Pg&#x27;,
-                                    environment = &#x27;TESTING&#x27;,
-                                    guidedNavigation = 1
-                                } = options;
-                        
-                                return xhr.post(&#x27;/gdc/projects&#x27;, {
-                                    body: JSON.stringify({
-                                        project: {
-                                            content: {
-                                                guidedNavigation,
-                                                driver,
-                                                authorizationToken,
-                                                environment
-                                            },
-                                            meta: {
-                                                title,
-                                                summary,
-                                                projectTemplate
-                                            }
-                                        }
-                                    })
                                 })
-                                    .then(xhr.parseJSON)
-                                    .then(project =&gt;
-                                        handlePolling(xhr.get, project.uri, (response) =&gt; {
-                                            return isProjectCreated(response.project);
-                                        }, options));
-                            }
+                            })
+                            .then(parseJSON)
+                            .then(project =&gt;
+                                handlePolling(project.uri, (response) =&gt; {
+                                    return isProjectCreated(response.project);
+                                }, options));
+                        }
                         
-                            /**
-                             * Delete project
-                             *
-                             * @method deleteProject
-                             * @param {String} projectId
-                             */
-                            function deleteProject(projectId) {
-                                return xhr.del(&#x60;/gdc/projects/${projectId}&#x60;);
-                            }
-                        
-                            return {
-                                getCurrentProjectId,
-                                getProjects,
-                                getDatasets,
-                                getColorPalette,
-                                setColorPalette,
-                                getTimezone,
-                                setTimezone,
-                                createProject,
-                                deleteProject
-                            };
+                        /**
+                         * Delete project
+                         *
+                         * @method deleteProject
+                         * @param {String} projectId
+                         */
+                        export function deleteProject(projectId) {
+                            return del(&#x60;/gdc/projects/${projectId}&#x60;);
                         }
                         
                             </pre>
