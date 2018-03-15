@@ -2,7 +2,6 @@
 import {
     isPlainObject,
     isFunction,
-    has,
     set as _set,
     defaults,
     merge,
@@ -26,7 +25,7 @@ import fetch from './utils/fetch';
 
 const DEFAULT_POLL_DELAY = 1000;
 
-function simulateBeforeSend(settings, url) {
+function simulateBeforeSend(url, settings) {
     const xhrMockInBeforeSend = {
         setRequestHeader(key, value) {
             _set(settings, ['headers', key], value);
@@ -53,34 +52,6 @@ function enrichSettingWithCustomDomain(originalUrl, originalSettings, domain) {
     return { url, settings };
 }
 
-function isLoginRequest(url) {
-    return url.indexOf('/gdc/account/login') !== -1;
-}
-
-/**
- * @param {Response} response
- * @return {Promise} promise which resolves to result JSON ()
- */
-export const parseJSON = response => response.json();
-
-/**
- * @param {Response} response see https://developer.mozilla.org/en-US/docs/Web/API/Response
- * @return {Response} or {Error}
- */
-const checkStatus = (response) => {
-    if (response.status >= 200 && response.status < 399) {
-        return response;
-    }
-
-    if (response instanceof Error && has(response, 'response')) {
-        throw response;
-    }
-
-    const error = new Error(response.statusText);
-    error.response = response;
-    throw error;
-};
-
 export function handlePolling(url, settings, sendRequest) {
     const pollingDelay = result(settings, 'pollDelay');
 
@@ -96,8 +67,48 @@ export const originPackageHeaders = ({ name, version }) => ({
     'X-GDC-JS-PKG-VERSION': version
 });
 
+export class ApiError extends Error {
+    constructor(message, cause) {
+        super(message);
+        this.cause = cause;
+    }
+}
+
+export class ApiResponseError extends ApiError {
+    constructor(message, response, responseBody) {
+        super(message, null);
+        this.response = response;
+        this.responseBody = responseBody;
+    }
+}
+
+export class ApiNetworkError extends ApiError {}
+
+export class ApiResponse {
+    constructor(response, responseBody) {
+        this.response = response;
+        this.responseBody = responseBody;
+    }
+
+    get data() {
+        try {
+            return JSON.parse(this.responseBody);
+        } catch (error) {
+            return this.responseBody;
+        }
+    }
+
+    getData() {
+        try {
+            return JSON.parse(this.responseBody);
+        } catch (error) {
+            return this.responseBody;
+        }
+    }
+}
+
 export function createModule(configStorage) {
-    let tokenRequest; // TODO make app-wide persitent (ie. extract outside of the SDK)
+    let tokenRequest; // TODO make app-wide persistent (ie. extract outside of the SDK)
 
     defaults(configStorage, { xhrSettings: {} });
 
@@ -140,11 +151,9 @@ export function createModule(configStorage) {
     }
 
     function continueAfterTokenRequest(url, settings) {
-        return tokenRequest.then((response) => {
+        return tokenRequest.then(async (response) => {
             if (!response.ok) {
-                const err = new Error('Unauthorized');
-                err.response = response;
-                throw err;
+                throw new ApiResponseError('Unauthorized', response, null);
             }
             tokenRequest = null;
 
@@ -155,95 +164,103 @@ export function createModule(configStorage) {
         });
     }
 
-    function handleUnauthorized(originalUrl, originalSettings) {
-        if (!tokenRequest) {
-            // Create only single token request for any number of waiting request.
-            // If token request exist, just listen for it's end.
-            const { url, settings } = enrichSettingWithCustomDomain('/gdc/account/token', createRequestSettings({}), configStorage.domain);
-
-            tokenRequest = fetch(url, settings).then((response) => {
-                // tokenRequest = null;
-                // TODO jquery compat - allow to attach unauthorized callback and call it if attached
-                // if ((xhrObj.status === 401) && (isFunction(req.unauthorized))) {
-                //     req.unauthorized(xhrObj, textStatus, err, deferred);
-                //     return;
-                // }
-                // unauthorized handler is not defined or not http 401
-                // unauthorized when retrieving token -> not logged
-                if (response.status === 401) {
-                    const err = new Error('Unauthorized');
-                    err.response = response;
-                    throw err;
-                }
-
-                return response;
-            });
+    async function handleUnauthorized(originalUrl, originalSettings) {
+        // Create only single token request for any number of waiting request.
+        // If token request exist, just listen for it's end.
+        if (tokenRequest) {
+            return continueAfterTokenRequest(originalUrl, originalSettings);
         }
-        return continueAfterTokenRequest(originalUrl, originalSettings);
+
+        const { url, settings } = enrichSettingWithCustomDomain('/gdc/account/token', createRequestSettings({}), configStorage.domain);
+
+        tokenRequest = fetch(url, settings);
+        const response = await tokenRequest;
+        const responseBody = await response.text();
+        tokenRequest = null;
+        // TODO jquery compat - allow to attach unauthorized callback and call it if attached
+        // if ((xhrObj.status === 401) && (isFunction(req.unauthorized))) {
+        //     req.unauthorized(xhrObj, textStatus, err, deferred);
+        //     return;
+        // }
+        // unauthorized handler is not defined or not http 401
+        // unauthorized when retrieving token -> not logged
+
+        if (response.status === 401) {
+            throw new ApiResponseError('Unauthorized', response, responseBody);
+        }
+
+        return new ApiResponse(response, responseBody);
     }
 
-    function ajax(originalUrl, customSettings = {}) {
+    async function ajax(originalUrl, customSettings = {}) {
         // TODO refactor to: getRequestParams(originalUrl, customSettings);
         const firstSettings = createRequestSettings(customSettings);
         const { url, settings } = enrichSettingWithCustomDomain(originalUrl, firstSettings, configStorage.domain);
 
-        simulateBeforeSend(settings, url); // mutates `settings` param
+        simulateBeforeSend(url, settings); // mutates `settings` param
 
         if (tokenRequest) {
             return continueAfterTokenRequest(url, settings);
         }
 
-        return fetch(url, settings).then((response) => {
-            // If response.status id 401 and it was a login request there is no need
-            // to cycle back for token - login does not need token and this meant you
-            // are not authorized
-            if (response.status === 401) {
-                if (isLoginRequest(url)) {
-                    const err = new Error('Unauthorized');
-                    err.response = response;
-                    throw err;
-                }
+        let response;
+        try {
+            response = await fetch(url, settings);
+        } catch (e) {
+            throw new ApiNetworkError(e.message, e); // TODO is it really necessary? couldn't we throw just Error?
+        }
 
-                return handleUnauthorized(url, settings);
+        // Fetch URL and resolve body promise (if left unresolved, the body isn't even shown in chrome-dev-tools)
+        const responseBody = await response.text();
+
+        if (response.status === 401) {
+            // if 401 is in login-request, it means wrong user/password (we wont continue)
+            if (url.indexOf('/gdc/account/login') !== -1) {
+                throw new ApiResponseError('Unauthorized', response, responseBody);
             }
+            return handleUnauthorized(url, settings);
+        }
 
-            if (response.status === 202 && !settings.dontPollOnResult) {
-                // poll on new provided url, fallback to the original one
-                // (for example validElements returns 303 first with new url which may then return 202 to poll on)
-                let finalUrl = response.url || url;
+        // Note: Fetch does redirects automagically for 301 (and maybe more .. TODO when?)
+        // see https://fetch.spec.whatwg.org/#ref-for-concept-request%E2%91%A3%E2%91%A2
+        if (response.status === 202 && !settings.dontPollOnResult) {
+            // poll on new provided url, fallback to the original one
+            // (for example validElements returns 303 first with new url which may then return 202 to poll on)
+            let finalUrl = response.url || url;
 
-                const finalSettings = settings;
+            const finalSettings = settings;
 
-                // if the response is 202 and Location header is not empty, let's poll on the new Location
-                if (response.headers.has('Location')) {
-                    finalUrl = response.headers.get('Location');
-                }
-                finalSettings.method = 'GET';
-                delete finalSettings.data;
-                delete finalSettings.body;
-
-                return handlePolling(finalUrl, finalSettings, ajax);
+            // if the response is 202 and Location header is not empty, let's poll on the new Location
+            if (response.headers.has('Location')) {
+                finalUrl = response.headers.get('Location');
             }
-            return response;
-        }).then(checkStatus);
+            finalSettings.method = 'GET';
+            delete finalSettings.data;
+            delete finalSettings.body;
+
+            return handlePolling(finalUrl, finalSettings, ajax);
+        }
+
+        if (response.status >= 200 && response.status <= 399) {
+            return new ApiResponse(response, responseBody);
+        }
+
+        // throws on 400, 500, etc.
+        throw new ApiResponseError(response.statusText, response, responseBody);
+    }
+
+    function xhrMethod(method) {
+        return function xhrMethodFn(url, settings) {
+            const opts = merge({ method }, settings);
+            return ajax(url, opts);
+        };
     }
 
     /**
      * Wrapper for xhr.ajax method GET
      * @method get
      */
-    const get = (url, settings) => {
-        const opts = merge({ method: 'GET' }, settings);
-        return ajax(url, opts).then(parseJSON);
-    };
-
-    function xhrMethod(method) {
-        return function methodFn(url, settings) {
-            const opts = merge({ method }, settings);
-
-            return ajax(url, opts);
-        };
-    }
+    const get = xhrMethod('GET');
 
     /**
      * Wrapper for xhr.ajax method POST
@@ -269,7 +286,6 @@ export function createModule(configStorage) {
         put,
         del,
         ajax,
-        ajaxSetup,
-        parseJSON
+        ajaxSetup
     };
 }

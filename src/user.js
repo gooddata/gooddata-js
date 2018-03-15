@@ -9,10 +9,8 @@ export function createModule(xhr) {
      */
     function isLoggedIn() {
         return new Promise((resolve, reject) => {
-            // cannot use get here directly - we need to access to response
-            // not to responses JSON get returns
-            xhr.ajax('/gdc/account/token', { method: 'GET' }).then((r) => {
-                if (r.ok) {
+            xhr.get('/gdc/account/token').then((r) => {
+                if (r.response.ok) {
                     resolve(true);
                 }
 
@@ -47,7 +45,7 @@ export function createModule(xhr) {
                     verifyCaptcha: ''
                 }
             })
-        }).then(xhr.parseJSON);
+        }).then((r => r.getData()));
     }
 
     /**
@@ -60,8 +58,7 @@ export function createModule(xhr) {
      * @param {String} targetUrl
      */
     function loginSso(sessionId, serverUrl, targetUrl) {
-        // cannot use xhr.get, server doesn't respond with JSON
-        return xhr.ajax(`/gdc/account/customerlogin?sessionId=${sessionId}&serverURL=${serverUrl}&targetURL=${targetUrl}`, { method: 'GET' });
+        return xhr.get(`/gdc/account/customerlogin?sessionId=${sessionId}&serverURL=${serverUrl}&targetURL=${targetUrl}`);
     }
 
     /**
@@ -71,18 +68,19 @@ export function createModule(xhr) {
     function logout() {
         return isLoggedIn().then((loggedIn) => {
             if (loggedIn) {
-                return xhr.get('/gdc/app/account/bootstrap').then((result) => {
-                    const userUri = result.bootstrapResource.accountSetting.links.self;
-                    const userId = userUri.match(/([^\/]+)\/?$/)[1]; // eslint-disable-line no-useless-escape
+                return xhr
+                    .get('/gdc/app/account/bootstrap')
+                    .then((result) => {
+                        const data = result.getData();
+                        const userUri = data.bootstrapResource.accountSetting.links.self;
+                        const userId = userUri.match(/([^\/]+)\/?$/)[1]; // eslint-disable-line no-useless-escape
 
-                    return xhr.ajax(`/gdc/account/login/${userId}`, {
-                        method: 'delete'
+                        return xhr.del(`/gdc/account/login/${userId}`);
                     });
-                });
             }
 
             return Promise.resolve();
-        });
+        }, err => Promise.reject(err));
     }
 
     /**
@@ -104,14 +102,14 @@ export function createModule(xhr) {
     function getAccountInfo() {
         return xhr.get('/gdc/app/account/bootstrap')
             .then((result) => {
-                const br = result.bootstrapResource;
+                const { bootstrapResource } = result.getData();
                 const accountInfo = {
-                    login: br.accountSetting.login,
-                    loginMD5: br.current.loginMD5,
-                    firstName: br.accountSetting.firstName,
-                    lastName: br.accountSetting.lastName,
-                    organizationName: br.settings.organizationName,
-                    profileUri: br.accountSetting.links.self
+                    login: bootstrapResource.accountSetting.login,
+                    loginMD5: bootstrapResource.current.loginMD5,
+                    firstName: bootstrapResource.accountSetting.firstName,
+                    lastName: bootstrapResource.accountSetting.lastName,
+                    organizationName: bootstrapResource.settings.organizationName,
+                    profileUri: bootstrapResource.accountSetting.links.self
                 };
 
                 return accountInfo;
@@ -124,6 +122,7 @@ export function createModule(xhr) {
      */
     function getFeatureFlags() {
         return xhr.get('/gdc/app/account/bootstrap')
+            .then((r => r.getData()))
             .then(result => result.bootstrapResource.current.featureFlags);
     }
 

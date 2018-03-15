@@ -128,7 +128,7 @@ describe('dataProducts', () => {
                         })
                     }
                 );
-                return dataProducts.createDataProduct('contractId', 'dataproductId', ['data-admin-test1', 'data-admin-test2']).then((result) => {
+                return dataProducts.createDataProduct('contractId', 'dataproductId', ['data-admin-test1', 'data-admin-test2']).then(r => r.response).then((result) => {
                     expect(result.status).toBe(201);
                 });
             });

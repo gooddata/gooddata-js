@@ -7,6 +7,7 @@ import {
     pick
 } from 'lodash';
 import { getIn, handlePolling, queryString } from './util';
+import { ApiResponseError } from './xhr';
 
 /**
  * Functions for working with metadata objects
@@ -40,13 +41,11 @@ export function createModule(xhr) {
             return xhr.post(uri, {
                 data: JSON.stringify(data)
             }).then((r) => {
-                if (!r.ok) {
-                    const err = new Error(r.statusText);
-                    err.response = r;
-                    throw err;
+                if (!r.response.ok) {
+                    throw new ApiResponseError(r.response.statusText, r.response, r.responseBody);
                 }
 
-                return r.json();
+                return r.getData();
             }).then(result => _get(result, ['objects', 'items']));
         });
 
@@ -68,6 +67,7 @@ export function createModule(xhr) {
     function getObjectsByQuery(projectId, options) {
         function getOnePage(uri, items = []) {
             return xhr.get(uri)
+                .then((r => r.getData()))
                 .then(({ objects }) => {
                     items.push(...objects.items);
                     const nextUri = objects.paging.next;
@@ -108,13 +108,13 @@ export function createModule(xhr) {
         return xhr.post(resourceUri, {
             data: JSON.stringify(data)
         }).then((r) => {
-            if (!r.ok) {
-                const err = new Error(r.statusText);
-                err.response = r;
+            if (!r.response.ok) {
+                const err = new Error(r.response.statusText);
+                err.response = r.response;
                 throw err;
             }
 
-            return r.json();
+            return r.getData();
         }).then(result => result.entries);
     }
 
@@ -146,13 +146,13 @@ export function createModule(xhr) {
         return xhr.post(resourceUri, {
             data: JSON.stringify(data)
         }).then((r) => {
-            if (!r.ok) {
-                const err = new Error(r.statusText);
-                err.response = r;
+            if (!r.response.ok) {
+                const err = new Error(r.response.statusText);
+                err.response = r.response;
                 throw err;
             }
 
-            return r.json();
+            return r.getData();
         }).then(result => result.useMany);
     }
 
@@ -164,7 +164,9 @@ export function createModule(xhr) {
      * @return {Array} An array of visualization objects
      */
     function getVisualizations(projectId) {
-        return xhr.get(`/gdc/md/${projectId}/query/visualizations`).then(r => (r.ok ? r.json() : r)).then(getIn('query.entries'));
+        return xhr.get(`/gdc/md/${projectId}/query/visualizations`)
+            .then(apiResponse => (apiResponse.response.ok ? apiResponse.getData() : apiResponse.response))
+            .then(getIn('query.entries'));
     }
 
     /**
@@ -175,7 +177,9 @@ export function createModule(xhr) {
     * @return {Array} An array of attribute objects
     */
     function getAttributes(projectId) {
-        return xhr.get(`/gdc/md/${projectId}/query/attributes`).then(r => (r.ok ? r.json() : r)).then(getIn('query.entries'));
+        return xhr.get(`/gdc/md/${projectId}/query/attributes`)
+            .then(apiResponse => (apiResponse.response.ok ? apiResponse.getData() : apiResponse.response))
+            .then(getIn('query.entries'));
     }
 
     /**
@@ -187,7 +191,9 @@ export function createModule(xhr) {
      * @see getFolders
      */
     function getDimensions(projectId) {
-        return xhr.get(`/gdc/md/${projectId}/query/dimensions`).then(r => (r.ok ? r.json() : r)).then(getIn('query.entries'));
+        return xhr.get(`/gdc/md/${projectId}/query/dimensions`)
+            .then(apiResponse => (apiResponse.response.ok ? apiResponse.getData() : apiResponse.response))
+            .then(getIn('query.entries'));
     }
 
     /**
@@ -203,7 +209,9 @@ export function createModule(xhr) {
         function getFolderEntries(pId, t) {
             const typeURL = t ? `?type=${t}` : '';
 
-            return xhr.get(`/gdc/md/${pId}/query/folders${typeURL}`).then(getIn('query.entries'));
+            return xhr.get(`/gdc/md/${pId}/query/folders${typeURL}`)
+                .then((r => r.getData()))
+                .then(getIn('query.entries'));
         }
 
         switch (type) {
@@ -232,7 +240,9 @@ export function createModule(xhr) {
      * @return {Array} An array of fact objects
      */
     function getFacts(projectId) {
-        return xhr.get(`/gdc/md/${projectId}/query/facts`).then(r => (r.ok ? r.json() : r)).then(getIn('query.entries'));
+        return xhr.get(`/gdc/md/${projectId}/query/facts`)
+            .then(apiResponse => (apiResponse.response.ok ? apiResponse.getData() : apiResponse.response))
+            .then(getIn('query.entries'));
     }
 
     /**
@@ -243,7 +253,9 @@ export function createModule(xhr) {
      * @return {Array} An array of metric objects
      */
     function getMetrics(projectId) {
-        return xhr.get(`/gdc/md/${projectId}/query/metrics`).then(r => (r.ok ? r.json() : r)).then(getIn('query.entries'));
+        return xhr.get(`/gdc/md/${projectId}/query/metrics`)
+            .then(apiResponse => (apiResponse.response.ok ? apiResponse.getData() : apiResponse.response))
+            .then(getIn('query.entries'));
     }
 
     /**
@@ -261,7 +273,9 @@ export function createModule(xhr) {
     function getAvailableMetrics(projectId, attrs) {
         return xhr.post(`/gdc/md/${projectId}/availablemetrics`, {
             data: JSON.stringify(attrs)
-        }).then(r => (r.ok ? r.json() : r)).then(r => r.entries);
+        })
+            .then(apiResponse => (apiResponse.response.ok ? apiResponse.getData() : apiResponse.response))
+            .then(data => data.entries);
     }
 
     /**
@@ -279,7 +293,9 @@ export function createModule(xhr) {
     function getAvailableAttributes(projectId, metrics) {
         return xhr.post(`/gdc/md/${projectId}/drillcrosspaths`, {
             body: JSON.stringify(metrics)
-        }).then(r => (r.ok ? r.json() : r)).then(r => r.drillcrosspath.links);
+        })
+            .then(apiResponse => (apiResponse.response.ok ? apiResponse.getData() : apiResponse.response))
+            .then(r => r.drillcrosspath.links);
     }
 
     /**
@@ -297,7 +313,7 @@ export function createModule(xhr) {
     function getAvailableFacts(projectId, items) {
         return xhr.post(`/gdc/md/${projectId}/availablefacts`, {
             data: JSON.stringify(items)
-        }).then(r => (r.ok ? r.json() : r)).then(r => r.entries);
+        }).then(r => (r.response.ok ? r.getData() : r.response)).then(r => r.entries);
     }
 
     /**
@@ -308,7 +324,7 @@ export function createModule(xhr) {
      * @return {Object} object details
      */
     function getObjectDetails(uri) {
-        return xhr.get(uri);
+        return xhr.get(uri).then((r => r.getData()));
     }
 
     /**
@@ -488,19 +504,19 @@ export function createModule(xhr) {
      * @return {String} uri of the metadata object
      */
     function getObjectUri(projectId, identifier) {
-        return xhr.ajax(`/gdc/md/${projectId}/identifiers`, {
-            method: 'POST',
+        return xhr.post(`/gdc/md/${projectId}/identifiers`, {
             body: {
                 identifierToUri: [identifier]
             }
-        }).then(xhr.parseJSON).then((data) => {
+        }).then((r) => {
+            const data = r.getData();
             const found = data.identifiers.find(pair => pair.identifier === identifier);
 
             if (found) {
                 return found.uri;
             }
 
-            throw new Error(`Object with identifier ${identifier} not found in project ${projectId}`);
+            throw new ApiResponseError(`Object with identifier ${identifier} not found in project ${projectId}`, r.response, r.responseBody);
         });
     }
 
@@ -517,7 +533,7 @@ export function createModule(xhr) {
             body: {
                 identifierToUri: identifiers
             }
-        }).then(xhr.parseJSON).then((data) => {
+        }).then((r => r.getData())).then((data) => {
             return data.identifiers;
         });
     }
@@ -535,7 +551,7 @@ export function createModule(xhr) {
             body: {
                 uriToIdentifier: uris
             }
-        }).then(xhr.parseJSON).then((data) => {
+        }).then((r => r.getData())).then((data) => {
             return data.identifiers;
         });
     }
@@ -560,7 +576,7 @@ export function createModule(xhr) {
                     }
                 ]
             }
-        }).then(r => (r.ok ? r.json() : r)).then(r => _get(r, 'elementLabelUri'));
+        }).then(r => (r.response.ok ? _get(r.getData(), 'elementLabelUri') : r.response));
     }
 
     /**
@@ -593,7 +609,7 @@ export function createModule(xhr) {
             data: JSON.stringify({
                 validElementsRequest: requestBody
             })
-        }).then(xhr.parseJSON);
+        }).then((r => r.getData()));
     }
 
     /**
@@ -618,7 +634,7 @@ export function createModule(xhr) {
     function createObject(projectId, obj) {
         return xhr.post(`/gdc/md/${projectId}/obj?createAndGet=true`, {
             data: JSON.stringify(obj)
-        }).then(xhr.parseJSON);
+        }).then((r => r.getData()));
     }
 
     function isTaskFinished(task) {
@@ -648,7 +664,7 @@ export function createModule(xhr) {
                 manage: { maql }
             })
         })
-            .then(xhr.parseJSON)
+            .then((r => r.getData()))
             .then((response) => {
                 const manageStatusUri = response.entries[0].link;
                 return handlePolling(xhr.get, manageStatusUri, isTaskFinished, options);
@@ -671,7 +687,7 @@ export function createModule(xhr) {
                 pullIntegration: uploadsDir
             })
         })
-            .then(xhr.parseJSON)
+            .then((r => r.getData()))
             .then((response) => {
                 const etlPullStatusUri = response.pull2Task.links.poll;
                 return handlePolling(xhr.get, etlPullStatusUri, isTaskFinished, options);

@@ -72,10 +72,10 @@ export function createModule(xhr) {
         };
         const finalPollingUri = uriPart + qs.stringify(query, { addQueryPrefix: true });
         return xhr.ajax(finalPollingUri, { method: 'GET' }).then((r) => {
-            if (r.status === 204) {
+            if (r.response.status === 204) {
                 return null;
             }
-            return r.json();
+            return r.getData();
         });
     }
 
@@ -109,7 +109,7 @@ export function createModule(xhr) {
         invariant(dimensionality <= 2, 'executeAfm does not support more than 2 dimensions');
 
         return xhr.post(`/gdc/app/projects/${projectId}/executeAfm`, { body: JSON.stringify(execution) })
-            .then(xhr.parseJSON)
+            .then((r => r.getData()))
             .then((executionResponse) => {
                 const offset = Array(dimensionality).fill(0); // offset holds information on dimensionality
                 const pollingUri = executionResponse.executionResponse.links.executionResult;

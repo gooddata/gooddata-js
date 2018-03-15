@@ -67,7 +67,7 @@ export function createModule(xhr, execution) {
         const uri = `/gdc/internal/projects/${projectId}/loadCatalog`;
 
         return xhr.post(uri, { data: { catalogRequest } })
-            .then(xhr.parseJSON)
+            .then((r => r.getData()))
             .then(data => data.catalogResponse);
     }
 
@@ -101,7 +101,7 @@ export function createModule(xhr, execution) {
         const uri = `/gdc/internal/projects/${projectId}/loadDateDataSets`;
 
         return xhr.post(uri, { data: { dateDataSetsRequest } })
-            .then(xhr.parseJSON)
+            .then((r => r.getData()))
             .then(data => data.dateDataSetsResponse);
     }
 

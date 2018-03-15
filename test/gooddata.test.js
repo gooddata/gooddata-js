@@ -22,8 +22,8 @@ describe('factory', () => {
         fetchMock.mock('https://secure.gooddata.com/some/url', { status: 200, body: 'hello from secure' });
 
         return defaultSdk.xhr.ajax('/some/url').then((response) => {
-            expect(response.status).toBe(200);
-            return response.text();
+            expect(response.response.status).toBe(200);
+            return response.responseBody;
         }).then((body) => {
             expect(body).toBe('hello from secure');
         });
@@ -36,8 +36,8 @@ describe('factory', () => {
         modules.forEach(m => expect(sdk).toHaveProperty(m));
 
         return sdk.xhr.ajax('/some/url').then((response) => {
-            expect(response.status).toBe(200);
-            return response.text();
+            expect(response.response.status).toBe(200);
+            return response.responseBody;
         }).then((body) => {
             expect(body).toBe('hello');
         });
@@ -66,12 +66,12 @@ describe('factory', () => {
 
         return Promise.all([
             sdkStg3.xhr.ajax('/some/url')
-                .then(r => r.text())
+                .then(r => r.responseBody)
                 .then((body) => {
                     expect(body).toEqual('hello from stg3');
                 }),
             sdkStg2.xhr.ajax('/some/url')
-                .then(r => r.text())
+                .then(r => r.responseBody)
                 .then((body) => {
                     expect(body).toEqual('hello from stg2');
                 })

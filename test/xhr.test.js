@@ -34,11 +34,9 @@ describe('fetch', () => {
     describe('xhr.ajax request', () => {
         it('should handle successful request', () => {
             fetchMock.mock('/some/url', { status: 200, body: 'hello' });
-            return xhr.ajax('/some/url').then((response) => {
-                expect(response.status).toBe(200);
-                return response.text();
-            }).then((body) => {
-                expect(body).toBe('hello');
+            return xhr.ajax('/some/url').then((r) => {
+                expect(r.response.status).toBe(200);
+                expect(r.getData()).toBe('hello');
             });
         });
 
@@ -99,7 +97,7 @@ describe('fetch', () => {
             })
                 .mock('/gdc/account/token', 200);
             return xhr.ajax('/some/url').then((r) => {
-                expect(r.status).toBe(200);
+                expect(r.response.status).toBe(200);
             });
         });
 
@@ -124,8 +122,8 @@ describe('fetch', () => {
                 .mock('/gdc/account/token', 200);
 
             return Promise.all([xhr.ajax('/some/url/1'), xhr.ajax('/some/url/2')]).then((r) => {
-                expect(r[0].status).toBe(200);
-                expect(r[1].status).toBe(200);
+                expect(r[0].response.status).toBe(200);
+                expect(r[1].response.status).toBe(200);
             });
         });
     });
@@ -155,12 +153,9 @@ describe('fetch', () => {
             });
 
             return xhr.ajax('/some/url', { pollDelay: 0 }).then((r) => {
-                expect(r.status).toBe(200);
+                expect(r.response.status).toBe(200);
                 expect(fetchMock.calls('/some/url').length).toBe(3);
-
-                return r.text().then((t) => {
-                    expect(t).toBe('Poll result');
-                });
+                expect(r.getData()).toBe('Poll result');
             });
         });
 
@@ -177,13 +172,10 @@ describe('fetch', () => {
             });
 
             return xhr.ajax('/some/url', { pollDelay: 0 }).then((r) => {
-                expect(r.status).toBe(200);
+                expect(r.response.status).toBe(200);
                 expect(fetchMock.calls('/some/url').length).toBe(1);
                 expect(fetchMock.calls('/some/url2').length).toBe(1);
-
-                return r.text().then((t) => {
-                    expect(t).toBe('Poll result');
-                });
+                expect(r.getData()).toBe('Poll result');
             });
         });
 
@@ -196,7 +188,7 @@ describe('fetch', () => {
             });
 
             return xhr.ajax('/some/url', { pollDelay: 0, dontPollOnResult: true }).then((r) => {
-                expect(r.status).toBe(202);
+                expect(r.response.status).toBe(202);
                 expect(fetchMock.calls('/some/url').length).toBe(1);
             });
         });
@@ -226,13 +218,10 @@ describe('fetch', () => {
             });
 
             return xhr.ajax('/some/url', { pollDelay: 0 }).then((r) => {
-                expect(r.status).toBe(200);
+                expect(r.response.status).toBe(200);
                 expect(fetchMock.calls('/some/url').length).toBe(1);
                 expect(fetchMock.calls('/other/url').length).toBe(3);
-
-                return r.text().then((t) => {
-                    expect(t).toBe('Poll result from other url');
-                });
+                expect(r.getData()).toBe('Poll result from other url');
             });
         });
 
@@ -242,14 +231,11 @@ describe('fetch', () => {
             fetchMock.mock('/last/url', { status: 200, body: 'Poll result with redirects' });
 
             return xhr.ajax('/some/url', { pollDelay: 0 }).then((r) => {
-                expect(r.status).toBe(200);
+                expect(r.response.status).toBe(200);
                 expect(fetchMock.calls('/some/url').length).toBe(1);
                 expect(fetchMock.calls('/other/url').length).toBe(1);
                 expect(fetchMock.calls('/last/url').length).toBe(1);
-
-                return r.text().then((t) => {
-                    expect(t).toBe('Poll result with redirects');
-                });
+                expect(r.getData()).toBe('Poll result with redirects');
             });
         });
 

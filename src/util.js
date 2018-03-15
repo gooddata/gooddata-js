@@ -42,19 +42,21 @@ export const handlePolling = (xhrGet, uri, isPollingDone, options = {}) => {
         pollStep = 5000
     } = options;
 
-    return xhrGet(uri).then((response) => {
-        if (attempts > maxAttempts) {
-            return Promise.reject(new Error(response));
-        }
-        return isPollingDone(response) ?
-            Promise.resolve(response) :
-            delay(pollStep).then(() => {
-                return handlePolling(xhrGet, uri, isPollingDone, {
-                    ...options,
-                    attempts: attempts + 1
+    return xhrGet(uri)
+        .then(r => r.getData())
+        .then((response) => {
+            if (attempts > maxAttempts) {
+                return Promise.reject(new Error(response));
+            }
+            return isPollingDone(response) ?
+                Promise.resolve(response) :
+                delay(pollStep).then(() => {
+                    return handlePolling(xhrGet, uri, isPollingDone, {
+                        ...options,
+                        attempts: attempts + 1
+                    });
                 });
-            });
-    });
+        });
 };
 
 

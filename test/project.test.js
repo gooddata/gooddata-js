@@ -312,7 +312,7 @@ describe('project', () => {
                     200
                 );
 
-                return project.deleteProject(projectId).then(r => expect(r.ok).toBeTruthy());
+                return project.deleteProject(projectId).then(r => expect(r.response.ok).toBeTruthy());
             });
         });
     });

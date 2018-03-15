@@ -7,7 +7,9 @@ export function createModule(xhr) {
             dataProductId,
             domainId,
             segmentId
-        })).then(data => data.logs.map(item => item.log));
+        }))
+            .then((r => r.getData()))
+            .then(data => data.logs.map(item => item.log));
 
     return {
         getLogs
