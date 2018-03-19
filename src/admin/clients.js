@@ -31,7 +31,8 @@ export function createModule(xhr) {
             query
         );
 
-        return xhr.get(uri).then(result => transformClient(result));
+        return xhr
+            .get(uri).then(r => r.getData()).then(result => transformClient(result));
     };
 
     const getClients = (contractId, dataProductId, segmentId, domainId, filter, paging) => {
@@ -45,10 +46,12 @@ export function createModule(xhr) {
             );
 
         if (uri) {
-            return xhr.get(uri).then(result => ({
-                items: result.clients.items.map(transformClient),
-                paging: result.clients.paging
-            }));
+            return xhr.get(uri)
+                .then(r => r.getData())
+                .then(result => ({
+                    items: result.clients.items.map(transformClient),
+                    paging: result.clients.paging
+                }));
         }
 
         return Promise.resolve({ items: [], paging: {} });
@@ -67,10 +70,12 @@ export function createModule(xhr) {
                 query
             );
 
-        return xhr.get(uri).then(result => ({
-            ...result.clientUsers,
-            items: result.clientUsers.items.map(transformClientUser)
-        }));
+        return xhr.get(uri)
+            .then((r => r.getData()))
+            .then(result => ({
+                ...result.clientUsers,
+                items: result.clientUsers.items.map(transformClientUser)
+            }));
     };
 
     return {

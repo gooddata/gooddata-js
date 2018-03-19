@@ -87,9 +87,10 @@ describe('segments', () => {
                     }
                 );
 
-                return segments.createSegment('contractId', 'dataproductId', 'segmentId', ['data-admin-test1', 'data-admin-test2']).then((result) => {
-                    expect(result.status).toBe(201);
-                });
+                return segments.createSegment('contractId', 'dataproductId', 'segmentId', ['data-admin-test1', 'data-admin-test2'])
+                    .then((result) => {
+                        expect(result.response.status).toBe(201);
+                    });
             });
         });
     });

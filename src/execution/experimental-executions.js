@@ -485,19 +485,19 @@ export function createModule(xhr, loadAttributesMap) {
         return new Promise((resolve, reject) => {
             xhr.ajax(uri, settings)
                 .then((r) => {
-                    if (r.status === 204) {
+                    const { response } = r;
+
+                    if (response.status === 204) {
                         return {
-                            status: r.status,
+                            status: response.status,
                             result: ''
                         };
                     }
 
-                    return r.json().then((result) => {
-                        return {
-                            status: r.status,
-                            result
-                        };
-                    });
+                    return {
+                        status: response.status,
+                        result: r.getData()
+                    };
                 })
                 .then(({ status, result }) => {
                     const values = [
@@ -572,13 +572,13 @@ export function createModule(xhr, loadAttributesMap) {
             ...settings,
             body: JSON.stringify(request)
         })
-            .then(xhr.parseJSON)
-            .then((result) => {
+            .then((r => r.getData()))
+            .then((response) => {
                 executedReport.headers = wrapMeasureIndexesFromMappings(
-                    get(executionConfiguration, 'metricMappings'), get(result, ['executionResult', 'headers'], []));
+                    get(executionConfiguration, 'metricMappings'), get(response, ['executionResult', 'headers'], []));
 
                 // Start polling on url returned in the executionResult for tabularData
-                return loadExtendedDataResults(result.executionResult.extendedTabularDataResult, settings);
+                return loadExtendedDataResults(response.executionResult.extendedTabularDataResult, settings);
             })
             .then((r) => {
                 const { result, status } = r;

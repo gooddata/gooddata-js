@@ -24,6 +24,7 @@ export const transformDataProduct = (item) => {
 export function createModule(xhr) {
     const getDataProducts = (contractId, include) =>
         xhr.get(routes.interpolate(routes.CONTRACT_DATA_PRODUCTS, { contractId }, include && { include }))
+            .then((r => r.getData()))
             .then(data => ({
                 items: data.dataProducts.items.map(transformDataProduct)
             }));
@@ -33,6 +34,7 @@ export function createModule(xhr) {
             routes.CONTRACT_DATA_PRODUCT, { contractId, dataProductId },
             Object.assign(include && { include }, stats && { stats }, state && { state })
         ))
+            .then((r => r.getData()))
             .then(data => transformDataProduct(data));
 
     const createDataProduct = (contractId, dataProductId, domainIds) =>

@@ -15,6 +15,7 @@ export const transformDomainDataProduct = ({ domainDataProduct }) => {
 export function createModule(xhr) {
     const getDomainDataProducts = (contractId, dataProductId) =>
         xhr.get(routes.interpolate(routes.CONTRACT_DATA_PRODUCT_DOMAIN_DATA_PRODUCTS, { contractId, dataProductId }))
+            .then((r => r.getData()))
             .then(({ domainDataProducts: { items }, status }) => ({
                 items: items.map(transformDomainDataProduct),
                 status

@@ -25,6 +25,8 @@ describe('user', () => {
                     }
                 );
 
+                expect.assertions(1);
+
                 return user.login('login', 'pass').then((result) => {
                     expect(result).toEqual(
                         { userLogin: { profile: '/gdc/account/profile/abcd', state: '/gdc/account/login/abcd' } }
@@ -33,6 +35,7 @@ describe('user', () => {
             });
 
             it('rejects with bad credentials', () => {
+                expect.assertions(1);
                 fetchMock.post(
                     '/gdc/account/login',
                     400
@@ -44,6 +47,7 @@ describe('user', () => {
 
         describe('loginSso', () => {
             it('should resolve if user logged in', () => {
+                expect.assertions(1);
                 const sessionId = `
                     -----BEGIN+PGP+MESSAGE-----
                     1234
@@ -56,10 +60,13 @@ describe('user', () => {
                     `/gdc/account/customerlogin?sessionId=${sessionId}&serverURL=${serverUrl}&targetURL=${targetUrl}`,
                     200
                 );
-                return user.loginSso(sessionId, serverUrl, targetUrl).then(r => expect(r).toBeTruthy());
+
+                return user.loginSso(sessionId, serverUrl, targetUrl)
+                    .then(r => expect(r.response.ok).toBeTruthy());
             });
 
             it('should reject for invalid sessionId', () => {
+                expect.assertions(1);
                 const sessionId = `
                     -----BEGIN+PGP+MESSAGE-----
                     wrong sessionId
@@ -72,9 +79,7 @@ describe('user', () => {
                     `/gdc/account/customerlogin?sessionId=${sessionId}&serverURL=${serverUrl}&targetURL=${targetUrl}`,
                     400
                 );
-                return user.loginSso(sessionId, serverUrl, targetUrl).then(() => {
-                    throw new Error('Should reject with 400');
-                }, (err) => {
+                return user.loginSso(sessionId, serverUrl, targetUrl).then(null, (err) => {
                     expect(err.response.status).toBe(400);
                 });
             });
@@ -82,35 +87,37 @@ describe('user', () => {
 
         describe('isLoggedIn', () => {
             it('should resolve if user logged in', () => {
+                expect.assertions(1);
                 fetchMock.mock(
                     '/gdc/account/token',
                     200
                 );
-                return user.isLoggedIn().then(r => expect(r).toBeTruthy());
+                return expect(user.isLoggedIn()).resolves.toBeTruthy();
             });
 
             it('should resolve with false if user not logged in', () => {
+                expect.assertions(1);
                 fetchMock.mock(
                     '/gdc/account/token',
                     401
                 );
-                return user.isLoggedIn().then((r) => {
-                    expect(r).not.toBeTruthy();
-                });
+                return expect(user.isLoggedIn()).resolves.toBeFalsy();
             });
         });
 
         describe('logout', () => {
             it('should resolve when user is not logged in', () => {
+                expect.assertions(1);
                 fetchMock.mock(
                     '/gdc/account/token',
                     401
                 );
 
-                return user.logout().then(null, err => expect(err).fail('Should resolve'));
+                return expect(user.logout()).resolves.toEqual(undefined);
             });
 
             it('should log out user', () => {
+                expect.assertions(1);
                 const userId = 'USER_ID';
 
                 fetchMock.mock(
@@ -139,28 +146,30 @@ describe('user', () => {
                     200 // should be 204, but see https://github.com/wheresrhys/fetch-mock/issues/36
                 );
 
-                return user.logout().then(r => expect(r.ok).toBeTruthy());
+                return user.logout().then((r) => {
+                    return expect(r.response.ok).toBeTruthy();
+                });
             });
         });
 
         describe('updateProfileSettings', () => {
             it('should update user\'s settings', () => {
+                expect.assertions(1);
                 const userId = 'USER_ID';
 
                 fetchMock.mock(
                     `/gdc/account/profile/${userId}/settings`,
                     { status: 400, body: '' }
                 );
-                return user.updateProfileSettings(userId, []).then(() => {
-                    throw new Error('Should reject with 400');
-                }, (err) => {
-                    expect(err.response.status).toBe(400);
+                return user.updateProfileSettings(userId, []).then(null, (err) => {
+                    return expect(err.response.status).toBe(400);
                 });
             });
         });
 
         describe('Account info', () => {
             it('should return info about account', () => {
+                expect.assertions(6);
                 const login = 'LOGIN';
                 const loginMD5 = 'LOGIN_MD5';
                 const firstName = 'FIRST_NAME';

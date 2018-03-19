@@ -22,6 +22,7 @@ export function createModule(xhr) {
             { contractId, dataProductId, segmentId },
             query
         ))
+            .then((r => r.getData()))
             .then(result => ({ items: result.domainSegments.items.map(transformDomainSegment) }));
     };
 
@@ -31,6 +32,7 @@ export function createModule(xhr) {
             { contractId, dataProductId, segmentId, domainId },
             query
         ))
+            .then((r => r.getData()))
             .then(result => transformDomainSegment(result));
     };
 

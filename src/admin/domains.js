@@ -23,11 +23,14 @@ export function createModule(xhr) {
     const getDomain = (contractId, domainId, query) => {
         const uri = routes.interpolate(routes.CONTRACT_DOMAIN, { contractId, domainId }, query);
 
-        return xhr.get(uri).then(transformDomain);
+        return xhr.get(uri)
+            .then((r => r.getData()))
+            .then(transformDomain);
     };
 
     const getDomains = (contractId, query) => {
         return xhr.get(routes.interpolate(routes.CONTRACT_DOMAINS, { contractId }, query))
+            .then((r => r.getData()))
             .then(result => ({ items: result.domains.items.map(transformDomain) })); // TODO: paging?
     };
 
@@ -39,10 +42,12 @@ export function createModule(xhr) {
         const uri = paging ?
             paging.next : routes.interpolate(routes.CONTRACT_DOMAIN_USERS, { contractId, domainId }, query);
 
-        return xhr.get(uri).then(result => ({
-            ...result.domainUsers,
-            items: result.domainUsers.items.map(transformDomainUser)
-        }));
+        return xhr.get(uri)
+            .then((r => r.getData()))
+            .then(result => ({
+                ...result.domainUsers,
+                items: result.domainUsers.items.map(transformDomainUser)
+            }));
     };
 
     const getDomainProjects = (contractId, domainId, state, query, paging) => {
@@ -57,10 +62,12 @@ export function createModule(xhr) {
                     Object.assign(state && { state }, query && { prefixSearch: query }) : null
             );
 
-        return xhr.get(uri).then(result => ({
-            ...result.domainProjects,
-            items: result.domainProjects.items.map(item => item.project)
-        }));
+        return xhr.get(uri)
+            .then((r => r.getData()))
+            .then(result => ({
+                ...result.domainProjects,
+                items: result.domainProjects.items.map(item => item.project)
+            }));
     };
 
     return {

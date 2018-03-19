@@ -22,6 +22,7 @@ export function createModule(xhr) {
 
     const getDataProductSegments = (contractId, dataProductId) =>
         xhr.get(routes.interpolate(routes.CONTRACT_DATA_PRODUCT_SEGMENTS, { contractId, dataProductId }))
+            .then((r => r.getData()))
             .then(data => ({
                 items: data.segments.items.map(transformSegment),
                 status: data.segments.status

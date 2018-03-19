@@ -44,15 +44,17 @@ export function createModule(xhr) {
      * @return {String} current project identifier
      */
     function getCurrentProjectId() {
-        return xhr.get('/gdc/app/account/bootstrap').then((result) => {
-            const currentProject = result.bootstrapResource.current.project;
-            // handle situation in which current project is missing (e.g. new user)
-            if (!currentProject) {
-                return null;
-            }
+        return xhr.get('/gdc/app/account/bootstrap')
+            .then(r => r.getData())
+            .then((result) => {
+                const currentProject = result.bootstrapResource.current.project;
+                // handle situation in which current project is missing (e.g. new user)
+                if (!currentProject) {
+                    return null;
+                }
 
-            return result.bootstrapResource.current.project.links.self.split('/').pop();
-        });
+                return result.bootstrapResource.current.project.links.self.split('/').pop();
+            });
     }
 
     /**
@@ -63,9 +65,11 @@ export function createModule(xhr) {
      * @return {Array} An Array of projects
      */
     function getProjects(profileId) {
-        return xhr.get(`/gdc/account/profile/${profileId}/projects`).then((r) => {
-            return r.projects.map(p => p.project);
-        });
+        return xhr.get(`/gdc/account/profile/${profileId}/projects`)
+            .then(r => r.getData())
+            .then((r) => {
+                return r.projects.map(p => p.project);
+            });
     }
 
     /**
@@ -76,7 +80,9 @@ export function createModule(xhr) {
      * @return {Array} An array of objects containing datasets metadata
      */
     function getDatasets(projectId) {
-        return xhr.get(`/gdc/md/${projectId}/query/datasets`).then(getIn('query.entries'));
+        return xhr.get(`/gdc/md/${projectId}/query/datasets`)
+            .then(r => r.getData())
+            .then(getIn('query.entries'));
     }
 
     /**
@@ -89,21 +95,23 @@ export function createModule(xhr) {
      * color palette
      */
     function getColorPalette(projectId) {
-        return xhr.get(`/gdc/projects/${projectId}/styleSettings`).then((result) => {
-            return result.styleSettings.chartPalette.map((c) => {
-                return {
-                    r: c.fill.r,
-                    g: c.fill.g,
-                    b: c.fill.b
-                };
-            });
-        }, (err) => {
-            if (err.status === 200) {
-                return DEFAULT_PALETTE;
-            }
+        return xhr.get(`/gdc/projects/${projectId}/styleSettings`)
+            .then(r => r.getData())
+            .then((result) => {
+                return result.styleSettings.chartPalette.map((c) => {
+                    return {
+                        r: c.fill.r,
+                        g: c.fill.g,
+                        b: c.fill.b
+                    };
+                });
+            }, (err) => {
+                if (err.status === 200) {
+                    return DEFAULT_PALETTE;
+                }
 
-            throw new Error(err.statusText);
-        });
+                throw new Error(err.statusText);
+            });
     }
 
     /**
@@ -141,9 +149,11 @@ export function createModule(xhr) {
     function getTimezone(projectId) {
         const bootstrapUrl = `/gdc/app/account/bootstrap?projectId=${projectId}`;
 
-        return xhr.get(bootstrapUrl).then((result) => {
-            return result.bootstrapResource.current.timezone;
-        });
+        return xhr.get(bootstrapUrl)
+            .then((r => r.getData()))
+            .then((result) => {
+                return result.bootstrapResource.current.timezone;
+            });
     }
 
     function setTimezone(projectId, timezone) {
@@ -155,7 +165,7 @@ export function createModule(xhr) {
         return xhr.ajax(timezoneServiceUrl, {
             method: 'POST',
             body: data
-        }).then(xhr.parseJSON);
+        }).then((r => r.getData()));
     }
 
     /**
@@ -195,7 +205,7 @@ export function createModule(xhr) {
                 }
             })
         })
-            .then(xhr.parseJSON)
+            .then((r => r.getData()))
             .then(project =>
                 handlePolling(xhr.get, project.uri, (response) => {
                     return isProjectCreated(response.project);

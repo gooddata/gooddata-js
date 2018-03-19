@@ -545,7 +545,7 @@ describe('metadata', () => {
                         body: JSON.stringify(fixtures.elementsLabelsResult)
                     });
 
-                md.translateElementLabelsToUris('myFakeProjectId', '/gdc/md/labelUri', ['2014-01-01', '2016-01-01'])
+                return md.translateElementLabelsToUris('myFakeProjectId', '/gdc/md/labelUri', ['2014-01-01', '2016-01-01'])
                     .then((result) => {
                         expect(result).toEqual(fixtures.elementsLabelsResult.elementLabelUri);
                     });
@@ -573,6 +573,7 @@ describe('metadata', () => {
             });
 
             it('should reject promise when identifier does not exist', () => {
+                expect.assertions(1);
                 fetchMock.post(
                     '/gdc/md/myFakeProjectId/identifiers',
                     {
@@ -581,7 +582,9 @@ describe('metadata', () => {
                     }
                 );
 
-                return md.getObjectUri('myFakeProjectId', 'foo.bar').then(null, err => expect(err).toBeInstanceOf(Error));
+                return md.getObjectUri('myFakeProjectId', 'foo.bar').catch((err) => {
+                    expect(err).toBeInstanceOf(Error);
+                });
             });
         });
 
