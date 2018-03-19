@@ -10,7 +10,10 @@ import { createModule as catalogueFactory } from './catalogue';
 import { createModule as adminFactory } from './admin';
 
 import { createModule as loadAttributesMapFactory } from './utils/attributesMapLoader';
-import { getAttributesDisplayForms } from './utils/visualizationObjectHelper';
+import {
+    getAttributesDisplayForms,
+    getClassUri
+} from './utils/visualizationObjectHelper';
 
 /**
  * # JS SDK
@@ -43,7 +46,8 @@ class SDK {
         this.admin = adminFactory(this.xhr);
         this.utils = {
             loadAttributesMap: loadAttributesMapFactory(this.md),
-            getAttributesDisplayForms
+            getAttributesDisplayForms,
+            getClassUri
         };
     }
 
