@@ -80,3 +80,7 @@ export function getAttributesDisplayForms(mdObject) {
     const attrMeasureFiltersDfs = attrMeasureFilters.map(getAttributeFilterDisplayForm);
     return [...attrMeasureFiltersDfs, ...attributesDfs];
 }
+
+export function getClassUri(mdObject) {
+    return get(mdObject, ['visualizationClass', 'uri']);
+}
