@@ -51,7 +51,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v5.0.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v5.0.1</span>
                         <h1 class="file-heading">File: src/metadata.js</h1>
                         
                         <div class="file">
@@ -640,6 +640,7 @@ title: foobar
                          *      - complement {Boolean}
                          *      - includeTotalCountWithoutFilters {Boolean}
                          *      - restrictiveDefinition {String}
+                         *      - afm {Object}
                          * @return {Object} ValidElements response with:
                          *      - items {Array} elements
                          *      - paging {Object}
@@ -648,13 +649,35 @@ title: foobar
                         export function getValidElements(projectId, id, options = {}) {
                             const query = pick(options, [&#x27;limit&#x27;, &#x27;offset&#x27;, &#x27;order&#x27;, &#x27;filter&#x27;, &#x27;prompt&#x27;]);
                             const queryParams = queryString(query);
+                            const pickedOptions = pick(options, [
+                                &#x27;uris&#x27;, &#x27;complement&#x27;, &#x27;includeTotalCountWithoutFilters&#x27;, &#x27;restrictiveDefinition&#x27;
+                            ]);
+                            const { afm } = options;
                         
-                            const requestBody = pick(options, [&#x27;uris&#x27;, &#x27;complement&#x27;, &#x27;includeTotalCountWithoutFilters&#x27;, &#x27;restrictiveDefinition&#x27;]);
-                            return post(&#x60;/gdc/md/${projectId}/obj/${id}/validElements${queryParams}&#x60;.replace(/\?$/, &#x27;&#x27;), {
-                                data: JSON.stringify({
-                                    validElementsRequest: requestBody
-                                })
-                            }).then(parseJSON);
+                            const getRequestBodyWithReportDefinition =
+                                () =&gt; post(
+                                    &#x60;/gdc/app/projects/${projectId}/executeAfm/debug&#x60;, {
+                                        body: {
+                                            execution: {
+                                                afm
+                                            }
+                                        }
+                                    }
+                                )
+                                .then(parseJSON)
+                                .then(reportDefinitionResult =&gt; ({
+                                    ...pickedOptions,
+                                    restrictiveDefinitionContent: reportDefinitionResult.reportDefinition.content
+                                }));
+                            const getOptions = afm ? getRequestBodyWithReportDefinition : () =&gt; Promise.resolve(pickedOptions);
+                        
+                            return getOptions()
+                                .then(requestBody =&gt; post(
+                                    &#x60;/gdc/md/${projectId}/obj/${id}/validElements${queryParams}&#x60;.replace(/\?$/, &#x27;&#x27;), {
+                                        data: JSON.stringify({ validElementsRequest: requestBody })
+                                    }
+                                )
+                                .then(parseJSON));
                         }
                         
                         /**

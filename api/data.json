@@ -2,7 +2,7 @@
     "project": {
         "name": "gooddata",
         "description": "GoodData JavaScript SDK",
-        "version": "5.0.0",
+        "version": "5.0.1",
         "url": ""
     },
     "files": {
@@ -1007,7 +1007,7 @@
                 },
                 {
                     "name": "options",
-                    "description": "objects with options:\n     - limit {Number}\n     - offset {Number}\n     - order {String} 'asc' or 'desc'\n     - filter {String}\n     - prompt {String}\n     - uris {Array}\n     - complement {Boolean}\n     - includeTotalCountWithoutFilters {Boolean}\n     - restrictiveDefinition {String}",
+                    "description": "objects with options:\n     - limit {Number}\n     - offset {Number}\n     - order {String} 'asc' or 'desc'\n     - filter {String}\n     - prompt {String}\n     - uris {Array}\n     - complement {Boolean}\n     - includeTotalCountWithoutFilters {Boolean}\n     - restrictiveDefinition {String}\n     - afm {Object}",
                     "type": "Object"
                 }
             ],
@@ -1020,7 +1020,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 602,
+            "line": 625,
             "description": "Delete object",
             "experimental": "",
             "itemtype": "method",
@@ -1037,7 +1037,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 613,
+            "line": 636,
             "description": "Create object",
             "experimental": "",
             "itemtype": "method",
@@ -1059,7 +1059,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 639,
+            "line": 662,
             "description": "LDM manage",
             "experimental": "",
             "itemtype": "method",
@@ -1086,7 +1086,7 @@
         },
         {
             "file": "src/metadata.js",
-            "line": 662,
+            "line": 685,
             "description": "ETL pull",
             "experimental": "",
             "itemtype": "method",
