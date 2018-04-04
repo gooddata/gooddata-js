@@ -63,6 +63,7 @@ export function createModule(xhr) {
      *        - mode {String} 'enriched' or 'raw'
      *        - author {String} the URI of the author of the metadata objects
      *        - limit {number} default is 50 (also maximum)
+     *        - deprecated {number BOOLEAN 1 or 0 (default)} show also deprecated objects
      * @return {Promise<Array>} array of returned objects
      */
     function getObjectsByQuery(projectId, options) {
@@ -76,7 +77,7 @@ export function createModule(xhr) {
         }
 
         const uri = `/gdc/md/${projectId}/objects/query`;
-        const query = pick({ limit: 50, ...options }, ['category', 'mode', 'author', 'limit']);
+        const query = pick({ limit: 50, ...options }, ['category', 'mode', 'author', 'limit', 'deprecated']);
         return getOnePage(uri + queryString(query));
     }
 
