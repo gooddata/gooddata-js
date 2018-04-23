@@ -114,10 +114,15 @@ export default function executeAfm(projectId, execution) {
             const offset = Array(dimensionality).fill(0); // offset holds information on dimensionality
             const pollingUri = executionResponse.executionResponse.links.executionResult;
             return getOnePage(pollingUri, offset).then((executionResult) => {
-                return {
-                    executionResponse,
-                    executionResult
+                const result = {
+                    ...executionResponse,
+                    ...executionResult
                 };
+                /* backward compatibility - start */
+                result.executionResponse.executionResponse = executionResponse.executionResponse;
+                result.executionResult.executionResult = executionResult.executionResult;
+                /* backward compatibility - end */
+                return result;
             });
         });
 }
