@@ -115,8 +115,8 @@ export default function executeAfm(projectId, execution) {
             const pollingUri = executionResponse.executionResponse.links.executionResult;
             return getOnePage(pollingUri, offset).then((executionResult) => {
                 return {
-                    executionResponse,
-                    executionResult
+                    ...executionResponse,
+                    ...executionResult
                 };
             });
         });
