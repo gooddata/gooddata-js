@@ -44,12 +44,25 @@ export class ExecuteAfmModule {
      * @returns {Promise<Execution.IExecutionResponse>} Promise with `executionResponse`
      *  See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/Execution.ts#L69
      */
-    private getExecutionResponse(projectId: string, execution: AFM.IExecution)
+    public getExecutionResponse(projectId: string, execution: AFM.IExecution)
         : Promise<Execution.IExecutionResponse> {
         validateNumOfDimensions(get(execution, 'execution.resultSpec.dimensions').length);
         return this.xhr.post(`/gdc/app/projects/${projectId}/executeAfm`, { body: JSON.stringify(execution) })
             .then(apiResponse => apiResponse.getData())
             .then(unwrapExecutionResponse);
+    }
+
+    public fetchExecutionResult(executionResultUri: string, limit: number[], offset: number[])
+    : Promise<Execution.IExecutionResultWrapper | null> {
+        const uri = replaceLimitAndOffsetInUri(executionResultUri, limit, offset);
+
+        return this.xhr.ajax(uri, { method: 'GET' })
+            .then((apiResponse) => {
+                if (apiResponse.response.status === 204) {
+                    return null;
+                }
+                return apiResponse.getData();
+            });
     }
 
     /**
@@ -98,19 +111,6 @@ export class ExecuteAfmModule {
                 return nextPageExists(nextOffset, total)
                     ? this.getAllPages(executionResultUri, nextLimit, nextOffset, newExecutionResult)
                     : newExecutionResult;
-            });
-    }
-
-    private fetchExecutionResult(executionResultUri: string, limit: number[], offset: number[])
-        : Promise<Execution.IExecutionResultWrapper | null> {
-        const uri = replaceLimitAndOffsetInUri(executionResultUri, limit, offset);
-
-        return this.xhr.ajax(uri, { method: 'GET' })
-            .then((apiResponse) => {
-                if (apiResponse.response.status === 204) {
-                    return null;
-                }
-                return apiResponse.getData();
             });
     }
 }
