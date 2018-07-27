@@ -67,8 +67,10 @@ function getGlobalDateFilters(afm: AFM.IAfm): AFM.DateFilterItem[] {
  *   2. Remove global date filter
  * Otherwise
  *   Return provided AFM without any change
+ *
+ *  For more info see commit "RAIL-620 Allow multiple date filters for measure"
+ *  https://github.com/gooddata/gooddata-data-layer/commit/5b95253
  */
-
 export function handleMeasureDateFilter(afm: AFM.IAfm): AFM.IAfm {
     const globalDateFilters: AFM.DateFilterItem[] = getGlobalDateFilters(afm);
     if (!globalDateFilters.length) {
