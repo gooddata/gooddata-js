@@ -5,10 +5,2337 @@
         "version": "8.0.0",
         "url": ""
     },
-    "files": {},
-    "modules": {},
-    "classes": {},
+    "files": {
+        "src/DataLayer/converters/toAfmResultSpec.ts": {
+            "name": "src/DataLayer/converters/toAfmResultSpec.ts",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/DataLayer/helpers/filters.ts": {
+            "name": "src/DataLayer/helpers/filters.ts",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/DataLayer/utils/AfmUtils.ts": {
+            "name": "src/DataLayer/utils/AfmUtils.ts",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/DataLayer/utils/ResultSpecUtils.ts": {
+            "name": "src/DataLayer/utils/ResultSpecUtils.ts",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/DataLayer/utils/async.ts": {
+            "name": "src/DataLayer/utils/async.ts",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/DataLayer/index.ts": {
+            "name": "src/DataLayer/index.ts",
+            "modules": {
+                "DataLayer": 1
+            },
+            "classes": {
+                "DataLayer": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/execution/execute-afm.ts": {
+            "name": "src/execution/execute-afm.ts",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/execution/experimental-executions.ts": {
+            "name": "src/execution/experimental-executions.ts",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/utils/promise.ts": {
+            "name": "src/utils/promise.ts",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/admin.ts": {
+            "name": "src/admin.ts",
+            "modules": {
+                "admin": 1
+            },
+            "classes": {
+                "admin": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/catalogue.ts": {
+            "name": "src/catalogue.ts",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/config.ts": {
+            "name": "src/config.ts",
+            "modules": {
+                "config": 1
+            },
+            "classes": {
+                "config": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/execution.ts": {
+            "name": "src/execution.ts",
+            "modules": {
+                "execution": 1
+            },
+            "classes": {
+                "execution": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/gooddata.ts": {
+            "name": "src/gooddata.ts",
+            "modules": {
+                "sdk": 1
+            },
+            "classes": {
+                "sdk": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/metadata.ts": {
+            "name": "src/metadata.ts",
+            "modules": {
+                "metadata": 1
+            },
+            "classes": {
+                "metadata": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/project.ts": {
+            "name": "src/project.ts",
+            "modules": {
+                "project": 1
+            },
+            "classes": {
+                "project": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/user.ts": {
+            "name": "src/user.ts",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/util.ts": {
+            "name": "src/util.ts",
+            "modules": {
+                "util": 1
+            },
+            "classes": {
+                "util": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/xhr.ts": {
+            "name": "src/xhr.ts",
+            "modules": {
+                "xhr": 1
+            },
+            "classes": {
+                "xhr": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "DataLayer": {
+            "name": "DataLayer",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "DataLayer": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/DataLayer/index.ts",
+            "line": 17,
+            "description": "Data layer"
+        },
+        "execution": {
+            "name": "execution",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "execution": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/execution.ts",
+            "line": 8,
+            "description": "Execution endpoints"
+        },
+        "admin": {
+            "name": "admin",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "admin": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/admin.ts",
+            "line": 13,
+            "description": "Network-UI support methods. Mostly private"
+        },
+        "config": {
+            "name": "config",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "config": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/config.ts",
+            "line": 4,
+            "description": "Config module holds SDK configuration variables\n\nCurrently its only custom domain - which enabled using\nsdk from different domain (using CORS)\n\nNever set properties directly - always use setter methods"
+        },
+        "sdk": {
+            "name": "sdk",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "sdk": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/gooddata.ts",
+            "line": 15,
+            "description": "# JS SDK\nHere is a set of functions that mostly are a thin wraper over the [GoodData API](https://developer.gooddata.com/api).\nBefore calling any of those functions, you need to authenticate with a valid GoodData\nuser credentials. After that, every subsequent call in the current session is authenticated.\nYou can find more about the GD authentication mechanism here.\n\n## GD Authentication Mechansim\nIn this JS SDK library we provide you with a simple `login(username, passwd)` function\nthat does the magic for you.\nTo fully understand the authentication mechansim, please read\n[Authentication via API article](http://developer.gooddata.com/article/authentication-via-api)\non [GoodData Developer Portal](http://developer.gooddata.com/)"
+        },
+        "metadata": {
+            "name": "metadata",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "metadata": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/metadata.ts",
+            "line": 31,
+            "description": "Functions for working with metadata objects"
+        },
+        "project": {
+            "name": "project",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "project": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/project.ts",
+            "line": 6,
+            "description": "Functions for working with projects"
+        },
+        "util": {
+            "name": "util",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "util": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/util.ts",
+            "line": 8,
+            "description": "Utility methods. Mostly private"
+        },
+        "xhr": {
+            "name": "xhr",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "xhr": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/xhr.ts",
+            "line": 13,
+            "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
+        }
+    },
+    "classes": {
+        "DataLayer": {
+            "name": "DataLayer",
+            "shortname": "DataLayer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "DataLayer",
+            "namespace": "",
+            "file": "src/DataLayer/index.ts",
+            "line": 17,
+            "description": "Data layer"
+        },
+        "execution": {
+            "name": "execution",
+            "shortname": "execution",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "execution",
+            "namespace": "",
+            "file": "src/execution.ts",
+            "line": 8,
+            "description": "Execution endpoints",
+            "deprecated": true,
+            "deprecationMessage": "The module is in maintenance mode only (just the the compilation issues are being fixed when\n     referenced utilities and interfaces are being changed) and is not being extended when AFM executor\n     have new functionality added."
+        },
+        "admin": {
+            "name": "admin",
+            "shortname": "admin",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "admin",
+            "namespace": "",
+            "file": "src/admin.ts",
+            "line": 13,
+            "description": "Network-UI support methods. Mostly private"
+        },
+        "config": {
+            "name": "config",
+            "shortname": "config",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "config",
+            "namespace": "",
+            "file": "src/config.ts",
+            "line": 4,
+            "description": "Config module holds SDK configuration variables\n\nCurrently its only custom domain - which enabled using\nsdk from different domain (using CORS)\n\nNever set properties directly - always use setter methods"
+        },
+        "sdk": {
+            "name": "sdk",
+            "shortname": "sdk",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "sdk",
+            "namespace": "",
+            "file": "src/gooddata.ts",
+            "line": 15,
+            "description": "# JS SDK\nHere is a set of functions that mostly are a thin wraper over the [GoodData API](https://developer.gooddata.com/api).\nBefore calling any of those functions, you need to authenticate with a valid GoodData\nuser credentials. After that, every subsequent call in the current session is authenticated.\nYou can find more about the GD authentication mechanism here.\n\n## GD Authentication Mechansim\nIn this JS SDK library we provide you with a simple `login(username, passwd)` function\nthat does the magic for you.\nTo fully understand the authentication mechansim, please read\n[Authentication via API article](http://developer.gooddata.com/article/authentication-via-api)\non [GoodData Developer Portal](http://developer.gooddata.com/)"
+        },
+        "metadata": {
+            "name": "metadata",
+            "shortname": "metadata",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "metadata",
+            "namespace": "",
+            "file": "src/metadata.ts",
+            "line": 31,
+            "description": "Functions for working with metadata objects"
+        },
+        "project": {
+            "name": "project",
+            "shortname": "project",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "project",
+            "namespace": "",
+            "file": "src/project.ts",
+            "line": 6,
+            "description": "Functions for working with projects"
+        },
+        "util": {
+            "name": "util",
+            "shortname": "util",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "util",
+            "namespace": "",
+            "file": "src/util.ts",
+            "line": 8,
+            "description": "Utility methods. Mostly private"
+        },
+        "xhr": {
+            "name": "xhr",
+            "shortname": "xhr",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "xhr",
+            "namespace": "",
+            "file": "src/xhr.ts",
+            "line": 13,
+            "description": "Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.\nInteface is same as original jQuery.ajax.\n\nIf token is expired, current request is \"paused\", token is refreshed and request is retried and result.\nis transparently returned to original call.\n\nAdditionally polling is handled. Only final result of polling returned."
+        }
+    },
     "elements": {},
-    "classitems": [],
-    "warnings": []
+    "classitems": [
+        {
+            "file": "src/DataLayer/converters/toAfmResultSpec.ts",
+            "line": 151,
+            "description": "Converts visualizationObject to afm and resultSpec",
+            "itemtype": "method",
+            "name": "toAfmResultSpec",
+            "params": [
+                {
+                    "name": "visObj",
+                    "description": "",
+                    "type": "VisualizationObject.IVisualizationObjectContent"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "IConvertedAFM"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/helpers/filters.ts",
+            "line": 60,
+            "description": "AFM Date Filter logic:\n\nWhen:\n  There is at least one metric with date filter & global date filter present\nThen:\n  1. To each metric add all global date filters if there isn't other date filter with the same date data set\n  2. Remove global date filter\nOtherwise\n  Return provided AFM without any change",
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 15,
+            "description": "Unwraps measure object",
+            "itemtype": "method",
+            "name": "unwrapSimpleMeasure",
+            "params": [
+                {
+                    "name": "item",
+                    "description": "",
+                    "type": "AFM.IMeasure"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "AFM.ISimpleMeasure"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 26,
+            "description": "Unwraps popMeasure object",
+            "itemtype": "method",
+            "name": "unwrapPoPMeasure",
+            "params": [
+                {
+                    "name": "item",
+                    "description": "",
+                    "type": "AFM.IMeasure"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "AFM.IPopMeasure"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 37,
+            "description": "Unwraps previousPeriodMeasure object",
+            "itemtype": "method",
+            "name": "unwrapPreviousPeriodMeasure",
+            "params": [
+                {
+                    "name": "item",
+                    "description": "",
+                    "type": "AFM.IMeasure"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "AFM.IPreviousPeriodMeasure"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 48,
+            "description": "Normalize AFM",
+            "itemtype": "method",
+            "name": "normalizeAfm",
+            "params": [
+                {
+                    "name": "afm",
+                    "description": "",
+                    "type": "AFM.IAfm"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "INormalizedAFM"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 64,
+            "description": "Returns true if measure is a simple measure",
+            "itemtype": "method",
+            "name": "isSimpleMeasure",
+            "params": [
+                {
+                    "name": "item",
+                    "description": "",
+                    "type": "AFM.IMeasure"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 75,
+            "description": "Returns true if measure is PeriodOverPeriod",
+            "itemtype": "method",
+            "name": "isPoP",
+            "params": [
+                {
+                    "name": "item",
+                    "description": "",
+                    "type": "AFM.IMeasure"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 86,
+            "description": "Returns true if measure is previous period measure",
+            "itemtype": "method",
+            "name": "isPreviousPeriodMeasure",
+            "params": [
+                {
+                    "name": "item",
+                    "description": "",
+                    "type": "AFM.IMeasure"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 97,
+            "description": "Returns true if filter is attributeFilter",
+            "itemtype": "method",
+            "name": "isAttributeFilter",
+            "params": [
+                {
+                    "name": "filter",
+                    "description": "",
+                    "type": "AFM.FilterItem"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 109,
+            "description": "Returns true if filter is dateFilter",
+            "itemtype": "method",
+            "name": "isDateFilter",
+            "params": [
+                {
+                    "name": "filter",
+                    "description": "",
+                    "type": "AFM.CompatibilityFilter"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 121,
+            "description": "Returns true if measure has dateFilters",
+            "itemtype": "method",
+            "name": "hasMetricDateFilters",
+            "params": [
+                {
+                    "name": "normalizedAfm",
+                    "description": "",
+                    "type": "INormalizedAFM"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 138,
+            "description": "Returns global date filters",
+            "itemtype": "method",
+            "name": "getGlobalDateFilters",
+            "params": [
+                {
+                    "name": "normalizedAfm",
+                    "description": "",
+                    "type": "INormalizedAFM"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "AFM.DateFilterItem[]"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 149,
+            "description": "Returns true if measure has filters",
+            "itemtype": "method",
+            "name": "hasFilters",
+            "params": [
+                {
+                    "name": "measure",
+                    "description": "",
+                    "type": "AFM.ISimpleMeasure"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 160,
+            "description": "Return date filters from AFM",
+            "itemtype": "method",
+            "name": "getMeasureDateFilters",
+            "params": [
+                {
+                    "name": "normalizedAfm",
+                    "description": "",
+                    "type": "AFM.IAfm"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "AFM.DateFilterItem[]"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 177,
+            "description": "Return true if AFM has global date filter",
+            "itemtype": "method",
+            "name": "hasGlobalDateFilter",
+            "params": [
+                {
+                    "name": "afm",
+                    "description": "",
+                    "type": "INormalizedAFM"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 196,
+            "description": "Return uri or identifier from ObjQualifier",
+            "itemtype": "method",
+            "name": "getId",
+            "params": [
+                {
+                    "name": "obj",
+                    "description": "",
+                    "type": "AFM.ObjQualifier"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "String|null"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 213,
+            "description": "Returns date filter date dataset",
+            "itemtype": "method",
+            "name": "getDateFilterDateDataSet",
+            "params": [
+                {
+                    "name": "filter",
+                    "description": "",
+                    "type": "AFM.DateFilterItem"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "AFM.ObjQualifier | null"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 230,
+            "description": "Returns true if dateFilters dataSets match",
+            "itemtype": "method",
+            "name": "dateFiltersDataSetsMatch",
+            "params": [
+                {
+                    "name": "f1",
+                    "description": "",
+                    "type": "AFM.DateFilterItem"
+                },
+                {
+                    "name": "f2",
+                    "description": "",
+                    "type": "AFM.DateFilterItem"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "AFM.ObjQualifier | null | boolean"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 251,
+            "description": "Append attribute filters and date filter to afm\n\nDate filter handling:\n     - Override if date filter has the same id\n     - Add if date filter if date filter id is different\n\nAttribute filter handling:\n     - Add all",
+            "itemtype": "method",
+            "name": "appendFilters",
+            "params": [
+                {
+                    "name": "afm",
+                    "description": "",
+                    "type": "AFM.IAfm"
+                },
+                {
+                    "name": "attributeFilters",
+                    "description": "",
+                    "type": "AFM.AttributeFilterItem[]"
+                },
+                {
+                    "name": "dateFilter",
+                    "description": "",
+                    "type": "AFM.DateFilterItem"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "AFM.IAfm"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/AfmUtils.ts",
+            "line": 308,
+            "description": "Returns true if AFM is executable",
+            "itemtype": "method",
+            "name": "isAfmExecutable",
+            "params": [
+                {
+                    "name": "afm",
+                    "description": "",
+                    "type": "AFM.IAfm"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/ResultSpecUtils.ts",
+            "line": 7,
+            "description": "Attaches sorts into resultSpec",
+            "itemtype": "method",
+            "name": "applySorting",
+            "params": [
+                {
+                    "name": "resultSpec",
+                    "description": "",
+                    "type": "AFM.IResultSpec"
+                },
+                {
+                    "name": "sortItems",
+                    "description": "",
+                    "type": "AFM.SortItem[]"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "AFM.IResultSpec"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/ResultSpecUtils.ts",
+            "line": 54,
+            "description": "Returns true if sortItem fits to afm",
+            "itemtype": "method",
+            "name": "isSortValid",
+            "params": [
+                {
+                    "name": "afm",
+                    "description": "",
+                    "type": "AFM.IAfm"
+                },
+                {
+                    "name": "sortItem",
+                    "description": "",
+                    "type": "AFM.SortItem"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/DataLayer/utils/async.ts",
+            "line": 18,
+            "description": "Creates infinite stream\nUsage:\nconst subject = createSubject(\n     (result) => console.log('Success:', result),\n     (error) => console.error('Error:', error)\n);\nsubject.next(promise1);\nsubject.next(promise2);\n\nsubject.unsubscribe();",
+            "itemtype": "method",
+            "name": "createSubject",
+            "params": [
+                {
+                    "name": "successHandler",
+                    "description": "",
+                    "type": "StreamSuccessHandler<T>"
+                },
+                {
+                    "name": "errorHandler",
+                    "description": "",
+                    "type": "StreamErrorHandler"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "ISubject<Promise<T>>"
+            },
+            "class": "DataLayer"
+        },
+        {
+            "file": "src/execution/execute-afm.ts",
+            "line": 15,
+            "description": "Execute AFM and fetch all data results",
+            "itemtype": "method",
+            "name": "executeAfm",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- GD project identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "execution",
+                    "description": "- See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/AFM.ts#L2",
+                    "type": "AFM.IExecution"
+                }
+            ],
+            "return": {
+                "description": "Structure with `executionResponse` and `executionResult` -\n See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/Execution.ts#L113",
+                "type": "Promise<Execution.IExecutionResponses>"
+            },
+            "class": "execution",
+            "module": "DataLayer"
+        },
+        {
+            "file": "src/execution/execute-afm.ts",
+            "line": 37,
+            "description": "Get Response from Execution",
+            "itemtype": "method",
+            "name": "getExecutionResponse",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- GD project identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "execution",
+                    "description": "- See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/AFM.ts#L2",
+                    "type": "AFM.IExecution"
+                }
+            ],
+            "return": {
+                "description": "Promise with `executionResponse`\n See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/Execution.ts#L69",
+                "type": "Promise<Execution.IExecutionResponse>"
+            },
+            "class": "execution",
+            "module": "DataLayer"
+        },
+        {
+            "file": "src/execution/execute-afm.ts",
+            "line": 55,
+            "description": "Get one page of Result from Execution (with requested limit and offset)",
+            "itemtype": "method",
+            "name": "getPartialExecutionResult",
+            "params": [
+                {
+                    "name": "executionResultUri",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "limit",
+                    "description": "- limit for each dimension",
+                    "type": "Number[]"
+                },
+                {
+                    "name": "offset",
+                    "description": "- offset for each dimension",
+                    "type": "Number[]"
+                }
+            ],
+            "return": {
+                "description": "Promise with `executionResult` or `null` (null means empty response - HTTP 204)\n See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/Execution.ts#L88",
+                "type": "Promise<Execution.IExecutionResult | null>"
+            },
+            "class": "execution",
+            "module": "DataLayer"
+        },
+        {
+            "file": "src/execution/execute-afm.ts",
+            "line": 76,
+            "description": "Get whole ExecutionResult",
+            "itemtype": "method",
+            "name": "getExecutionResult",
+            "params": [
+                {
+                    "name": "executionResultUri",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "Promise with `executionResult` or `null` (null means empty response - HTTP 204)\n See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/Execution.ts#L88",
+                "type": "Promise<Execution.IExecutionResult | null>"
+            },
+            "class": "execution",
+            "module": "DataLayer"
+        },
+        {
+            "file": "src/execution/experimental-executions.ts",
+            "line": 496,
+            "description": "For the given projectId it returns table structure with the given\nelements in column headers.",
+            "itemtype": "method",
+            "name": "getData",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- GD project identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "columns",
+                    "description": "- An array of attribute or metric identifiers.",
+                    "type": "Array"
+                },
+                {
+                    "name": "executionConfiguration",
+                    "description": "- Execution configuration - can contain for example\n                property \"where\" containing query-like filters\n                property \"orderBy\" contains array of sorted properties to order in form\n                     [{column: 'identifier', direction: 'asc|desc'}]",
+                    "type": "Object"
+                },
+                {
+                    "name": "settings",
+                    "description": "- Supports additional settings accepted by the underlying\n                            xhr.ajax() calls",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "Structure with `headers` and `rawData` keys filled with values from execution.",
+                "type": "Object"
+            },
+            "class": "execution",
+            "module": "execution"
+        },
+        {
+            "file": "src/utils/promise.ts",
+            "line": 1,
+            "description": "Return promise that will resolve after `ms` miliseconds",
+            "params": [
+                {
+                    "name": "ms",
+                    "description": "time in miliseconds",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "admin",
+            "module": "execution"
+        },
+        {
+            "file": "src/catalogue.ts",
+            "line": 17,
+            "description": "Convert specific params in options to \"requiredDataSets\" structure. For more details look into\nres file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "Supported keys in options are:\n<ul>\n<li>dataSetIdentifier - in value is string identifier of dataSet - this leads to CUSTOM type\n<li>returnAllDateDataSets - true value means to return ALL values without dataSet differentiation\n<li>returnAllRelatedDateDataSets - only related date dataSets are loaded across all dataSets\n<li>by default we get PRODUCTION dataSets\n</ul>"
+                }
+            ],
+            "return": {
+                "description": "\"requiredDataSets\" object hash.",
+                "type": "Object"
+            },
+            "class": "config",
+            "module": "admin"
+        },
+        {
+            "file": "src/config.ts",
+            "line": 33,
+            "description": "Returns sanitized config",
+            "itemtype": "method",
+            "name": "sanitizeConfig",
+            "return": {
+                "description": "config with sanitized domain",
+                "type": "Object|undefiend"
+            },
+            "class": "config",
+            "module": "config"
+        },
+        {
+            "file": "src/config.ts",
+            "line": 57,
+            "description": "Config factory",
+            "params": [
+                {
+                    "name": "configStorage",
+                    "description": "config object",
+                    "type": "Object|null"
+                }
+            ],
+            "itemtype": "method",
+            "name": "createModule",
+            "return": {
+                "description": "SDK config module"
+            },
+            "class": "config",
+            "module": "config"
+        },
+        {
+            "file": "src/config.ts",
+            "line": 71,
+            "description": "Sets custom domain. Parameter is url which has always to be https://\n(if you don't provide it, we will do it for you).\n\nRegExp inspired taken from\nhttps://github.com/jarib/google-closure-library/blob/master/closure/goog/string/linkify.js",
+            "params": [
+                {
+                    "name": "domain",
+                    "description": "valid domain starting with https:// or null for removing",
+                    "type": "String|null"
+                }
+            ],
+            "itemtype": "method",
+            "name": "setCustomDomain",
+            "class": "config",
+            "module": "config"
+        },
+        {
+            "file": "src/config.ts",
+            "line": 84,
+            "description": "Returns current domain",
+            "itemtype": "method",
+            "name": "getCustomDomain",
+            "class": "config",
+            "module": "config"
+        },
+        {
+            "file": "src/config.ts",
+            "line": 93,
+            "description": "Sets JS package and version info",
+            "itemtype": "method",
+            "name": "setJsPackage",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "package name",
+                    "type": "String"
+                },
+                {
+                    "name": "version",
+                    "description": "package version (semver)",
+                    "type": "String"
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "class": "config",
+            "module": "config"
+        },
+        {
+            "file": "src/config.ts",
+            "line": 107,
+            "description": "Returns JS package and version info",
+            "itemtype": "method",
+            "name": "getJsPackage",
+            "return": {
+                "description": "with 'name' and 'version' properties",
+                "type": "Object"
+            },
+            "access": "private",
+            "tagname": "",
+            "class": "config",
+            "module": "config"
+        },
+        {
+            "file": "src/gooddata.ts",
+            "line": 68,
+            "description": "# Factory for creating SDK instances",
+            "params": [
+                {
+                    "name": "config",
+                    "description": "object to be passed to SDK constructor",
+                    "type": "Object|null"
+                }
+            ],
+            "itemtype": "method",
+            "name": "setCustomDomain",
+            "class": "sdk",
+            "module": "sdk"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 40,
+            "description": "Load all objects with given uris\n(use bulk loading instead of getting objects one by one)",
+            "itemtype": "method",
+            "name": "getObjects",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "objectUris",
+                    "description": "array of uris for objects to be loaded",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "array of loaded elements",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 76,
+            "description": "Loads all objects by query (fetches all pages, one by one)",
+            "itemtype": "method",
+            "name": "getObjectsByQuery",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "options",
+                    "description": "(see https://developer.gooddata.com/api endpoint: /gdc/md/{project_id}/objects/query)\n       - category {String} for example 'dataSets' or 'projectDashboard'\n       - mode {String} 'enriched' or 'raw'\n       - author {String} the URI of the author of the metadata objects\n       - limit {number} default is 50 (also maximum)\n       - deprecated {boolean} show also deprecated objects",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "array of returned objects",
+                "type": "Promise<Array>"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 107,
+            "description": "Get MD objects from using2 resource. Include only objects of given types\nand take care about fetching only nearest objects if requested.",
+            "itemtype": "method",
+            "name": "getObjectUsing",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "uri",
+                    "description": "uri of the object for which dependencies are to be found",
+                    "type": "String"
+                },
+                {
+                    "name": "options",
+                    "description": "objects with options:\n       - types {Array} array of strings with object types to be included\n       - nearest {Boolean} whether to include only nearest dependencies",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "promise promise once resolved returns an array of\n        entries returned by using2 resource",
+                "type": "JQuery promise"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 143,
+            "description": "Get MD objects from using2 resource. Include only objects of given types\nand take care about fetching only nearest objects if requested.",
+            "itemtype": "method",
+            "name": "getObjectUsingMany",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "uris",
+                    "description": "uris of objects for which dependencies are to be found",
+                    "type": "Array"
+                },
+                {
+                    "name": "options",
+                    "description": "objects with options:\n       - types {Array} array of strings with object types to be included\n       - nearest {Boolean} whether to include only nearest dependencies",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "promise promise once resolved returns an array of\n        entries returned by using2 resource",
+                "type": "JQuery promise"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 179,
+            "description": "Returns all visualizationObjects metadata in a project specified by projectId param",
+            "itemtype": "method",
+            "name": "getVisualizations",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "Project identifier",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "An array of visualization objects metadata",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 193,
+            "description": "Returns all attributes in a project specified by projectId param",
+            "itemtype": "method",
+            "name": "getAttributes",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "Project identifier",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "An array of attribute objects",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 208,
+            "description": "Returns all dimensions in a project specified by projectId param",
+            "itemtype": "method",
+            "name": "getDimensions",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "Project identifier",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "An array of dimension objects",
+                "type": "Array"
+            },
+            "see": [
+                "getFolders"
+            ],
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 224,
+            "description": "Returns project folders. Folders can be of specific types and you can specify\nthe type you need by passing and optional `type` parameter",
+            "itemtype": "method",
+            "name": "getFolders",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- Project identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "type",
+                    "description": "- Optional, possible values are `metric`, `fact`, `attribute`",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "An array of dimension objects",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 260,
+            "description": "Returns all facts in a project specified by the given projectId",
+            "itemtype": "method",
+            "name": "getFacts",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "Project identifier",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "An array of fact objects",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 275,
+            "description": "Returns all metrics in a project specified by the given projectId",
+            "itemtype": "method",
+            "name": "getMetrics",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "Project identifier",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "An array of metric objects",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 290,
+            "description": "Returns all metrics that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given attributes",
+            "itemtype": "method",
+            "name": "getAvailableMetrics",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- Project identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "attrs",
+                    "description": "- An array of attribute uris for which we want to get\navailabale metrics",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "An array of reachable metrics for the given attrs",
+                "type": "Array"
+            },
+            "see": [
+                "getAvailableAttributes",
+                "getAvailableFacts"
+            ],
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 310,
+            "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
+            "itemtype": "method",
+            "name": "getAvailableAttributes",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- Project identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "metrics",
+                    "description": "- An array of metric uris for which we want to get\navailabale attributes",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "An array of reachable attributes for the given metrics",
+                "type": "Array"
+            },
+            "see": [
+                "getAvailableMetrics",
+                "getAvailableFacts"
+            ],
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 328,
+            "description": "Returns all attributes that are reachable (with respect to ldm of the project\nspecified by the given projectId) for given metrics (also called as drillCrossPath)",
+            "itemtype": "method",
+            "name": "getAvailableFacts",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- Project identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "items",
+                    "description": "- An array of metric or attribute uris for which we want to get\navailabale facts",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "An array of reachable facts for the given items",
+                "type": "Array"
+            },
+            "see": [
+                "getAvailableAttributes",
+                "getAvailableMetrics"
+            ],
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 345,
+            "description": "Get details of a metadata object specified by its uri",
+            "itemtype": "method",
+            "name": "getObjectDetails",
+            "params": [
+                {
+                    "name": "uri",
+                    "description": "uri of the metadata object for which details are to be retrieved"
+                }
+            ],
+            "return": {
+                "description": "object details",
+                "type": "Object"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 356,
+            "description": "Get folders with items.\nReturns array of folders, each having a title and items property which is an array of\ncorresponding items. Each item is either a metric or attribute, keeping its original\nverbose structure.",
+            "itemtype": "method",
+            "name": "getFoldersWithItems",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "type of folders to return",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "Array of folder object, each containing title and\ncorresponding items.",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 498,
+            "description": "Get identifier of a metadata object identified by its uri",
+            "itemtype": "method",
+            "name": "getObjectIdentifier",
+            "params": [
+                {
+                    "name": "uri",
+                    "description": "uri of the metadata object for which the identifier is to be retrieved"
+                }
+            ],
+            "return": {
+                "description": "object identifier",
+                "type": "String"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 524,
+            "description": "Get uri of an metadata object, specified by its identifier and project id it belongs to",
+            "itemtype": "method",
+            "name": "getObjectUri",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "identifier",
+                    "description": "identifier of the metadata object"
+                }
+            ],
+            "return": {
+                "description": "uri of the metadata object",
+                "type": "String"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 553,
+            "description": "Get uris specified by identifiers",
+            "itemtype": "method",
+            "name": "getUrisFromIdentifiers",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "identifiers",
+                    "description": "identifiers of the metadata objects",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "array of identifier + uri pairs",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 571,
+            "description": "Get identifiers specified by uris",
+            "itemtype": "method",
+            "name": "getIdentifiersFromUris",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "uris",
+                    "description": "of the metadata objects",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "array of identifier + uri pairs",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 589,
+            "description": "Get attribute elements with their labels and uris.",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "labelUri",
+                    "description": "uri of the label (display form)",
+                    "type": "String"
+                },
+                {
+                    "name": "patterns",
+                    "description": "elements labels/titles (for EXACT mode), or patterns (for WILD mode)",
+                    "type": "Array<String>"
+                },
+                {
+                    "name": "mode",
+                    "description": "match mode, currently only EXACT supported",
+                    "type": "('EXACT'|'WILD')"
+                }
+            ],
+            "return": {
+                "description": "array of elementLabelUri objects",
+                "type": "Array"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 612,
+            "description": "Get valid elements of an attribute, specified by its identifier and project id it belongs to",
+            "itemtype": "method",
+            "name": "getValidElements",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "id of the project",
+                    "type": "String"
+                },
+                {
+                    "name": "id",
+                    "description": "display form id of the metadata object"
+                },
+                {
+                    "name": "options",
+                    "description": "objects with options:\n     - limit {Number}\n     - offset {Number}\n     - order {String} 'asc' or 'desc'\n     - filter {String}\n     - prompt {String}\n     - uris {Array}\n     - complement {Boolean}\n     - includeTotalCountWithoutFilters {Boolean}\n     - restrictiveDefinition {String}\n     - afm {Object}",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "ValidElements response with:\n     - items {Array} elements\n     - paging {Object}\n     - elementsMeta {Object}",
+                "type": "Object"
+            },
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 670,
+            "description": "Delete object",
+            "experimental": "",
+            "itemtype": "method",
+            "name": "deleteObject",
+            "params": [
+                {
+                    "name": "uri",
+                    "description": "of the object to be deleted",
+                    "type": "String"
+                }
+            ],
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 681,
+            "description": "Create object",
+            "experimental": "",
+            "itemtype": "method",
+            "name": "createObject",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "obj",
+                    "description": "object definition",
+                    "type": "String"
+                }
+            ],
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 695,
+            "description": "LDM manage",
+            "experimental": "",
+            "itemtype": "method",
+            "name": "ldmManage",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "maql",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "options",
+                    "description": "for polling (maxAttempts, pollStep)",
+                    "type": "Object"
+                }
+            ],
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/metadata.ts",
+            "line": 714,
+            "description": "ETL pull",
+            "experimental": "",
+            "itemtype": "method",
+            "name": "etlPull",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "uploadsDir",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "options",
+                    "description": "for polling (maxAttempts, pollStep)",
+                    "type": "Object"
+                }
+            ],
+            "class": "metadata",
+            "module": "metadata"
+        },
+        {
+            "file": "src/project.ts",
+            "line": 46,
+            "description": "Get current project id",
+            "itemtype": "method",
+            "name": "getCurrentProjectId",
+            "return": {
+                "description": "current project identifier",
+                "type": "String"
+            },
+            "class": "project",
+            "module": "project"
+        },
+        {
+            "file": "src/project.ts",
+            "line": 66,
+            "description": "Fetches projects available for the user represented by the given profileId",
+            "itemtype": "method",
+            "name": "getProjects",
+            "params": [
+                {
+                    "name": "profileId",
+                    "description": "- User profile identifier",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "An Array of projects",
+                "type": "Array"
+            },
+            "class": "project",
+            "module": "project"
+        },
+        {
+            "file": "src/project.ts",
+            "line": 81,
+            "description": "Fetches all datasets for the given project",
+            "itemtype": "method",
+            "name": "getDatasets",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- GD project identifier",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "An array of objects containing datasets metadata",
+                "type": "Array"
+            },
+            "class": "project",
+            "module": "project"
+        },
+        {
+            "file": "src/project.ts",
+            "line": 94,
+            "description": "Fetches a chart color palette for a project represented by the given\nprojectId parameter.",
+            "itemtype": "method",
+            "name": "getColorPalette",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- A project identifier",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "An array of objects with r, g, b fields representing a project's\ncolor palette",
+                "type": "Array"
+            },
+            "class": "project",
+            "module": "project"
+        },
+        {
+            "file": "src/project.ts",
+            "line": 123,
+            "description": "Sets given colors as a color palette for a given project.",
+            "itemtype": "method",
+            "name": "setColorPalette",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- GD project identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "colors",
+                    "description": "- An array of colors that we want to use within the project.\nEach color should be an object with r, g, b fields. // TODO really object?",
+                    "type": "Array"
+                }
+            ],
+            "class": "project",
+            "module": "project"
+        },
+        {
+            "file": "src/project.ts",
+            "line": 143,
+            "description": "Gets current timezone and its offset. Example output:\n\n    {\n        id: 'Europe/Prague',\n        displayName: 'Central European Time',\n        currentOffsetMs: 3600000\n    }",
+            "itemtype": "method",
+            "name": "getTimezone",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "- GD project identifier",
+                    "type": "String"
+                }
+            ],
+            "class": "project",
+            "module": "project"
+        },
+        {
+            "file": "src/project.ts",
+            "line": 176,
+            "description": "Create project\nNote: returns a promise which is resolved when the project creation is finished",
+            "experimental": "",
+            "itemtype": "method",
+            "name": "createProject",
+            "params": [
+                {
+                    "name": "title",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "authorizationToken",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "options",
+                    "description": "for project creation (summary, projectTemplate, ...)",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "created project object",
+                "type": "Object"
+            },
+            "class": "project",
+            "module": "project"
+        },
+        {
+            "file": "src/project.ts",
+            "line": 220,
+            "description": "Delete project",
+            "itemtype": "method",
+            "name": "deleteProject",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "class": "project",
+            "module": "project"
+        },
+        {
+            "file": "src/user.ts",
+            "line": 9,
+            "description": "Find out whether a user is logged in",
+            "return": {
+                "description": "resolves with true if user logged in, false otherwise",
+                "type": "Promise"
+            },
+            "itemtype": "method",
+            "name": "isLoggedIn",
+            "class": "util",
+            "module": "project"
+        },
+        {
+            "file": "src/user.ts",
+            "line": 33,
+            "description": "This function provides an authentication entry point to the GD API. It is needed to authenticate\nby calling this function prior any other API calls. After providing valid credentials\nevery subsequent API call in a current session will be authenticated.",
+            "itemtype": "method",
+            "name": "login",
+            "params": [
+                {
+                    "name": "username",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "password",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "class": "util",
+            "module": "project"
+        },
+        {
+            "file": "src/user.ts",
+            "line": 56,
+            "description": "This function provides an authentication entry point to the GD API via SSO\nhttps://help.gooddata.com/display/developer/GoodData+PGP+Single+Sign-On",
+            "itemtype": "method",
+            "name": "loginSso",
+            "params": [
+                {
+                    "name": "sessionId",
+                    "description": "PGP message",
+                    "type": "String"
+                },
+                {
+                    "name": "serverUrl",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "targetUrl",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "class": "util",
+            "module": "project"
+        },
+        {
+            "file": "src/user.ts",
+            "line": 71,
+            "description": "Logs out current user",
+            "itemtype": "method",
+            "name": "logout",
+            "class": "util",
+            "module": "project"
+        },
+        {
+            "file": "src/user.ts",
+            "line": 93,
+            "description": "Updates user's profile settings",
+            "itemtype": "method",
+            "name": "updateProfileSettings",
+            "params": [
+                {
+                    "name": "profileId",
+                    "description": "- User profile identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "profileSetting",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "class": "util",
+            "module": "project"
+        },
+        {
+            "file": "src/user.ts",
+            "line": 105,
+            "description": "Returns info about currently logged in user from bootstrap resource",
+            "itemtype": "method",
+            "name": "getAccountInfo",
+            "class": "util",
+            "module": "project"
+        },
+        {
+            "file": "src/user.ts",
+            "line": 124,
+            "description": "Returns the feature flags valid for the currently logged in user.",
+            "itemtype": "method",
+            "name": "getFeatureFlags",
+            "class": "util",
+            "module": "project"
+        },
+        {
+            "file": "src/util.ts",
+            "line": 16,
+            "description": "Gooddata-js package signature",
+            "access": "private",
+            "tagname": "",
+            "class": "util",
+            "module": "util"
+        },
+        {
+            "file": "src/util.ts",
+            "line": 22,
+            "description": "Create getter function for accessing nested objects",
+            "params": [
+                {
+                    "name": "path",
+                    "description": "Target path to nested object",
+                    "type": "String"
+                }
+            ],
+            "itemtype": "method",
+            "name": "getIn",
+            "access": "private",
+            "tagname": "",
+            "class": "util",
+            "module": "util"
+        },
+        {
+            "file": "src/util.ts",
+            "line": 37,
+            "description": "Helper for polling",
+            "params": [
+                {
+                    "name": "uri",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "isPollingDone",
+                    "description": "",
+                    "type": "Function"
+                },
+                {
+                    "name": "options",
+                    "description": "for polling (maxAttempts, pollStep)",
+                    "type": "Object"
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "class": "util",
+            "module": "util"
+        },
+        {
+            "file": "src/util.ts",
+            "line": 74,
+            "description": "Builds query string from plain object\n(Refactored from admin/routes.js)",
+            "params": [
+                {
+                    "name": "query",
+                    "description": "parameters possibly including arrays inside",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "querystring",
+                "type": "String"
+            },
+            "class": "util",
+            "module": "util"
+        },
+        {
+            "file": "src/xhr.ts",
+            "line": 124,
+            "description": "Back compatible method for setting common XHR settings\n\nUsually in our apps we used beforeSend ajax callback to set the X-GDC-REQUEST header with unique ID.",
+            "params": [
+                {
+                    "name": "settings",
+                    "description": "object XHR settings as"
+                }
+            ],
+            "class": "xhr",
+            "module": "xhr"
+        },
+        {
+            "file": "src/xhr.ts",
+            "line": 193,
+            "description": "Wrapper for xhr.ajax method GET",
+            "class": "xhr",
+            "module": "xhr"
+        },
+        {
+            "file": "src/xhr.ts",
+            "line": 200,
+            "description": "Wrapper for xhr.ajax method POST",
+            "class": "xhr",
+            "module": "xhr"
+        },
+        {
+            "file": "src/xhr.ts",
+            "line": 207,
+            "description": "Wrapper for xhr.ajax method PUT",
+            "class": "xhr",
+            "module": "xhr"
+        },
+        {
+            "file": "src/xhr.ts",
+            "line": 214,
+            "description": "Wrapper for xhr.ajax method DELETE",
+            "class": "xhr",
+            "module": "xhr"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/converters/toAfmResultSpec.ts:151"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:15"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:26"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:37"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:48"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:64"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:75"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:86"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:97"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:109"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:121"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:138"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:149"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:160"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:177"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:196"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:213"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:230"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/AfmUtils.ts:308"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/ResultSpecUtils.ts:7"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/DataLayer/utils/ResultSpecUtils.ts:54"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/execution/execute-afm.ts:15"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/execution/execute-afm.ts:37"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/execution/execute-afm.ts:55"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/execution/execute-afm.ts:76"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/catalogue.ts:17"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/util.ts:74"
+        },
+        {
+            "message": "Missing item type\nAFM Date Filter logic:\n\nWhen:\n  There is at least one metric with date filter & global date filter present\nThen:\n  1. To each metric add all global date filters if there isn't other date filter with the same date data set\n  2. Remove global date filter\nOtherwise\n  Return provided AFM without any change",
+            "line": " src/DataLayer/helpers/filters.ts:60"
+        },
+        {
+            "message": "Missing item type\nReturn promise that will resolve after `ms` miliseconds",
+            "line": " src/utils/promise.ts:1"
+        },
+        {
+            "message": "Missing item type\nConvert specific params in options to \"requiredDataSets\" structure. For more details look into\nres file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res",
+            "line": " src/catalogue.ts:17"
+        },
+        {
+            "message": "Missing item type\nGet attribute elements with their labels and uris.",
+            "line": " src/metadata.ts:589"
+        },
+        {
+            "message": "Missing item type\nGooddata-js package signature",
+            "line": " src/util.ts:16"
+        },
+        {
+            "message": "Missing item type\nHelper for polling",
+            "line": " src/util.ts:37"
+        },
+        {
+            "message": "Missing item type\nBuilds query string from plain object\n(Refactored from admin/routes.js)",
+            "line": " src/util.ts:74"
+        },
+        {
+            "message": "Missing item type\nBack compatible method for setting common XHR settings\n\nUsually in our apps we used beforeSend ajax callback to set the X-GDC-REQUEST header with unique ID.",
+            "line": " src/xhr.ts:124"
+        },
+        {
+            "message": "Missing item type\nWrapper for xhr.ajax method GET",
+            "line": " src/xhr.ts:193"
+        },
+        {
+            "message": "Missing item type\nWrapper for xhr.ajax method POST",
+            "line": " src/xhr.ts:200"
+        },
+        {
+            "message": "Missing item type\nWrapper for xhr.ajax method PUT",
+            "line": " src/xhr.ts:207"
+        },
+        {
+            "message": "Missing item type\nWrapper for xhr.ajax method DELETE",
+            "line": " src/xhr.ts:214"
+        }
+    ]
 }

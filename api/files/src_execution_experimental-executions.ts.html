@@ -1,0 +1,696 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/admin.html">admin</a></li>
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/admin.html">admin</a></li>
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v8.0.0</span>
+                        <h1 class="file-heading">File: src/execution/experimental-executions.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
+                        import * as md5 from &#x27;md5&#x27;;
+                        import * as invariant from &#x27;invariant&#x27;;
+                        import {
+                            cloneDeep,
+                            compact,
+                            filter,
+                            first,
+                            find,
+                            map,
+                            merge,
+                            every,
+                            get,
+                            isEmpty,
+                            negate,
+                            partial,
+                            flatten,
+                            set
+                        } from &#x27;lodash&#x27;;
+                        
+                        import { Rules } from &#x27;../utils/rules&#x27;;
+                        import { sortDefinitions } from &#x27;../utils/definitions&#x27;;
+                        import {
+                            getMissingUrisInAttributesMap
+                        } from &#x27;../utils/attributesMapLoader&#x27;;
+                        import {
+                            getAttributes,
+                            getMeasures,
+                            getMeasureFilters,
+                            getDefinition,
+                            isAttributeMeasureFilter,
+                            getAttributesDisplayForms
+                        } from &#x27;../utils/visualizationObjectHelper&#x27;;
+                        import { IMeasure } from &#x27;../interfaces&#x27;;
+                        import { XhrModule } from &#x27;../xhr&#x27;;
+                        
+                        const notEmpty = negate(isEmpty);
+                        
+                        function findHeaderForMappingFn(mapping: any, header: any) {
+                            return ((mapping.element === header.id || mapping.element === header.uri) &amp;&amp;
+                                header.measureIndex === undefined);
+                        }
+                        
+                        function wrapMeasureIndexesFromMappings(metricMappings: any[], headers: any[]) {
+                            if (metricMappings) {
+                                metricMappings.forEach((mapping) =&gt; {
+                                    const header = find(headers, partial(findHeaderForMappingFn, mapping));
+                                    if (header) {
+                                        header.measureIndex = mapping.measureIndex;
+                                        header.isPoP = mapping.isPoP;
+                                    }
+                                });
+                            }
+                            return headers;
+                        }
+                        
+                        const emptyResult = {
+                            extendedTabularDataResult: {
+                                values: [],
+                                warnings: []
+                            }
+                        };
+                        
+                        const MAX_TITLE_LENGTH = 1000;
+                        
+                        function getMetricTitle(suffix: string, title: string) {
+                            const maxLength = MAX_TITLE_LENGTH - suffix.length;
+                            if (title &amp;&amp; title.length &gt; maxLength) {
+                                if (title[title.length - 1] === &#x27;)&#x27;) {
+                                    return &#x60;${title.substring(0, maxLength - 2)}…)${suffix}&#x60;;
+                                }
+                                return &#x60;${title.substring(0, maxLength - 1)}…${suffix}&#x60;;
+                            }
+                            return &#x60;${title}${suffix}&#x60;;
+                        }
+                        
+                        const getBaseMetricTitle = partial(getMetricTitle, &#x27;&#x27;);
+                        
+                        const CONTRIBUTION_METRIC_FORMAT = &#x27;#,##0.00%&#x27;;
+                        
+                        function getPoPDefinition(measure: IMeasure) {
+                            return get(measure, [&#x27;definition&#x27;, &#x27;popMeasureDefinition&#x27;], {});
+                        }
+                        
+                        function getAggregation(measure: IMeasure) {
+                            return get(getDefinition(measure), &#x27;aggregation&#x27;, &#x27;&#x27;).toLowerCase();
+                        }
+                        
+                        function isEmptyFilter(metricFilter: any) {
+                            if (get(metricFilter, &#x27;positiveAttributeFilter&#x27;)) {
+                                return isEmpty(get(metricFilter, [&#x27;positiveAttributeFilter&#x27;, &#x27;in&#x27;]));
+                            }
+                            if (get(metricFilter, &#x27;negativeAttributeFilter&#x27;)) {
+                                return isEmpty(get(metricFilter, [&#x27;negativeAttributeFilter&#x27;, &#x27;notIn&#x27;]));
+                            }
+                            if (get(metricFilter, &#x27;absoluteDateFilter&#x27;)) {
+                                return get(metricFilter, [&#x27;absoluteDateFilter&#x27;, &#x27;from&#x27;]) === undefined &amp;&amp;
+                                    get(metricFilter, [&#x27;absoluteDateFilter&#x27;, &#x27;to&#x27;]) === undefined;
+                            }
+                            return get(metricFilter, [&#x27;relativeDateFilter&#x27;, &#x27;from&#x27;]) === undefined &amp;&amp;
+                                get(metricFilter, [&#x27;relativeDateFilter&#x27;, &#x27;to&#x27;]) === undefined;
+                        }
+                        
+                        function allFiltersEmpty(item: any) {
+                            return every(
+                                map(getMeasureFilters(item), f =&gt; isEmptyFilter(f))
+                            );
+                        }
+                        
+                        function isDerived(measure: any) {
+                            const aggregation = getAggregation(measure);
+                            return (aggregation !== &#x27;&#x27; || !allFiltersEmpty(measure));
+                        }
+                        
+                        function getAttrTypeFromMap(dfUri: string, attributesMap: any) {
+                            return get(get(attributesMap, [dfUri], {}), [&#x27;attribute&#x27;, &#x27;content&#x27;, &#x27;type&#x27;]);
+                        }
+                        
+                        function getAttrUriFromMap(dfUri: string, attributesMap: any) {
+                            return get(get(attributesMap, [dfUri], {}), [&#x27;attribute&#x27;, &#x27;meta&#x27;, &#x27;uri&#x27;]);
+                        }
+                        
+                        function isAttrFilterNegative(attributeFilter: any) {
+                            return get(attributeFilter, &#x27;negativeAttributeFilter&#x27;) !== undefined;
+                        }
+                        
+                        function getAttrFilterElements(attributeFilter: any) {
+                            const isNegative = isAttrFilterNegative(attributeFilter);
+                            const pathToElements = isNegative ? [&#x27;negativeAttributeFilter&#x27;, &#x27;notIn&#x27;] : [&#x27;positiveAttributeFilter&#x27;, &#x27;in&#x27;];
+                            return get(attributeFilter, pathToElements, []);
+                        }
+                        
+                        function getAttrFilterExpression(measureFilter: any, attributesMap: any) {
+                            const isNegative = get(measureFilter, &#x27;negativeAttributeFilter&#x27;, false);
+                            const detailPath = isNegative ? &#x27;negativeAttributeFilter&#x27; : &#x27;positiveAttributeFilter&#x27;;
+                            const attributeUri = getAttrUriFromMap(get(measureFilter, [detailPath, &#x27;displayForm&#x27;, &#x27;uri&#x27;]), attributesMap);
+                            const elements = getAttrFilterElements(measureFilter);
+                            if (isEmpty(elements)) {
+                                return null;
+                            }
+                            const elementsForQuery = map(elements, e =&gt; &#x60;[${e}]&#x60;);
+                            const negative = isNegative ? &#x27;NOT &#x27; : &#x27;&#x27;;
+                        
+                            return &#x60;[${attributeUri}] ${negative}IN (${elementsForQuery.join(&#x27;,&#x27;)})&#x60;;
+                        }
+                        
+                        function getDateFilterExpression() {
+                            // measure date filter was never supported
+                            return &#x27;&#x27;;
+                        }
+                        
+                        function getFilterExpression(attributesMap: any, measureFilter: any) {
+                            if (isAttributeMeasureFilter(measureFilter)) {
+                                return getAttrFilterExpression(measureFilter, attributesMap);
+                            }
+                            return getDateFilterExpression();
+                        }
+                        
+                        function getGeneratedMetricExpression(item: any, attributesMap: any) {
+                            const aggregation = getAggregation(item).toUpperCase();
+                            const objectUri = get(getDefinition(item), &#x27;item.uri&#x27;);
+                            const where = filter(map(getMeasureFilters(item), partial(getFilterExpression, attributesMap)), e =&gt; !!e);
+                        
+                            return &#x60;SELECT ${aggregation ? &#x60;${aggregation}([${objectUri}])&#x60; : &#x60;[${objectUri}]&#x60;
+                            }${notEmpty(where) ? &#x60; WHERE ${where.join(&#x27; AND &#x27;)}&#x60; : &#x27;&#x27;}&#x60;;
+                        }
+                        
+                        function getPercentMetricExpression(category: any, attributesMap: any, measure: any) {
+                            let metricExpressionWithoutFilters = &#x60;SELECT [${get(getDefinition(measure), &#x27;item.uri&#x27;)}]&#x60;;
+                        
+                            if (isDerived(measure)) {
+                                metricExpressionWithoutFilters = getGeneratedMetricExpression(
+                                    set(cloneDeep(measure), [&#x27;definition&#x27;, &#x27;measureDefinition&#x27;, &#x27;filters&#x27;], []),
+                                    attributesMap
+                                );
+                            }
+                        
+                            const attributeUri = getAttrUriFromMap(get(category, &#x27;displayForm.uri&#x27;), attributesMap);
+                            const whereFilters = filter(map(getMeasureFilters(measure), partial(getFilterExpression, attributesMap)), e =&gt; !!e);
+                            const whereExpression = notEmpty(whereFilters) ? &#x60; WHERE ${whereFilters.join(&#x27; AND &#x27;)}&#x60; : &#x27;&#x27;;
+                        
+                            // tslint:disable-next-line:max-line-length
+                            return &#x60;SELECT (${metricExpressionWithoutFilters}${whereExpression}) / (${metricExpressionWithoutFilters} BY ALL [${attributeUri}]${whereExpression})&#x60;;
+                        }
+                        
+                        function getPoPExpression(attributeUri: string, metricExpression: string) {
+                            return &#x60;SELECT ${metricExpression} FOR PREVIOUS ([${attributeUri}])&#x60;;
+                        }
+                        
+                        function getGeneratedMetricHash(title: string, format: string, expression: string) {
+                            return md5(&#x60;${expression}#${title}#${format}&#x60;);
+                        }
+                        
+                        function getMeasureType(measure: any) {
+                            const aggregation = getAggregation(measure);
+                            if (aggregation === &#x27;&#x27;) {
+                                return &#x27;metric&#x27;;
+                            } else if (aggregation === &#x27;count&#x27;) {
+                                return &#x27;attribute&#x27;;
+                            }
+                            return &#x27;fact&#x27;;
+                        }
+                        
+                        function getGeneratedMetricIdentifier(
+                            item: any,
+                            aggregation: string,
+                            expressionCreator: Function,
+                            hasher: any,
+                            attributesMap: any
+                        ) {
+                            const [, , , prjId, , id] = get(getDefinition(item), &#x27;item.uri&#x27;, &#x27;&#x27;).split(&#x27;/&#x27;);
+                            const identifier = &#x60;${prjId}_${id}&#x60;;
+                            const hash = hasher(expressionCreator(item, attributesMap));
+                            const hasNoFilters = isEmpty(getMeasureFilters(item));
+                            const type = getMeasureType(item);
+                        
+                            const prefix = (hasNoFilters || allFiltersEmpty(item)) ? &#x27;&#x27; : &#x27;_filtered&#x27;;
+                        
+                            return &#x60;${type}_${identifier}.generated.${hash}${prefix}_${aggregation}&#x60;;
+                        }
+                        
+                        function isDateAttribute(attribute: any, attributesMap = {}) {
+                            return getAttrTypeFromMap(get(attribute, [&#x27;displayForm&#x27;, &#x27;uri&#x27;]), attributesMap) !== undefined;
+                        }
+                        
+                        function getMeasureSorting(measure?: any, mdObj?: any) {
+                            const sorting = get(mdObj, [&#x27;properties&#x27;, &#x27;sortItems&#x27;], []);
+                            const matchedSorting = sorting.find((sortItem: any) =&gt; {
+                                const measureSortItem = get(sortItem, [&#x27;measureSortItem&#x27;]);
+                                if (measureSortItem) {
+                                    // only one item now, we support only 2d data
+                                    const identifier = get(measureSortItem, [&#x27;locators&#x27;, 0, &#x27;measureLocatorItem&#x27;, &#x27;measureIdentifier&#x27;]);
+                                    return identifier === get(measure, &#x27;localIdentifier&#x27;);
+                                }
+                                return false;
+                            });
+                            if (matchedSorting) {
+                                return get(matchedSorting, [&#x27;measureSortItem&#x27;, &#x27;direction&#x27;], null);
+                            }
+                            return null;
+                        }
+                        
+                        function getCategorySorting(category: any, mdObj: any) {
+                            const sorting = get(mdObj, [&#x27;properties&#x27;, &#x27;sortItems&#x27;], []);
+                            const matchedSorting = sorting.find((sortItem: any) =&gt; {
+                                const attributeSortItem = get(sortItem, [&#x27;attributeSortItem&#x27;]);
+                                if (attributeSortItem) {
+                                    const identifier = get(attributeSortItem, [&#x27;attributeIdentifier&#x27;]);
+                                    return identifier === get(category, &#x27;localIdentifier&#x27;);
+                                }
+                                return false;
+                            });
+                            if (matchedSorting) {
+                                return get(matchedSorting, [&#x27;attributeSortItem&#x27;, &#x27;direction&#x27;], null);
+                            }
+                            return null;
+                        }
+                        
+                        const createPureMetric = (measure: any, mdObj: any, measureIndex: number) =&gt; ({
+                            element: get(measure, [&#x27;definition&#x27;, &#x27;measureDefinition&#x27;, &#x27;item&#x27;, &#x27;uri&#x27;]),
+                            sort: getMeasureSorting(measure, mdObj),
+                            meta: { measureIndex }
+                        });
+                        
+                        function createDerivedMetric(measure: any, mdObj: any, measureIndex: number, attributesMap: any) {
+                            const { format } = measure;
+                            const sort = getMeasureSorting(measure, mdObj);
+                            const title = getBaseMetricTitle(measure.title);
+                        
+                            const hasher = partial(getGeneratedMetricHash, title, format);
+                            const aggregation = getAggregation(measure);
+                            const element = getGeneratedMetricIdentifier(
+                                measure,
+                                aggregation.length ? aggregation : &#x27;base&#x27;,
+                                getGeneratedMetricExpression,
+                                hasher,
+                                attributesMap);
+                            const definition = {
+                                metricDefinition: {
+                                    identifier: element,
+                                    expression: getGeneratedMetricExpression(measure, attributesMap),
+                                    title,
+                                    format
+                                }
+                            };
+                        
+                            return {
+                                element,
+                                definition,
+                                sort,
+                                meta: {
+                                    measureIndex
+                                }
+                            };
+                        }
+                        
+                        function createContributionMetric(measure: any, mdObj: any, measureIndex: number, attributesMap: any) {
+                            const attribute = first(getAttributes(mdObj));
+                            const getMetricExpression = partial(getPercentMetricExpression, attribute, attributesMap);
+                            const title = getBaseMetricTitle(get(measure, &#x27;title&#x27;));
+                            const hasher = partial(getGeneratedMetricHash, title, CONTRIBUTION_METRIC_FORMAT);
+                            const identifier = getGeneratedMetricIdentifier(measure, &#x27;percent&#x27;, getMetricExpression, hasher, attributesMap);
+                            return {
+                                element: identifier,
+                                definition: {
+                                    metricDefinition: {
+                                        identifier,
+                                        expression: getMetricExpression(measure),
+                                        title,
+                                        format: CONTRIBUTION_METRIC_FORMAT
+                                    }
+                                },
+                                sort: getMeasureSorting(measure, mdObj),
+                                meta: {
+                                    measureIndex
+                                }
+                            };
+                        }
+                        
+                        function getOriginalMeasureForPoP(popMeasure: any, mdObj: any) {
+                            return getMeasures(mdObj).find((measure: any) =&gt;
+                                get(measure, &#x27;localIdentifier&#x27;) === get(getPoPDefinition(popMeasure), [&#x27;measureIdentifier&#x27;])
+                            );
+                        }
+                        
+                        function createPoPMetric(popMeasure: any, mdObj: any, measureIndex: number, attributesMap: any) {
+                            const title = getBaseMetricTitle(get(popMeasure, &#x27;title&#x27;));
+                            const format = get(popMeasure, &#x27;format&#x27;);
+                            const hasher = partial(getGeneratedMetricHash, title, format);
+                        
+                            const attributeUri = get(popMeasure, &#x27;definition.popMeasureDefinition.popAttribute.uri&#x27;);
+                            const originalMeasure = getOriginalMeasureForPoP(popMeasure, mdObj);
+                        
+                            const originalMeasureExpression = &#x60;[${get(getDefinition(originalMeasure), [&#x27;item&#x27;, &#x27;uri&#x27;])}]&#x60;;
+                            let metricExpression = getPoPExpression(attributeUri, originalMeasureExpression);
+                        
+                            if (isDerived(originalMeasure)) {
+                                const generated = createDerivedMetric(originalMeasure, mdObj, measureIndex, attributesMap);
+                                const generatedMeasureExpression = &#x60;(${get(generated, [&#x27;definition&#x27;, &#x27;metricDefinition&#x27;, &#x27;expression&#x27;])})&#x60;;
+                                metricExpression = getPoPExpression(attributeUri, generatedMeasureExpression);
+                            }
+                        
+                            const identifier = getGeneratedMetricIdentifier(
+                                originalMeasure,
+                                &#x27;pop&#x27;,
+                                () =&gt; metricExpression, hasher, attributesMap
+                            );
+                        
+                            return {
+                                element: identifier,
+                                definition: {
+                                    metricDefinition: {
+                                        identifier,
+                                        expression: metricExpression,
+                                        title,
+                                        format
+                                    }
+                                },
+                                sort: getMeasureSorting(popMeasure, mdObj),
+                                meta: {
+                                    measureIndex,
+                                    isPoP: true
+                                }
+                            };
+                        }
+                        
+                        function createContributionPoPMetric(popMeasure: any, mdObj: any, measureIndex: number, attributesMap: any) {
+                            const attributeUri = get(popMeasure, [&#x27;definition&#x27;, &#x27;popMeasureDefinition&#x27;, &#x27;popAttribute&#x27;, &#x27;uri&#x27;]);
+                        
+                            const originalMeasure = getOriginalMeasureForPoP(popMeasure, mdObj);
+                        
+                            const generated = createContributionMetric(originalMeasure, mdObj, measureIndex, attributesMap);
+                            const title = getBaseMetricTitle(get(popMeasure, &#x27;title&#x27;));
+                        
+                            const format = CONTRIBUTION_METRIC_FORMAT;
+                            const hasher = partial(getGeneratedMetricHash, title, format);
+                        
+                            const generatedMeasureExpression = &#x60;(${get(generated, [&#x27;definition&#x27;, &#x27;metricDefinition&#x27;, &#x27;expression&#x27;])})&#x60;;
+                            const metricExpression = getPoPExpression(attributeUri, generatedMeasureExpression);
+                        
+                            const identifier = getGeneratedMetricIdentifier(
+                                originalMeasure,
+                                &#x27;pop&#x27;,
+                                () =&gt; metricExpression, hasher, attributesMap
+                            );
+                        
+                            return {
+                                element: identifier,
+                                definition: {
+                                    metricDefinition: {
+                                        identifier,
+                                        expression: metricExpression,
+                                        title,
+                                        format
+                                    }
+                                },
+                                sort: getMeasureSorting(),
+                                meta: {
+                                    measureIndex,
+                                    isPoP: true
+                                }
+                            };
+                        }
+                        
+                        function categoryToElement(attributesMap: any, mdObj: any, category: any) {
+                            const element = getAttrUriFromMap(get(category, [&#x27;displayForm&#x27;, &#x27;uri&#x27;]), attributesMap);
+                            return {
+                                element,
+                                sort: getCategorySorting(category, mdObj)
+                            };
+                        }
+                        
+                        function isPoP({ definition }: any) {
+                            return get(definition, &#x27;popMeasureDefinition&#x27;) !== undefined;
+                        }
+                        function isContribution({ definition }: any) {
+                            return get(definition, [&#x27;measureDefinition&#x27;, &#x27;computeRatio&#x27;]);
+                        }
+                        function isPoPContribution(popMeasure: any, mdObj: any) {
+                            if (isPoP(popMeasure)) {
+                                const originalMeasure = getOriginalMeasureForPoP(popMeasure, mdObj);
+                                return isContribution(originalMeasure);
+                            }
+                            return false;
+                        }
+                        function isCalculatedMeasure({ definition }: any) {
+                            return get(definition, [&#x27;measureDefinition&#x27;, &#x27;aggregation&#x27;]) === undefined;
+                        }
+                        
+                        const rules = new Rules();
+                        
+                        rules.addRule(
+                            [isPoPContribution],
+                            createContributionPoPMetric
+                        );
+                        
+                        rules.addRule(
+                            [isPoP],
+                            createPoPMetric
+                        );
+                        
+                        rules.addRule(
+                            [isContribution],
+                            createContributionMetric
+                        );
+                        
+                        rules.addRule(
+                            [isDerived],
+                            createDerivedMetric
+                        );
+                        
+                        rules.addRule(
+                            [isCalculatedMeasure],
+                            createPureMetric
+                        );
+                        
+                        function getMetricFactory(measure: any, mdObj: any) {
+                            const factory = rules.match(measure, mdObj);
+                        
+                            invariant(factory, &#x60;Unknown factory for: ${measure}&#x60;);
+                        
+                            return factory;
+                        }
+                        
+                        function getExecutionDefinitionsAndColumns(mdObj: any, options: any, attributesMap: any) {
+                            const measures = getMeasures(mdObj);
+                            let attributes = getAttributes(mdObj);
+                        
+                            const metrics = flatten(map(measures, (measure, index) =&gt;
+                                getMetricFactory(measure, mdObj)(measure, mdObj, index, attributesMap))
+                            );
+                            if (options.removeDateItems) {
+                                attributes = filter(attributes, attribute =&gt; !isDateAttribute(attribute, attributesMap));
+                            }
+                            attributes = map(attributes, partial(categoryToElement, attributesMap, mdObj));
+                        
+                            const columns = compact(map([...attributes, ...metrics], &#x27;element&#x27;));
+                            return {
+                                columns,
+                                definitions: sortDefinitions(compact(map(metrics, &#x27;definition&#x27;)))
+                            };
+                        }
+                        
+                        /**
+                         * Module for execution on experimental execution resource
+                         *
+                         * @class execution
+                         * @module execution
+                         * @deprecated The module is in maintenance mode only (just the the compilation issues are being fixed when
+                         *      referenced utilities and interfaces are being changed) and is not being extended when AFM executor
+                         *      have new functionality added.
+                         */
+                        export class ExperimentalExecutionsModule {
+                            constructor(private xhr: XhrModule, private loadAttributesMap: any) {}
+                        
+                            /**
+                             * For the given projectId it returns table structure with the given
+                             * elements in column headers.
+                             *
+                             * @method getData
+                             * @param {String} projectId - GD project identifier
+                             * @param {Array} columns - An array of attribute or metric identifiers.
+                             * @param {Object} executionConfiguration - Execution configuration - can contain for example
+                             *                 property &quot;where&quot; containing query-like filters
+                             *                 property &quot;orderBy&quot; contains array of sorted properties to order in form
+                             *                      [{column: &#x27;identifier&#x27;, direction: &#x27;asc|desc&#x27;}]
+                             * @param {Object} settings - Supports additional settings accepted by the underlying
+                             *                             xhr.ajax() calls
+                             *
+                             * @return {Object} Structure with &#x60;headers&#x60; and &#x60;rawData&#x60; keys filled with values from execution.
+                             */
+                            public getData(projectId: string, columns: any[], executionConfiguration: any = {}, settings: any = {}) {
+                        
+                                if (process.env.NODE_ENV !== &#x27;test&#x27;) {
+                                    // tslint:disable-next-line:no-console
+                                    console.warn(&#x27;ExperimentalExecutionsModule is deprecated and is no longer being maintained. &#x27; +
+                                        &#x27;Please migrate to the ExecuteAfmModule.&#x27;);
+                                }
+                        
+                                const executedReport: any = {
+                                    isLoaded: false
+                                };
+                        
+                                // Create request and result structures
+                                const request: any = {
+                                    execution: { columns }
+                                };
+                                // enrich configuration with supported properties such as
+                                // where clause with query-like filters
+                                [&#x27;where&#x27;, &#x27;orderBy&#x27;, &#x27;definitions&#x27;].forEach((property) =&gt; {
+                                    if (executionConfiguration[property]) {
+                                        request.execution[property] = executionConfiguration[property];
+                                    }
+                                });
+                        
+                                // Execute request
+                                return this.xhr.post(&#x60;/gdc/internal/projects/${projectId}/experimental/executions&#x60;, {
+                                    ...settings,
+                                    body: JSON.stringify(request)
+                                })
+                                    .then((r =&gt; r.getData()))
+                                    .then((response) =&gt; {
+                                        executedReport.headers = wrapMeasureIndexesFromMappings(
+                                            get(executionConfiguration, &#x27;metricMappings&#x27;), get(response, [&#x27;executionResult&#x27;, &#x27;headers&#x27;], []));
+                        
+                                        // Start polling on url returned in the executionResult for tabularData
+                                        return this.loadExtendedDataResults(response.executionResult.extendedTabularDataResult, settings);
+                                    })
+                                    .then((r: any) =&gt; {
+                                        const { result, status } = r;
+                        
+                                        return {
+                                            ...executedReport,
+                                            rawData: get(result, &#x27;extendedTabularDataResult.values&#x27;, []),
+                                            warnings: get(result, &#x27;extendedTabularDataResult.warnings&#x27;, []),
+                                            isLoaded: true,
+                                            isEmpty: status === 204
+                                        };
+                                    });
+                            }
+                        
+                            public mdToExecutionDefinitionsAndColumns(projectId: string, mdObj: any, options = {}) {
+                                const allDfUris = getAttributesDisplayForms(mdObj);
+                                const attributesMapPromise = this.getAttributesMap(options, allDfUris, projectId);
+                        
+                                return attributesMapPromise.then((attributesMap: any) =&gt; {
+                                    return getExecutionDefinitionsAndColumns(mdObj, options, attributesMap);
+                                });
+                            }
+                        
+                            private getAttributesMap(options: any, displayFormUris: string[], projectId: string) {
+                                const attributesMap = get(options, &#x27;attributesMap&#x27;, {});
+                        
+                                const missingUris = getMissingUrisInAttributesMap(displayFormUris, attributesMap);
+                                return this.loadAttributesMap(projectId, missingUris).then((result: any) =&gt; {
+                                    return {
+                                        ...attributesMap,
+                                        ...result
+                                    };
+                                });
+                            }
+                        
+                            private loadExtendedDataResults(uri: string, settings: any, prevResult = emptyResult) {
+                                return new Promise((resolve, reject) =&gt; {
+                                    this.xhr.ajax(uri, settings)
+                                        .then((r) =&gt; {
+                                            const { response } = r;
+                        
+                                            if (response.status === 204) {
+                                                return {
+                                                    status: response.status,
+                                                    result: &#x27;&#x27;
+                                                };
+                                            }
+                        
+                                            return {
+                                                status: response.status,
+                                                result: r.getData()
+                                            };
+                                        })
+                                        .then(({ status, result }) =&gt; {
+                                            const values = [
+                                                ...get(prevResult, &#x27;extendedTabularDataResult.values&#x27;, []),
+                                                ...get(result, &#x27;extendedTabularDataResult.values&#x27;, [])
+                                            ];
+                        
+                                            const warnings = [
+                                                ...get(prevResult, &#x27;extendedTabularDataResult.warnings&#x27;, []),
+                                                ...get(result, &#x27;extendedTabularDataResult.warnings&#x27;, [])
+                                            ];
+                        
+                                            const updatedResult = merge({}, prevResult, {
+                                                extendedTabularDataResult: {
+                                                    values,
+                                                    warnings
+                                                }
+                                            });
+                        
+                                            const nextUri = get(result, &#x27;extendedTabularDataResult.paging.next&#x27;);
+                                            if (nextUri) {
+                                                resolve(this.loadExtendedDataResults(nextUri, settings, updatedResult));
+                                            } else {
+                                                resolve({ status, result: updatedResult });
+                                            }
+                                        }, reject);
+                                });
+                            }
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
