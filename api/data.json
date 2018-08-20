@@ -2,7 +2,7 @@
     "project": {
         "name": "@gooddata/gooddata-js",
         "description": "GoodData JavaScript SDK",
-        "version": "8.1.0",
+        "version": "8.1.1",
         "url": ""
     },
     "files": {
@@ -1978,8 +1978,15 @@
             "description": "Find out whether a specified project is available to a currently logged user",
             "itemtype": "method",
             "name": "isLoggedInProject",
+            "params": [
+                {
+                    "name": "projectId",
+                    "description": "A project identifier",
+                    "type": "String"
+                }
+            ],
             "return": {
-                "description": "resolves with true if user logged in and project available,\n                  resolves with false if user logged in and project not available,\n                  rejects if user not logged in",
+                "description": "Resolves with true if user logged in and project available,\n                  resolves with false if user logged in and project not available,\n                  rejects if user not logged in",
                 "type": "Promise"
             },
             "class": "util",
@@ -1987,7 +1994,7 @@
         },
         {
             "file": "src/user.ts",
-            "line": 60,
+            "line": 61,
             "description": "This function provides an authentication entry point to the GD API. It is needed to authenticate\nby calling this function prior any other API calls. After providing valid credentials\nevery subsequent API call in a current session will be authenticated.",
             "itemtype": "method",
             "name": "login",
@@ -2008,7 +2015,7 @@
         },
         {
             "file": "src/user.ts",
-            "line": 83,
+            "line": 84,
             "description": "This function provides an authentication entry point to the GD API via SSO\nhttps://help.gooddata.com/display/developer/GoodData+PGP+Single+Sign-On",
             "itemtype": "method",
             "name": "loginSso",
@@ -2034,7 +2041,7 @@
         },
         {
             "file": "src/user.ts",
-            "line": 98,
+            "line": 99,
             "description": "Logs out current user",
             "itemtype": "method",
             "name": "logout",
@@ -2043,12 +2050,12 @@
         },
         {
             "file": "src/user.ts",
-            "line": 120,
+            "line": 121,
             "description": "Gets current user's profile",
             "itemtype": "method",
             "name": "getCurrentProfile",
             "return": {
-                "description": "resolves with account setting object if user logged in, false otherwise",
+                "description": "Resolves with account setting object",
                 "type": "Promise"
             },
             "class": "util",
@@ -2056,7 +2063,7 @@
         },
         {
             "file": "src/user.ts",
-            "line": 130,
+            "line": 131,
             "description": "Updates user's profile settings",
             "itemtype": "method",
             "name": "updateProfileSettings",
@@ -2077,7 +2084,7 @@
         },
         {
             "file": "src/user.ts",
-            "line": 142,
+            "line": 143,
             "description": "Returns info about currently logged in user from bootstrap resource",
             "itemtype": "method",
             "name": "getAccountInfo",
@@ -2086,7 +2093,7 @@
         },
         {
             "file": "src/user.ts",
-            "line": 161,
+            "line": 162,
             "description": "Returns the feature flags valid for the currently logged in user.",
             "itemtype": "method",
             "name": "getFeatureFlags",
