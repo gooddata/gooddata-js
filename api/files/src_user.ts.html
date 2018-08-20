@@ -51,13 +51,14 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v8.0.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v8.1.0</span>
                         <h1 class="file-heading">File: src/user.ts</h1>
                         
                         <div class="file">
                             <pre class="code prettyprint linenums">
                         // Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
                         import { XhrModule, ApiResponseError, ApiResponse } from &#x27;./xhr&#x27;;
+                        import { ProjectModule } from &#x27;./project&#x27;;
                         
                         export class UserModule {
                             constructor(private xhr: XhrModule) {
@@ -84,6 +85,32 @@ title: foobar
                                         } else {
                                             reject(err);
                                         }
+                                    });
+                                });
+                            }
+                        
+                            /**
+                             * Find out whether a specified project is available to a currently logged user
+                             *
+                             * @method isLoggedInProject
+                             * @return {Promise} resolves with true if user logged in and project available,
+                             *                   resolves with false if user logged in and project not available,
+                             *                   rejects if user not logged in
+                             */
+                            public isLoggedInProject(projectId: string) {
+                                return this.getCurrentProfile().then((profile) =&gt; {
+                                    return new Promise((resolve, reject) =&gt; {
+                                        const projectModule = new ProjectModule(this.xhr);
+                        
+                                        projectModule.getProjects(profile.links.self.split(&#x27;/&#x27;)[4]).then((projects) =&gt; {
+                                            if (projects.find((p: any) =&gt; p.links.self === &#x60;/gdc/projects/${projectId}&#x60;)) {
+                                                resolve(true);
+                                            } else {
+                                                resolve(false);
+                                            }
+                                        }, (err: ApiResponseError) =&gt; {
+                                            reject(err);
+                                        });
                                     });
                                 });
                             }
@@ -146,6 +173,16 @@ title: foobar
                         
                                     return Promise.resolve();
                                 }, (err: ApiResponseError) =&gt; Promise.reject(err));
+                            }
+                        
+                            /**
+                             * Gets current user&#x27;s profile
+                             * @method getCurrentProfile
+                             * @return {Promise} resolves with account setting object if user logged in, false otherwise
+                             */
+                            public getCurrentProfile() {
+                                return this.xhr.get(&#x27;/gdc/account/profile/current&#x27;)
+                                    .then(r =&gt; r.getData().accountSetting);
                             }
                         
                             /**

@@ -51,7 +51,7 @@ title: foobar
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <strong>gooddata-js</strong> <span class="version">v8.0.0</span>
+                        <strong>gooddata-js</strong> <span class="version">v8.1.0</span>
                         <h1>util Class</h1>
                         <div class="meta">
                         
@@ -113,6 +113,10 @@ title: foobar
                         
                                                     </li>
                                                     <li class="index-item method">
+                                                        <a href="#method_getCurrentProfile">getCurrentProfile</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
                                                         <a href="#method_getFeatureFlags">getFeatureFlags</a>
                         
                                                     </li>
@@ -122,6 +126,10 @@ title: foobar
                                                     </li>
                                                     <li class="index-item method">
                                                         <a href="#method_isLoggedIn">isLoggedIn</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_isLoggedInProject">isLoggedInProject</a>
                         
                                                     </li>
                                                     <li class="index-item method">
@@ -187,7 +195,7 @@ title: foobar
                                                                 <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_user.ts.html#l105"><code>src&#x2F;user.ts:105</code></a>
+                                                    <a href="../files/src_user.ts.html#l142"><code>src&#x2F;user.ts:142</code></a>
                                                     </p>
                                             
                                             
@@ -200,6 +208,49 @@ title: foobar
                                                 </div>
                                             
                                             
+                                            
+                                            </div>
+                                            <div id="method_getCurrentProfile" class="method item">
+                                                <h3 class="name"><code>getCurrentProfile</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                                    <span class="returns-inline">
+                                                        <span class="type">Promise</span>
+                                                    </span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.ts.html#l120"><code>src&#x2F;user.ts:120</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Gets current user's profile</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                                    <div class="returns">
+                                                        <h4>Returns</h4>
+                                            
+                                                        <div class="returns-description">
+                                                                    <span class="type">Promise</span>:
+                                                                <p>resolves with account setting object if user logged in, false otherwise</p>
+                                            
+                                                        </div>
+                                                    </div>
                                             
                                             </div>
                                             <div id="method_getFeatureFlags" class="method item">
@@ -218,7 +269,7 @@ title: foobar
                                                                 <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_user.ts.html#l124"><code>src&#x2F;user.ts:124</code></a>
+                                                    <a href="../files/src_user.ts.html#l161"><code>src&#x2F;user.ts:161</code></a>
                                                     </p>
                                             
                                             
@@ -306,7 +357,7 @@ title: foobar
                                                                 <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_user.ts.html#l9"><code>src&#x2F;user.ts:9</code></a>
+                                                    <a href="../files/src_user.ts.html#l10"><code>src&#x2F;user.ts:10</code></a>
                                                     </p>
                                             
                                             
@@ -325,6 +376,51 @@ title: foobar
                                                         <div class="returns-description">
                                                                     <span class="type">Promise</span>:
                                                                 <p>resolves with true if user logged in, false otherwise</p>
+                                            
+                                                        </div>
+                                                    </div>
+                                            
+                                            </div>
+                                            <div id="method_isLoggedInProject" class="method item">
+                                                <h3 class="name"><code>isLoggedInProject</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                                    <span class="returns-inline">
+                                                        <span class="type">Promise</span>
+                                                    </span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.ts.html#l34"><code>src&#x2F;user.ts:34</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Find out whether a specified project is available to a currently logged user</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                                    <div class="returns">
+                                                        <h4>Returns</h4>
+                                            
+                                                        <div class="returns-description">
+                                                                    <span class="type">Promise</span>:
+                                                                <p>resolves with true if user logged in and project available,
+                                            resolves with false if user logged in and project not available,
+                                            rejects if user not logged in</p>
                                             
                                                         </div>
                                                     </div>
@@ -355,7 +451,7 @@ title: foobar
                                                                 <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_user.ts.html#l33"><code>src&#x2F;user.ts:33</code></a>
+                                                    <a href="../files/src_user.ts.html#l60"><code>src&#x2F;user.ts:60</code></a>
                                                     </p>
                                             
                                             
@@ -426,7 +522,7 @@ title: foobar
                                                                 <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_user.ts.html#l56"><code>src&#x2F;user.ts:56</code></a>
+                                                    <a href="../files/src_user.ts.html#l83"><code>src&#x2F;user.ts:83</code></a>
                                                     </p>
                                             
                                             
@@ -495,7 +591,7 @@ title: foobar
                                                                 <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_user.ts.html#l71"><code>src&#x2F;user.ts:71</code></a>
+                                                    <a href="../files/src_user.ts.html#l98"><code>src&#x2F;user.ts:98</code></a>
                                                     </p>
                                             
                                             
@@ -535,7 +631,7 @@ title: foobar
                                                                 <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
                                                             <p>
                                                             Defined in
-                                                    <a href="../files/src_user.ts.html#l93"><code>src&#x2F;user.ts:93</code></a>
+                                                    <a href="../files/src_user.ts.html#l130"><code>src&#x2F;user.ts:130</code></a>
                                                     </p>
                                             
                                             
