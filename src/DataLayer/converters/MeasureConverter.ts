@@ -167,7 +167,7 @@ function getFormat(measure: IMeasure): string | undefined {
     const { measure: { definition } } = measure;
     const measureFormat = get(measure.measure, 'format');
 
-    if (VisualizationObject.isArithmeticMeasureDefinition(definition)) {
+    if (measureFormat === undefined && VisualizationObject.isArithmeticMeasureDefinition(definition)) {
         if (definition.arithmeticMeasure.operator === 'change') {
             return '#,##0.00%';
         }

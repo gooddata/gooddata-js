@@ -133,5 +133,12 @@ describe('convertMeasure', () => {
                 measures.buildArithmeticMeasure('am1', { operator: 'change' });
             expect(MeasureConverter.getFormat(arithmeticMeasure)).toEqual('#,##0.00%');
         });
+
+        it('should return custom format for change operation', () => {
+            const arithmeticMeasure = measures.buildArithmeticMeasure(
+                'am1', { operator: 'change' }, 'testAlias', 'customFormat'
+            );
+            expect(MeasureConverter.getFormat(arithmeticMeasure)).toEqual('customFormat');
+        });
     });
 });

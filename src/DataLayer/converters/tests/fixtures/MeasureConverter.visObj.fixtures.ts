@@ -303,7 +303,8 @@ export const previousPeriodMeasure: IMeasure = {
 export function buildArithmeticMeasure(
     localIdentifier: string = 'arithmetic_measure_1',
     customDefinition?: Partial<VisualizationObject.IArithmeticMeasureDefinition['arithmeticMeasure']>,
-    alias?: string
+    alias?: string,
+    format?: string
 ): IMeasure {
     const arithmeticMeasure: VisualizationObject.IArithmeticMeasureDefinition['arithmeticMeasure'] = {
         measureIdentifiers: ['m1', 'm2'],
@@ -315,6 +316,7 @@ export function buildArithmeticMeasure(
         measure: {
             localIdentifier,
             ...(alias && { alias }),
+            ...(format && { format }),
             definition: {
                 arithmeticMeasure
             }
