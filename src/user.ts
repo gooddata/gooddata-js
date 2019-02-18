@@ -91,8 +91,14 @@ export class UserModule {
      * @param {String} targetUrl
      */
     public loginSso(sessionId: string, serverUrl: string, targetUrl: string) {
-        return this.xhr.get(
-            `/gdc/account/customerlogin?sessionId=${sessionId}&serverURL=${serverUrl}&targetURL=${targetUrl}`
+        return this.xhr.post(
+            '/gdc/account/customerlogin', {
+                body: `encryptedClaims=${sessionId}&ssoProvider=${serverUrl}&targetUrl=${targetUrl}`,
+                headers: {
+                    // Need to override the default of application/json Content-Type
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                }
+            }
         );
     }
 
