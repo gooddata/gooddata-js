@@ -3,7 +3,7 @@ import "isomorphic-fetch";
 import * as fetchMock from "fetch-mock";
 import { ReportModule } from "../src/report";
 import { XhrModule } from "../src/xhr";
-import { IExportConfig, IExportResponse } from "../src/interfaces";
+import { IExportConfigRequest, IExportResponse } from "../src/interfaces";
 import { mockPollingRequest } from "./helpers/polling";
 
 const mockedReportModule = () => new ReportModule(new XhrModule(fetch, {}));
@@ -31,7 +31,7 @@ describe("report", () => {
                 const runningTask = mockTask(202);
                 mockPollingRequest(createdReport, runningTask, finishedTask);
 
-                const exportConfig: IExportConfig = {
+                const exportConfig: IExportConfigRequest = {
                     title: "title",
                     format: "xlsx",
                     mergeHeaders: false,
@@ -50,7 +50,7 @@ describe("report", () => {
 
                 mockPollingRequest(createdReport, runningTask, finishedTask);
 
-                const exportConfig: IExportConfig = {
+                const exportConfig: IExportConfigRequest = {
                     title: "title",
                     format: "xlsx",
                     mergeHeaders: false,
@@ -74,7 +74,7 @@ describe("report", () => {
 
                 mockPollingRequest(createdReport, runningTask, finishedTask);
 
-                const exportConfig: IExportConfig = {
+                const exportConfig: IExportConfigRequest = {
                     title: "title",
                     format: "xlsx",
                     mergeHeaders: false,

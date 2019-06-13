@@ -1,8 +1,9 @@
 // (C) 2007-2019 GoodData Corporation
 import { AFM, VisualizationObject } from "@gooddata/typings";
 import compact = require("lodash/compact");
+import isArray = require("lodash/isArray");
 import { convertVisualizationObjectFilter } from "./DataLayer/converters/FilterConverter";
-import { IExportConfig, IExportResponse } from "./interfaces";
+import { IExportConfigRequest, IExportResponse } from "./interfaces";
 import { handleHeadPolling, IPollingOptions } from "./util";
 import { ApiResponseError, XhrModule, ApiResponse } from "./xhr";
 
@@ -10,7 +11,7 @@ import VisualizationObjectFilter = VisualizationObject.VisualizationObjectFilter
 
 interface IResultExport {
     executionResult: string;
-    exportConfig: IExportConfig;
+    exportConfig: IExportConfigRequest;
 }
 
 interface IExportResultPayload {
@@ -39,7 +40,7 @@ export class ReportModule {
      * @method exportResult
      * @param {String} projectId GoodData projectId
      * @param {String} executionResult report which should be exported
-     * @param {IExportConfig} exportConfig requested export options
+     * @param {IExportConfigRequest} exportConfig requested export options
      * @param {Object} pollingOptions for polling (maxAttempts, pollStep)
      * @return {Promise} Resolves if export successfully,
      *                   Reject if export has error (network error, api error)
@@ -47,19 +48,22 @@ export class ReportModule {
     public exportResult(
         projectId: string,
         executionResult: string,
-        exportConfig: IExportConfig = {},
+        exportConfig: IExportConfigRequest = {},
         pollingOptions: IPollingOptions = {},
     ): Promise<IExportResponse> {
-        const showFilters: AFM.CompatibilityFilter[] = exportConfig.showFilters
-            ? compact(exportConfig.showFilters.map(this.convertFilter))
-            : [];
+        const { showFilters, ...restExportConfig } = exportConfig;
+
+        let sanitizedFilters: AFM.CompatibilityFilter[] | undefined;
+        if (isArray(showFilters) && showFilters.length > 0) {
+            sanitizedFilters = compact(showFilters.map(this.convertFilter));
+        }
 
         const requestPayload: IExportResultPayload = {
             resultExport: {
                 executionResult,
                 exportConfig: {
-                    ...exportConfig,
-                    showFilters,
+                    ...restExportConfig,
+                    showFilters: sanitizedFilters,
                 },
             },
         };

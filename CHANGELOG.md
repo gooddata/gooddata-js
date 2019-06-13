@@ -11,6 +11,39 @@ The REST API versions in the table are just for your information as the values a
 |\>= 10.0.0|3
 |<= 9.0.1|2
 
+<a name="12.0.0"></a>
+## 2019-06-13 Version [12.0.0](https://github.com/gooddata/gooddata-js/compare/v11.13.0...v12.0.0)
+
+- interface IExportConfig is used in SDK, AD, KD only.
+- add another interface IExportConfigRequest, this interface is used for sdk.report.exportResult - exportConfig parameter
+
+**Migration guide:**
+
+IExportConfig is used only in SDK, AD, KD. Don't use IExportConfig for sdk.report.exportResult calls.
+Calls to sdk.report.exportResult now accept exportConfig parameter with type IExportConfigRequest only.
+
+Example:
+```
+const executionResult = "/uri";
+const exportConfig: IExportConfigRequest = {
+   format: "xlsx",
+   mergeHeaders: true,
+   showFilters: [{
+      absoluteDateFilter: {
+         dataSet: { uri: "/gdc/md/i6k6sk4sznefv1kf0f2ls7jf8tm5ida6/obj/330" },
+         from: "2011-01-01",
+         to: "2011-12-31"
+      }
+   }],
+   title: "Custom Title"
+};
+return sdk.report.exportResult(
+   projectId,
+   executionResult,
+   exportConfig
+);
+```
+
 <a name="11.13.0"></a>
 ## 2019-06-05 Version [11.13.0](https://github.com/gooddata/gooddata-js/compare/v11.12.0...v11.13.0)
 
