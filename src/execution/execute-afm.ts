@@ -1,4 +1,4 @@
-// (C) 2007-2018 GoodData Corporation
+// (C) 2007-2019 GoodData Corporation
 import invariant from "invariant";
 import qs from "qs";
 import range from "lodash/range";
@@ -341,15 +341,11 @@ function mergeHeaderItemsForEachAttribute(
     }
 }
 
-// works only for one or two dimensions
-export function mergePage(
-    prevExecutionResult: Execution.IExecutionResult,
-    executionResult: Execution.IExecutionResult,
-): Execution.IExecutionResult {
-    const result = prevExecutionResult;
-    const { headerItems, data, paging } = executionResult;
-
-    const mergeHeaderItems = (dimension: number) => {
+function mergeHeaderItems(
+    result: Execution.IExecutionResult,
+    { headerItems, paging }: Execution.IExecutionResult,
+) {
+    const fixDimension = (dimension: number) => {
         // for 1 dimension we already have the headers from first page
         const otherDimension = dimension === 0 ? 1 : 0;
         const isEdge = paging.offset[otherDimension] === 0;
@@ -358,8 +354,17 @@ export function mergePage(
         }
     };
 
-    // merge data
+    if (paging.offset.length > 1) {
+        fixDimension(0);
+        fixDimension(1);
+    } else {
+        mergeHeaderItemsForEachAttribute(0, headerItems, result);
+    }
+}
+
+function mergeData(result: Execution.IExecutionResult, { data, paging }: Execution.IExecutionResult) {
     const rowOffset = paging.offset[0];
+
     if (result.data[rowOffset]) {
         // appending columns to existing rows
         for (let i = 0; i < data.length; i += 1) {
@@ -373,25 +378,36 @@ export function mergePage(
         const currentPageData = data as Execution.DataValue[];
         resultData.push(...currentPageData);
     }
+}
 
-    // merge headerItems
-    if (paging.offset.length > 1) {
-        mergeHeaderItems(0);
-        mergeHeaderItems(1);
-    } else {
-        mergeHeaderItemsForEachAttribute(0, headerItems, result);
-    }
-
-    // update page count
+function mergePagingCount(result: Execution.IExecutionResult, { paging }: Execution.IExecutionResult) {
     if (paging.offset.length === 1) {
         result.paging.count = [get(result, "headerItems[0][0]", []).length];
     }
+
     if (paging.offset.length === 2) {
         result.paging.count = [
             get(result, "headerItems[0][0]", []).length,
             get(result, "headerItems[1][0]", []).length,
         ];
     }
+}
+
+// works only for one or two dimensions
+export function mergePage(
+    prevExecutionResult: Execution.IExecutionResult,
+    executionResult: Execution.IExecutionResult,
+): Execution.IExecutionResult {
+    const result = prevExecutionResult;
+
+    // merge headerItems
+    mergeHeaderItems(result, executionResult);
+
+    // merge data
+    mergeData(result, executionResult);
+
+    // update page count
+    mergePagingCount(result, executionResult);
 
     return result;
 }
