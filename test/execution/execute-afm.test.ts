@@ -1,4 +1,4 @@
-// (C) 2007-2018 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import "isomorphic-fetch";
 import fetchMock from "fetch-mock";
 import range from "lodash/range";
@@ -536,6 +536,18 @@ describe("executeAfm", () => {
             .catch(err => {
                 expect(err).toBeInstanceOf(Error);
                 expect(err.response.status).toBe(400);
+            });
+    });
+
+    it("should contain execution response when polling fails", () => {
+        fetchMock.mock(fakeExecuteAfmUri, { status: 200, body: getPollingResponseBody() });
+
+        fetchMock.mock(fakeExecutionResultsUri, 400);
+
+        return createExecuteAfm()
+            .executeAfm("myFakeProjectId", getExecution())
+            .catch(err => {
+                expect(err.executionResponse).toBeDefined();
             });
     });
 
