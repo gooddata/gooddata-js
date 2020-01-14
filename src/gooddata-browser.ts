@@ -1,7 +1,8 @@
-// (C) 2007-2014 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import "isomorphic-fetch";
 import { factory, SDK } from "./gooddata";
 import { ApiResponse, ApiResponseError, ApiNetworkError } from "./xhr";
+import { ApiExecutionResponseError } from "./execution/execute-afm";
 import * as referenceHandling from "./referenceHandling";
 
 import * as DataLayer from "./DataLayer";
@@ -16,7 +17,7 @@ const factoryBrowser = factory(fetch.bind(window));
 export { factoryBrowser as factory, SDK, DataLayer };
 
 // Allow to reuse our ApiResponse and API response errors
-export { ApiResponse, ApiResponseError, ApiNetworkError };
+export { ApiResponse, ApiResponseError, ApiNetworkError, ApiExecutionResponseError };
 
 // explicitly export TypeGuards as they cannot be exported using the export * syntax when there is also a default export
 export { TypeGuards, referenceHandling };

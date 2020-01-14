@@ -1,11 +1,11 @@
-// (C) 2007-2018 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import invariant from "invariant";
 import qs from "qs";
 import range from "lodash/range";
 import get from "lodash/get";
 import { Execution, AFM } from "@gooddata/typings";
 
-import { XhrModule } from "../xhr";
+import { XhrModule, ApiResponseError } from "../xhr";
 import { convertExecutionToJson } from "./execute-afm.convert";
 
 export const DEFAULT_LIMIT = 1000;
@@ -27,6 +27,16 @@ export interface IVisualizationExecution {
     };
 }
 
+/**
+ * This interface represents error caused during second part of api execution (data fetching)
+ * and contains information about first execution part if that part was successful.
+ */
+export class ApiExecutionResponseError extends ApiResponseError {
+    constructor(error: ApiResponseError, public executionResponse: any) {
+        super(error.message, error.response, error.responseBody);
+    }
+}
+
 export class ExecuteAfmModule {
     constructor(private xhr: XhrModule) {}
 
@@ -44,11 +54,13 @@ export class ExecuteAfmModule {
         validateNumOfDimensions(get(execution, "execution.resultSpec.dimensions").length);
         return this.getExecutionResponse(projectId, execution).then(
             (executionResponse: Execution.IExecutionResponse) => {
-                return this.getExecutionResult(executionResponse.links.executionResult).then(
-                    (executionResult: Execution.IExecutionResult | null) => {
+                return this.getExecutionResult(executionResponse.links.executionResult)
+                    .then((executionResult: Execution.IExecutionResult | null) => {
                         return { executionResponse, executionResult };
-                    },
-                );
+                    })
+                    .catch(error => {
+                        throw new ApiExecutionResponseError(error, executionResponse);
+                    });
             },
         );
     }
