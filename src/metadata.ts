@@ -1,4 +1,4 @@
-// (C) 2007-2014 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import isPlainObject from "lodash/isPlainObject";
 import get from "lodash/get";
 import chunk from "lodash/chunk";
@@ -706,7 +706,8 @@ export class MetadataModule {
                 .then(response => response.getData())
                 .then(reportDefinitionResult => ({
                     ...pickedOptions,
-                    restrictiveDefinitionContent: reportDefinitionResult.reportDefinition.content,
+                    restrictiveDefinitionContent:
+                        reportDefinitionResult.reportDefinitionWithInlinedMetrics.content,
                 }));
 
         const getOptions = afm ? getRequestBodyWithReportDefinition : () => Promise.resolve(pickedOptions);
