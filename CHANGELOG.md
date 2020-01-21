@@ -8,12 +8,19 @@ The REST API versions in the table are just for your information as the values a
 
 |gooddata-js version | REST API version
 |:---:|:---:
+|\>= 12.1.0|5
 |\>= 12.0.0|4
 |\>= 10.0.0|3
 |<= 9.0.1|2
 
+<a name="12.1.0"></a>
+## 2020-01-21 Version [12.1.0](https://github.com/gooddata/gooddata-js/compare/v12.0.0...v12.1.0)
+
+- update REST API version to 5
+- add measure value filters support to getValidElements
+
 <a name="12.0.0"></a>
-## 2019-11-15 Version [11.20.0](https://github.com/gooddata/gooddata-js/compare/v11.19.3...v11.20.0)
+## 2019-11-15 Version [12.0.0](https://github.com/gooddata/gooddata-js/compare/v11.19.3...v12.0.0)
 
 - update REST API version to 4
 - add AFM to export payload
