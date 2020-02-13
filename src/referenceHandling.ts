@@ -1,4 +1,4 @@
-// (C) 2007-2019 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import { VisualizationObject } from "@gooddata/typings";
 import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
