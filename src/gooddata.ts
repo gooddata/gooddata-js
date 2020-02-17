@@ -1,4 +1,4 @@
-// (C) 2007-2019 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import cloneDeep from "lodash/cloneDeep";
 import { XhrModule } from "./xhr";
 import { UserModule } from "./user";
@@ -14,6 +14,7 @@ import { AdminModule } from "./admin";
 import { AttributesMapLoaderModule } from "./utils/attributesMapLoader";
 import { getAttributesDisplayForms } from "./utils/visualizationObjectHelper";
 import { convertReferencesToUris, ReferenceConverter } from "./referenceHandling";
+import { MetadataModuleExt } from "./metadataExt";
 
 /**
  * # JS SDK
@@ -37,6 +38,7 @@ export class SDK {
     public xhr: XhrModule;
     public user: UserModule;
     public md: MetadataModule;
+    public mdExt: MetadataModuleExt;
     public execution: ExecutionModule;
     public project: ProjectModule;
     public report: ReportModule;
@@ -57,6 +59,7 @@ export class SDK {
         this.xhr = new XhrModule(fetchMethod, this.configStorage);
         this.user = new UserModule(this.xhr);
         this.md = new MetadataModule(this.xhr);
+        this.mdExt = new MetadataModuleExt(this.xhr);
         this.execution = new ExecutionModule(this.xhr, this.md);
         this.project = new ProjectModule(this.xhr);
         this.report = new ReportModule(this.xhr);

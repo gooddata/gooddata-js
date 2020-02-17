@@ -1,4 +1,4 @@
-// (C) 2007-2014 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import md5 from "md5";
 import invariant from "invariant";
 import cloneDeep from "lodash/cloneDeep";

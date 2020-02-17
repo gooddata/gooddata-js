@@ -1,4 +1,4 @@
-// (C) 2007-2018 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import get from "lodash/get";
 import find from "lodash/find";
 import includes from "lodash/includes";

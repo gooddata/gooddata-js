@@ -1,4 +1,4 @@
-// (C) 2007-2018 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import { AFM, Execution } from "@gooddata/typings";
 import { IDataSource } from "../interfaces/DataSource";
 
