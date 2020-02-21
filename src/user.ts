@@ -1,6 +1,7 @@
-// (C) 2007-2019 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import { XhrModule, ApiResponseError, ApiResponse } from "./xhr";
 import { ProjectModule } from "./project";
+import qs from "qs";
 
 export interface IUserConfigsSettingItem {
     settingItem: {
@@ -214,5 +215,19 @@ export class UserModule {
             .get("/gdc/app/account/bootstrap")
             .then((r: any) => r.getData())
             .then((result: any) => result.bootstrapResource.current.featureFlags);
+    }
+
+    /**
+     * Initiates SPI SAML SSO
+     * @param relayState URL of the page where the user is redirected after a successful login
+     */
+    public initiateSamlSso(relayState: string) {
+        this.xhr
+            .get(`/gdc/account/samlrequest?${qs.stringify({ relayState })}`)
+            .then(data => data.getData())
+            .then(response => {
+                const loginUrl = response.samlRequests.items[0].samlRequest.loginUrl;
+                window.location.assign(loginUrl);
+            });
     }
 }
