@@ -1,8 +1,15 @@
 // (C) 2020 GoodData Corporation
 import { MetadataModule } from "./metadata";
-import { UserModule } from "./user";
 import { XhrModule } from "./xhr";
+import { UserModule } from "./user";
 import cloneDeepWith from "lodash/cloneDeepWith";
+import {
+    IKPI,
+    IAnalyticalDashboardContent,
+    DashboardExport,
+    IVisualizationWidget,
+    IAnalyticalDashboard,
+} from "@gooddata/typings";
 
 /**
  * Modify how and what should be copied to the cloned dashboard
@@ -10,11 +17,64 @@ import cloneDeepWith from "lodash/cloneDeepWith";
 
 export interface ICopyDashboardOptions {
     /** copy new kpi and reference it in the cloned dashboard */
-    copyKpi: boolean;
-    /** copy new insight and reference it in the cloned widget */
-    copyInsight: boolean;
+    copyKpi?: boolean;
+    /** copy new visualization object and reference it in the cloned widget */
+    copyVisObj?: boolean;
     /** optional, default value of name is "Copy of (current dashboard title)" */
     name?: string;
+}
+
+type UriTranslator = (oldUri: string) => string;
+
+export function createTranslator(
+    kpiMap: Map<string, string>,
+    visWidgetMap: Map<string, string>,
+): UriTranslator {
+    return (oldUri: string): string => {
+        const kpiMatch = kpiMap.get(oldUri);
+        const visWidgetMatch = visWidgetMap.get(oldUri);
+        if (kpiMatch) {
+            return kpiMatch;
+        } else if (visWidgetMatch) {
+            return visWidgetMatch;
+        } else {
+            return oldUri;
+        }
+    };
+}
+
+/**
+ * Updates content of the dashboard
+ *
+ * @param {string} dashboardUri uri of dashboard
+ * @param {UriTranslator} uriTranslator gets updated widgets and kpis uri
+ * @param {string} filterContext updated filter context uri
+ * @experimental
+ */
+export function updateContent(
+    analyticalDashboard: any,
+    uriTranslator: UriTranslator,
+    filterContext: string,
+): IAnalyticalDashboardContent {
+    return cloneDeepWith(
+        {
+            ...analyticalDashboard.content,
+            filterContext,
+            widgets: analyticalDashboard.content.widgets.map((uri: string) => {
+                return uriTranslator(uri);
+            }),
+        },
+        value => {
+            const uri = value.uri;
+            if (!uri) {
+                return;
+            }
+            return {
+                ...value,
+                uri: uriTranslator(uri),
+            };
+        },
+    );
 }
 
 export class MetadataModuleExt {
@@ -32,8 +92,10 @@ export class MetadataModuleExt {
      * @param {string} projectId id of the project
      * @param {string} dashboardUri uri of the dashboard
      * @param {ICopyDashboardOptions} options object with options:
+     *          - default {} dashboard is cloned with new kpi reference and visualization widget is cloned with new
+     *              visualization object reference
      *          - copyKpi {boolean} choose whether dashboard is cloned with new Kpi reference
-     *          - copyInsight {boolean} choose whether visualization widget is cloned with new Insight reference
+     *          - copyVisObj {boolean} choose whether visualization widget is cloned with new visualization object reference
      *          - name {string} optional - choose name, default value is "Copy of (old title of the dashboard)"
      * @returns {string} uri of cloned dashboard
      * @experimental
@@ -46,40 +108,52 @@ export class MetadataModuleExt {
     ): Promise<string> {
         const objectsFromDashboard = await this.getObjectsFromDashboard(projectId, dashboardUri);
         const dashboardDetails = await this.metadataModule.getObjectDetails(dashboardUri);
-        const kpiMap = await this.duplicateOrKeepKpis(projectId, objectsFromDashboard, options);
-        const visWidgetMap = await this.duplicateWidgets(projectId, objectsFromDashboard, options);
-        const translator = createTranslator(kpiMap, visWidgetMap);
-        const filterContext = await this.duplicateFilterContext(projectId, objectsFromDashboard);
-        const updatedFluidLayout = await this.updateLayout(dashboardUri, translator);
-        const updatedWidgets = await this.updateWidgets(dashboardUri, translator);
-        const dashboardTitle = this.getDashboardName(
-            dashboardDetails.analyticalDashboard.meta.title,
-            options.name,
-        );
-        const duplicateDashboard = {
-            ...dashboardDetails,
-            analyticalDashboard: {
-                ...dashboardDetails.analyticalDashboard,
-                content: {
-                    ...dashboardDetails.analyticalDashboard.content,
-                    filterContext,
-                    layout: {
-                        ...dashboardDetails.analyticalDashboard.content.layout,
-                        fluidLayout: updatedFluidLayout,
+        const { analyticalDashboard }: { analyticalDashboard: IAnalyticalDashboard } = dashboardDetails;
+        const allCreatedObjUris: string[] = [];
+        const visWidgetUris: string[] = [];
+        try {
+            const filterContext = await this.duplicateFilterContext(projectId, objectsFromDashboard);
+            allCreatedObjUris.push(filterContext);
+            const kpiMap = await this.duplicateOrKeepKpis(projectId, objectsFromDashboard, options);
+            if (this.shouldCopyKpi(options)) {
+                allCreatedObjUris.push(...Array.from(kpiMap.values()));
+            }
+            const visWidgetMap = await this.duplicateWidgets(projectId, objectsFromDashboard, options);
+            visWidgetUris.push(...Array.from(visWidgetMap.values()));
+            const translator = createTranslator(kpiMap, visWidgetMap);
+            const updatedContent = updateContent(analyticalDashboard, translator, filterContext);
+            const dashboardTitle = this.getDashboardName(analyticalDashboard.meta.title, options.name);
+            const duplicateDashboard: IAnalyticalDashboard = {
+                ...dashboardDetails,
+                analyticalDashboard: {
+                    ...dashboardDetails.analyticalDashboard,
+                    content: {
+                        filterContext,
+                        layout: { ...updatedContent.layout },
+                        widgets: [...updatedContent.widgets],
                     },
-                    widgets: updatedWidgets,
+                    meta: {
+                        ...dashboardDetails.analyticalDashboard.meta,
+                        title: dashboardTitle,
+                    },
                 },
-                meta: {
-                    ...dashboardDetails.analyticalDashboard.meta,
-                    title: dashboardTitle,
-                },
-            },
-        };
+            };
 
-        const duplicateDashboardUri = (await this.metadataModule.createObject(projectId, duplicateDashboard))
-            .analyticalDashboard.meta.uri;
+            const duplicateDashboardUri: string = (await this.metadataModule.createObject(
+                projectId,
+                duplicateDashboard,
+            )).analyticalDashboard.meta.uri;
 
-        return duplicateDashboardUri;
+            return duplicateDashboardUri;
+        } catch (err) {
+            if (this.shouldCopyVisObj(options)) {
+                await Promise.all(visWidgetUris.map(uri => this.cascadingDelete(projectId, uri)));
+            } else {
+                await Promise.all(visWidgetUris.map(uri => this.metadataModule.deleteObject(uri)));
+            }
+            await Promise.all(allCreatedObjUris.map(uri => this.cascadingDelete(projectId, uri)));
+            return dashboardUri;
+        }
     }
 
     /**
@@ -93,11 +167,11 @@ export class MetadataModuleExt {
      */
 
     public async cascadingDelete(projectID: string, dashboardUri: string): Promise<any> {
-        const objects = await this.metadataModule.getObjectUsing(projectID, dashboardUri);
-        const currentUserInfo = await (await this.userModule.getAccountInfo()).profileUri;
+        const objects: any[] = await this.metadataModule.getObjectUsing(projectID, dashboardUri);
+        const currentUser: string = (await this.userModule.getAccountInfo()).profileUri;
 
         const objectsToBeDeleted = objects
-            .filter((object: any) => object.author === currentUserInfo)
+            .filter((object: any) => object.author === currentUser)
             .map((object: any) => {
                 return object.link;
             });
@@ -119,55 +193,36 @@ export class MetadataModuleExt {
         return `Copy of ${originalName}`;
     }
 
-    private async updateWidgets(dashboardUri: string, uriTranslator: UriTranslator): Promise<any> {
-        const { analyticalDashboard } = await this.metadataModule.getObjectDetails(dashboardUri);
-
-        return analyticalDashboard.content.widgets.map((uri: string) => {
-            return uriTranslator(uri);
-        });
-    }
-
-    private async updateLayout(dashboardUri: string, uriTranslator: UriTranslator): Promise<any> {
-        const { analyticalDashboard } = await this.metadataModule.getObjectDetails(dashboardUri);
-        return cloneDeepWith({ ...analyticalDashboard.content.layout.fluidLayout }, key => {
-            const uri = key.uri;
-            if (uri === undefined) {
-                return;
-            }
-            return {
-                ...key,
-                uri: uriTranslator(uri),
-            };
-        });
-    }
-
     private async duplicateOrKeepKpis(
         projectId: string,
-        objsFromDashboard: any,
+        objsFromDashboard: any[],
         options: ICopyDashboardOptions,
-    ): Promise<any> {
-        const uriMap: any = new Map();
-        objsFromDashboard
-            .filter((obj: any) => this.unwrapObj(obj).meta.category === "kpi")
-            .map(async (kpiWidget: any) => {
-                const { kpi } = kpiWidget;
-                if (options.copyKpi) {
-                    const newUriKpiObj = (await this.metadataModule.createObject(projectId, kpiWidget)).kpi
-                        .meta.uri;
-                    uriMap.set(kpi.meta.uri, newUriKpiObj);
-                } else {
-                    uriMap.set(kpi.meta.uri, kpi.meta.uri);
-                }
-            });
+    ): Promise<Map<string, string>> {
+        const uriMap: Map<string, string> = new Map();
+        if (this.shouldCopyKpi(options)) {
+            await Promise.all(
+                objsFromDashboard
+                    .filter((obj: any) => this.unwrapObj(obj).meta.category === "kpi")
+                    .map(async (kpiWidget: any) => {
+                        const { kpi }: { kpi: IKPI } = kpiWidget;
+                        const newUriKpiObj: string = (await this.metadataModule.createObject(
+                            projectId,
+                            kpiWidget,
+                        )).kpi.meta.uri;
+                        uriMap.set(kpi.meta.uri as string, newUriKpiObj);
+                    }),
+            );
+        }
+
         return uriMap;
     }
 
     private async duplicateWidgets(
         projectId: string,
-        objsFromDashboard: any,
+        objsFromDashboard: any[],
         options: ICopyDashboardOptions,
-    ): Promise<any> {
-        const uriMap: any = new Map();
+    ): Promise<Map<string, string>> {
+        const uriMap: Map<string, string> = new Map();
 
         await Promise.all(
             objsFromDashboard
@@ -184,10 +239,10 @@ export class MetadataModuleExt {
         projectId: string,
         visWidget: any,
         options: ICopyDashboardOptions,
-        uriMap: any,
-    ) {
+        uriMap: Map<string, string>,
+    ): Promise<void> {
         const { visualizationWidget } = visWidget;
-        if (options.copyInsight) {
+        if (this.shouldCopyVisObj(options)) {
             const visObj = await this.metadataModule.getObjectDetails(
                 visualizationWidget.content.visualization,
             );
@@ -221,7 +276,10 @@ export class MetadataModuleExt {
         return filterContext.meta.uri;
     }
 
-    private async getObjectsFromDashboard(projectId: string, dashboardUri: string): Promise<any> {
+    private async getObjectsFromDashboard(
+        projectId: string,
+        dashboardUri: string,
+    ): Promise<Array<IKPI | DashboardExport.IFilterContext | IVisualizationWidget>> {
         const uris = await this.getObjectsUrisInDashboard(projectId, dashboardUri);
         return this.metadataModule.getObjects(projectId, uris);
     }
@@ -237,18 +295,12 @@ export class MetadataModuleExt {
     private unwrapObj(obj: any): any {
         return obj[Object.keys(obj)[0]];
     }
-}
 
-type UriTranslator = (oldUri: string) => string;
+    private shouldCopyVisObj(options: ICopyDashboardOptions): boolean {
+        return !!(options.copyVisObj || typeof options.copyVisObj === "undefined");
+    }
 
-function createTranslator(kpiMap: any, visWidgetMap: any): UriTranslator {
-    return (oldUri: string): string => {
-        if (kpiMap.get(oldUri) !== undefined) {
-            return kpiMap.get(oldUri);
-        } else if (visWidgetMap.get(oldUri) !== undefined) {
-            return visWidgetMap.get(oldUri);
-        } else {
-            return oldUri;
-        }
-    };
+    private shouldCopyKpi(options: ICopyDashboardOptions): boolean {
+        return !!(options.copyKpi || typeof options.copyKpi === "undefined");
+    }
 }
