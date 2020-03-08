@@ -1,4 +1,4 @@
-// (C) 2007-2019 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import { VisualizationObject } from "@gooddata/typings";
 import {
     ATTRIBUTE_DISPLAY_FORM_URI,
@@ -1365,4 +1365,26 @@ export const attributeWithIdentifier: VisualizationObject.IVisualizationObjectCo
             ],
         },
     ],
+};
+
+export const visualizationObjectWithLocationAttribute: VisualizationObject.IVisualizationObjectContent = {
+    visualizationClass: {
+        uri: "visClassUri",
+    },
+    buckets: [
+        {
+            localIdentifier: "locaiton",
+            items: [
+                {
+                    visualizationAttribute: {
+                        localIdentifier: "a1",
+                        displayForm: {
+                            uri: "/gdc/md/pid/obj/87",
+                        },
+                    },
+                },
+            ],
+        },
+    ],
+    properties: '{"controls":{"tooltipText":"/gdc/md/pid/obj/88"}}',
 };

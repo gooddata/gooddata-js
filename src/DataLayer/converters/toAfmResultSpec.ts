@@ -1,10 +1,12 @@
-// (C) 2007-2018 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import compact from "lodash/compact";
 import flatMap from "lodash/flatMap";
 import get from "lodash/get";
 import { AFM, VisualizationObject } from "@gooddata/typings";
 import { convertVisualizationObjectExtendedFilter } from "./FilterConverter";
 import MeasureConverter from "./MeasureConverter";
+import { TOOLTIP_TEXT } from "../../DataLayer/constants/buckets";
+import { IVisualizationProperties } from "./model/VisualizationObject";
 
 function convertAttribute(
     attribute: VisualizationObject.IVisualizationAttribute,
@@ -20,7 +22,12 @@ function convertAttribute(
 }
 
 function convertAFM(visualizationObject: VisualizationObject.IVisualizationObjectContent): AFM.IAfm {
-    const attributes: AFM.IAttribute[] = getAttributes(visualizationObject.buckets).map(convertAttribute);
+    const textualAttributes: AFM.IAttribute[] = getAttributes(visualizationObject.buckets).map(
+        convertAttribute,
+    );
+    const geoAttribute = getGeoAttributeForTooltip(visualizationObject);
+    const attributes = geoAttribute ? [...textualAttributes, geoAttribute] : textualAttributes;
+
     const attrProp = attributes.length ? { attributes } : {};
 
     const measures: AFM.IMeasure[] = getMeasures(visualizationObject.buckets).map(
@@ -98,6 +105,34 @@ function getAttributes(
         },
         [],
     );
+}
+
+function parsePropertyItem(item: string): IVisualizationProperties {
+    try {
+        return JSON.parse(item);
+    } catch (e) {
+        return {};
+    }
+}
+
+function buildTooltipBucketItem(tooltipText: string): AFM.IAttribute {
+    return {
+        localIdentifier: TOOLTIP_TEXT,
+        displayForm: {
+            uri: tooltipText,
+        },
+    };
+}
+
+function getGeoAttributeForTooltip(
+    visualizationObject: VisualizationObject.IVisualizationObjectContent,
+): AFM.IAttribute | null {
+    const properties: IVisualizationProperties = parsePropertyItem(visualizationObject.properties || "");
+    const tooltipText: string = get(properties, "controls.tooltipText", "");
+    if (tooltipText) {
+        return buildTooltipBucketItem(tooltipText);
+    }
+    return null;
 }
 
 function convertSorting(visObj: VisualizationObject.IVisualizationObjectContent): AFM.SortItem[] {
