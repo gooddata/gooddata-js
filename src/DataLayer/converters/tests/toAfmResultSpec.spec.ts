@@ -1,4 +1,4 @@
-// (C) 2007-2019 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import {
     simpleMeasure,
     simpleMeasureWithFormat,
@@ -34,7 +34,7 @@ import {
     nativeSubtotalsInTwoDimensions,
 } from "./fixtures/Afm.fixtures";
 
-import { charts, tables } from "./fixtures/VisObj.fixtures";
+import { charts, tables, visualizationObjectWithLocationAttribute } from "./fixtures/VisObj.fixtures";
 import { toAfmResultSpec } from "../toAfmResultSpec";
 
 describe("toAfmResultSpec", () => {
@@ -244,5 +244,20 @@ describe("toAfmResultSpec", () => {
         expect(toAfmResultSpec(tables.twoDimensionsAndNativeSubtotals)).toEqual(
             nativeSubtotalsInTwoDimensions,
         );
+    });
+
+    it("should convert geo attribute for tooltip text", () => {
+        expect(toAfmResultSpec(visualizationObjectWithLocationAttribute).afm).toEqual({
+            attributes: [
+                {
+                    displayForm: { uri: "/gdc/md/pid/obj/87" },
+                    localIdentifier: "a1",
+                },
+                {
+                    displayForm: { uri: "/gdc/md/pid/obj/88" },
+                    localIdentifier: "tooltipText",
+                },
+            ],
+        });
     });
 });

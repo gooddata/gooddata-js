@@ -1,4 +1,4 @@
-// (C) 2007-2018 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 export type SortDirection = "asc" | "desc";
 
 export type EmbeddedFilter = IEmbeddedDateFilter | IEmbeddedListAttributeFilter;
@@ -152,4 +152,8 @@ export interface IVisualizationMetadataResult {
 export function isEmbeddedDateFilter(dateFilter: EmbeddedFilter): dateFilter is IEmbeddedDateFilter {
     // TODO unused
     return (dateFilter as IEmbeddedDateFilter).dateFilter !== undefined;
+}
+
+export interface IVisualizationProperties {
+    [property: string]: any;
 }
