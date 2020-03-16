@@ -1373,7 +1373,7 @@ export const visualizationObjectWithLocationAttribute: VisualizationObject.IVisu
     },
     buckets: [
         {
-            localIdentifier: "locaiton",
+            localIdentifier: "location",
             items: [
                 {
                     visualizationAttribute: {
@@ -1381,6 +1381,29 @@ export const visualizationObjectWithLocationAttribute: VisualizationObject.IVisu
                         displayForm: {
                             uri: "/gdc/md/pid/obj/87",
                         },
+                    },
+                },
+            ],
+        },
+    ],
+    properties: '{"controls":{"tooltipText":"/gdc/md/pid/obj/88"}}',
+};
+
+export const visualizationObjectWithLocationAliasAttribute: VisualizationObject.IVisualizationObjectContent = {
+    visualizationClass: {
+        uri: "visClassUri",
+    },
+    buckets: [
+        {
+            localIdentifier: "location",
+            items: [
+                {
+                    visualizationAttribute: {
+                        localIdentifier: "a1",
+                        displayForm: {
+                            uri: "/gdc/md/pid/obj/87",
+                        },
+                        alias: "location alias",
                     },
                 },
             ],
