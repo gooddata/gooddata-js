@@ -34,7 +34,12 @@ import {
     nativeSubtotalsInTwoDimensions,
 } from "./fixtures/Afm.fixtures";
 
-import { charts, tables, visualizationObjectWithLocationAttribute } from "./fixtures/VisObj.fixtures";
+import {
+    charts,
+    tables,
+    visualizationObjectWithLocationAttribute,
+    visualizationObjectWithLocationAliasAttribute,
+} from "./fixtures/VisObj.fixtures";
 import { toAfmResultSpec } from "../toAfmResultSpec";
 
 describe("toAfmResultSpec", () => {
@@ -256,6 +261,23 @@ describe("toAfmResultSpec", () => {
                 {
                     displayForm: { uri: "/gdc/md/pid/obj/88" },
                     localIdentifier: "tooltipText",
+                },
+            ],
+        });
+    });
+
+    it("should convert geo attribute for tooltip text with alias", () => {
+        expect(toAfmResultSpec(visualizationObjectWithLocationAliasAttribute).afm).toEqual({
+            attributes: [
+                {
+                    displayForm: { uri: "/gdc/md/pid/obj/87" },
+                    localIdentifier: "a1",
+                    alias: "location alias",
+                },
+                {
+                    displayForm: { uri: "/gdc/md/pid/obj/88" },
+                    localIdentifier: "tooltipText",
+                    alias: "location alias",
                 },
             ],
         });

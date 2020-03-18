@@ -5,7 +5,7 @@ import get from "lodash/get";
 import { AFM, VisualizationObject } from "@gooddata/typings";
 import { convertVisualizationObjectExtendedFilter } from "./FilterConverter";
 import MeasureConverter from "./MeasureConverter";
-import { TOOLTIP_TEXT } from "../../DataLayer/constants/buckets";
+import { LOCATION, TOOLTIP_TEXT } from "../../DataLayer/constants/buckets";
 import { IVisualizationProperties } from "./model/VisualizationObject";
 
 function convertAttribute(
@@ -115,12 +115,14 @@ function parsePropertyItem(item: string): IVisualizationProperties {
     }
 }
 
-function buildTooltipBucketItem(tooltipText: string): AFM.IAttribute {
+function buildTooltipBucketItem(tooltipText: string, alias: string): AFM.IAttribute {
+    const tooltipAlias = alias ? { alias } : {};
     return {
         localIdentifier: TOOLTIP_TEXT,
         displayForm: {
             uri: tooltipText,
         },
+        ...tooltipAlias,
     };
 }
 
@@ -130,8 +132,19 @@ function getGeoAttributeForTooltip(
     const properties: IVisualizationProperties = parsePropertyItem(visualizationObject.properties || "");
     const tooltipText: string = get(properties, "controls.tooltipText", "");
     if (tooltipText) {
-        return buildTooltipBucketItem(tooltipText);
+        // copy alias of Geo attribute to alias of tooltipText attribute
+        const locationAlias: string = visualizationObject.buckets.reduce(
+            (locationAlias: string, bucket: VisualizationObject.IBucket): string => {
+                if (!locationAlias && bucket.localIdentifier === LOCATION) {
+                    return get(bucket, "items[0].visualizationAttribute.alias");
+                }
+                return locationAlias;
+            },
+            "",
+        );
+        return buildTooltipBucketItem(tooltipText, locationAlias);
     }
+
     return null;
 }
 
