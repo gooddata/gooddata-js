@@ -60,11 +60,14 @@ Then you can import the library file and global variable `gooddata` contains all
 ## Contributing :coffee:
 
 We welcome any contribution in form of [issues](https://github.com/gooddata/gooddata-js/issues) or [pull requests](https://github.com/gooddata/gooddata-js/pulls).
+
+Install [Node.js](http://nodejs.org) (node 12.16.1, npm v6.13.4) and [Yarn](https://classic.yarnpkg.com) 1.22.4.
+
 These commands may come in handy while developing:
 
 | command | description |
 | ------- | ----------- |
-| `yarn install --pure-lockfile` | first step |
+| `yarn install --frozen-lockfile` | first step |
 | `yarn dev` | build gooddata-js to `/dist` in watch mode |
 | `yarn test` | run unit tests in watch mode |
 | `yarn validate` | validate codestyle (tslint) |
