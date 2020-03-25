@@ -4,6 +4,7 @@ import { XhrModule } from "./xhr";
 import { UserModule } from "./user";
 import cloneDeepWith from "lodash/cloneDeepWith";
 import isEmpty from "lodash/isEmpty";
+import omit from "lodash/omit";
 import {
     IKPI,
     IAnalyticalDashboardContent,
@@ -130,7 +131,14 @@ export class MetadataModuleExt {
                     ...dashboardDetails.analyticalDashboard,
                     content: this.getDashboardDetailObject(updatedContent, filterContext),
                     meta: {
-                        ...dashboardDetails.analyticalDashboard.meta,
+                        ...omit(dashboardDetails.analyticalDashboard.meta, [
+                            "identifier",
+                            "uri",
+                            "author",
+                            "created",
+                            "updated",
+                            "contributor",
+                        ]),
                         title: dashboardTitle,
                     },
                 },
@@ -187,14 +195,12 @@ export class MetadataModuleExt {
         updatedContent: IAnalyticalDashboardContent,
         filterContext: string,
     ): IAnalyticalDashboardContent {
-        if (isEmpty(updatedContent.layout)) {
-            return { ...updatedContent, filterContext, widgets: [...updatedContent.widgets] };
-        }
+        const { layout } = updatedContent;
         return {
             ...updatedContent,
             filterContext,
-            layout: updatedContent.layout,
             widgets: [...updatedContent.widgets],
+            ...(isEmpty(layout) ? {} : { layout }),
         };
     }
 
