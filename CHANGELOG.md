@@ -13,6 +13,12 @@ The REST API versions in the table are just for your information as the values a
 |\>= 10.0.0|3
 |<= 9.0.1|2
 
+<a name="12.5.2"></a>
+## 2020-03-26 Version [12.5.2](https://github.com/gooddata/gooddata-js/compare/v12.5.2...v12.5.1)
+
+- fix saveAs function problem with saving old dashboards without layout
+- fix saveAs function problem with saving new update date in meta
+
 <a name="12.2.0"></a>
 ## 2020-01-21 Version [12.2.0](https://github.com/gooddata/gooddata-js/compare/v12.1.0...v12.2.0)
 

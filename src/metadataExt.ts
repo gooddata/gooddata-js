@@ -3,6 +3,8 @@ import { MetadataModule } from "./metadata";
 import { XhrModule } from "./xhr";
 import { UserModule } from "./user";
 import cloneDeepWith from "lodash/cloneDeepWith";
+import isEmpty from "lodash/isEmpty";
+import omit from "lodash/omit";
 import {
     IKPI,
     IAnalyticalDashboardContent,
@@ -123,17 +125,20 @@ export class MetadataModuleExt {
             const translator = createTranslator(kpiMap, visWidgetMap);
             const updatedContent = updateContent(analyticalDashboard, translator, filterContext);
             const dashboardTitle = this.getDashboardName(analyticalDashboard.meta.title, options.name);
-            const duplicateDashboard: IAnalyticalDashboard = {
+            const duplicateDashboard = {
                 ...dashboardDetails,
                 analyticalDashboard: {
                     ...dashboardDetails.analyticalDashboard,
-                    content: {
-                        filterContext,
-                        layout: { ...updatedContent.layout },
-                        widgets: [...updatedContent.widgets],
-                    },
+                    content: this.getDashboardDetailObject(updatedContent, filterContext),
                     meta: {
-                        ...dashboardDetails.analyticalDashboard.meta,
+                        ...omit(dashboardDetails.analyticalDashboard.meta, [
+                            "identifier",
+                            "uri",
+                            "author",
+                            "created",
+                            "updated",
+                            "contributor",
+                        ]),
                         title: dashboardTitle,
                     },
                 },
@@ -184,6 +189,19 @@ export class MetadataModuleExt {
                 },
             },
         });
+    }
+
+    private getDashboardDetailObject(
+        updatedContent: IAnalyticalDashboardContent,
+        filterContext: string,
+    ): IAnalyticalDashboardContent {
+        const { layout } = updatedContent;
+        return {
+            ...updatedContent,
+            filterContext,
+            widgets: [...updatedContent.widgets],
+            ...(isEmpty(layout) ? {} : { layout }),
+        };
     }
 
     private getDashboardName(originalName: string, newName?: string): string {
