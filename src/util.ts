@@ -1,4 +1,4 @@
-// (C) 2007-2019 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import get from "lodash/get";
 import { delay } from "./utils/promise";
 import { ApiResponse, ApiResponseError } from "./xhr";
@@ -162,4 +162,17 @@ export function getAllPagesByOffsetLimit(
                 }
             }, reject);
     });
+}
+
+export function getUIDByDevice(): string {
+    const navigatorInfo: Navigator = window.navigator;
+    const screenInfo: Screen = window.screen;
+    let uid: string = navigatorInfo.mimeTypes.length.toString();
+    uid += navigatorInfo.userAgent.replace(/\D+/g, "");
+    uid += navigatorInfo.plugins.length.toString();
+    uid += screenInfo.height || "";
+    uid += screenInfo.width || "";
+    uid += screenInfo.pixelDepth || "";
+
+    return uid;
 }

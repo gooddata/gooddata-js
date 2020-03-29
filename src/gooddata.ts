@@ -15,6 +15,7 @@ import { AttributesMapLoaderModule } from "./utils/attributesMapLoader";
 import { getAttributesDisplayForms } from "./utils/visualizationObjectHelper";
 import { convertReferencesToUris, ReferenceConverter } from "./referenceHandling";
 import { MetadataModuleExt } from "./metadataExt";
+import { getUIDByDevice } from "./util";
 
 /**
  * # JS SDK
@@ -50,6 +51,7 @@ export class SDK {
         loadAttributesMap: any;
         getAttributesDisplayForms: any;
         convertReferencesToUris: ReferenceConverter;
+        getUIDByDevice: () => string;
     };
 
     constructor(private fetchMethod: typeof fetch, config = {}) {
@@ -72,6 +74,7 @@ export class SDK {
             loadAttributesMap: attributesMapLoaderModule.loadAttributesMap.bind(attributesMapLoaderModule),
             getAttributesDisplayForms,
             convertReferencesToUris,
+            getUIDByDevice,
         };
     }
 
