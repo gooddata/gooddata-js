@@ -13,6 +13,11 @@ The REST API versions in the table are just for your information as the values a
 |\>= 10.0.0|3
 |<= 9.0.1|2
 
+<a name="12.5.4"></a>
+## 2020-04-21 Version [12.5.4](https://github.com/gooddata/gooddata-js/compare/v12.5.3...v12.5.4)
+
+- upgrade GoodData typings
+
 <a name="12.5.2"></a>
 ## 2020-03-26 Version [12.5.2](https://github.com/gooddata/gooddata-js/compare/v12.5.2...v12.5.1)
 
