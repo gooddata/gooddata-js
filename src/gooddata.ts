@@ -15,6 +15,7 @@ import { AttributesMapLoaderModule } from "./utils/attributesMapLoader";
 import { getAttributesDisplayForms } from "./utils/visualizationObjectHelper";
 import { convertReferencesToUris, ReferenceConverter } from "./referenceHandling";
 import { MetadataModuleExt } from "./metadataExt";
+import { BootstrapModule } from "./bootstrap";
 
 /**
  * # JS SDK
@@ -45,6 +46,7 @@ export class SDK {
     public dashboard: DashboardModule;
     public catalogue: CatalogueModule;
     public admin: AdminModule;
+    public bootstrap: BootstrapModule;
     public configStorage: IConfigStorage;
     public utils: {
         loadAttributesMap: any;
@@ -66,6 +68,7 @@ export class SDK {
         this.dashboard = new DashboardModule(this.xhr);
         this.catalogue = new CatalogueModule(this.xhr, this.execution);
         this.admin = new AdminModule(this.xhr);
+        this.bootstrap = new BootstrapModule(this.xhr);
 
         const attributesMapLoaderModule = new AttributesMapLoaderModule(this.md);
         this.utils = {
