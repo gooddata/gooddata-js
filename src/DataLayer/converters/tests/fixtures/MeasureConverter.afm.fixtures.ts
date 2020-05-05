@@ -1,13 +1,25 @@
-// (C) 2007-2018 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import { AFM } from "@gooddata/typings";
 import IMeasure = AFM.IMeasure;
 
-export const simpleMeasure: IMeasure = {
+export const simpleMeasureWithUri: IMeasure = {
     localIdentifier: "m1",
     definition: {
         measure: {
             item: {
                 uri: "/gdc/md/project/obj/metric.id",
+            },
+        },
+    },
+    alias: "Measure M1",
+};
+
+export const simpleMeasureWithIdentifiers: IMeasure = {
+    localIdentifier: "m1",
+    definition: {
+        measure: {
+            item: {
+                identifier: "metric.id",
             },
         },
     },
@@ -24,39 +36,7 @@ export const simpleMeasureWithFormat: IMeasure = {
         },
     },
     alias: "Measure M1",
-    format: "GD #,##0.00000",
-};
-
-export const simpleMeasureWithFilter: IMeasure = {
-    localIdentifier: "m1",
-    definition: {
-        measure: {
-            item: {
-                uri: "/gdc/md/project/obj/metric.id",
-            },
-            filters: [
-                {
-                    positiveAttributeFilter: {
-                        displayForm: { identifier: "foo" },
-                        in: ["val1", "val2"],
-                        textFilter: true,
-                    },
-                },
-            ],
-        },
-    },
-};
-
-export const simpleMeasureWithIdentifiers: IMeasure = {
-    localIdentifier: "m1",
-    definition: {
-        measure: {
-            item: {
-                identifier: "metric.id",
-            },
-        },
-    },
-    alias: "Measure M1",
+    format: "$#,##0 custom",
 };
 
 export const renamedMeasure: IMeasure = {
@@ -71,7 +51,7 @@ export const renamedMeasure: IMeasure = {
     alias: "Alias A1",
 };
 
-export const filteredMeasure: IMeasure = {
+export const measureWithFilters: IMeasure = {
     localIdentifier: "m1",
     definition: {
         measure: {
@@ -80,27 +60,14 @@ export const filteredMeasure: IMeasure = {
             },
             filters: [
                 {
-                    positiveAttributeFilter: {
-                        displayForm: {
-                            uri: "/gdc/md/project/obj/1",
+                    absoluteDateFilter: {
+                        dataSet: {
+                            uri: "/gdc/md/project/333",
                         },
-                        in: ["/gdc/md/project/obj/11?id=1", "/gdc/md/project/obj/11?id=2"],
+                        from: "2016-01-01",
+                        to: "2017-01-01",
                     },
                 },
-            ],
-        },
-    },
-    alias: "Measure M1",
-};
-
-export const measureWithRelativeDate: IMeasure = {
-    localIdentifier: "m1",
-    definition: {
-        measure: {
-            item: {
-                uri: "/gdc/md/project/obj/metric.id",
-            },
-            filters: [
                 {
                     relativeDateFilter: {
                         dataSet: {
@@ -125,40 +92,23 @@ export const measureWithRelativeDate: IMeasure = {
     alias: "Measure M1",
 };
 
-export const measureWithAbsoluteDate: IMeasure = {
+export const showInPercentMeasure: IMeasure = {
     localIdentifier: "m1",
+    format: "#,##0.00%",
     definition: {
         measure: {
             item: {
                 uri: "/gdc/md/project/obj/metric.id",
             },
-            filters: [
-                {
-                    absoluteDateFilter: {
-                        dataSet: {
-                            uri: "/gdc/md/project/333",
-                        },
-                        from: "2016-01-01",
-                        to: "2017-01-01",
-                    },
-                },
-                {
-                    positiveAttributeFilter: {
-                        displayForm: {
-                            uri: "/gdc/md/project/obj/1",
-                        },
-                        in: ["/gdc/md/project/obj/11?id=1", "/gdc/md/project/obj/11?id=2"],
-                    },
-                },
-            ],
+            computeRatio: true,
         },
     },
     alias: "Measure M1",
 };
 
-export const showInPercent: IMeasure = {
+export const showInPercentWithCustomFormat: IMeasure = {
     localIdentifier: "m1",
-    format: "#,##0.00%",
+    format: "$#,##0 custom",
     definition: {
         measure: {
             item: {
@@ -182,7 +132,7 @@ export const factBasedMeasure: IMeasure = {
     },
 };
 
-export const factBasedRenamedMeasure: IMeasure = {
+export const factBasedMeasureWithCustomFormat: IMeasure = {
     localIdentifier: "m1",
     definition: {
         measure: {
@@ -192,7 +142,7 @@ export const factBasedRenamedMeasure: IMeasure = {
             aggregation: "sum",
         },
     },
-    alias: "Summary",
+    format: "$#,##0 custom",
 };
 
 export const attributeBasedMeasure: IMeasure = {
@@ -208,7 +158,7 @@ export const attributeBasedMeasure: IMeasure = {
     format: "#,##0",
 };
 
-export const attributeBasedRenamedMeasure: IMeasure = {
+export const attributeBasedMeasureWithCustomFormat: IMeasure = {
     localIdentifier: "m1",
     definition: {
         measure: {
@@ -218,8 +168,7 @@ export const attributeBasedRenamedMeasure: IMeasure = {
             aggregation: "count",
         },
     },
-    alias: "Count",
-    format: "#,##0",
+    format: "$#,##0 custom",
 };
 
 export const popMeasure: IMeasure = {
@@ -233,6 +182,20 @@ export const popMeasure: IMeasure = {
         },
     },
     alias: "Measure M1 - SP year ago",
+};
+
+export const popMeasureWithCustomFormat: IMeasure = {
+    localIdentifier: "m1_pop",
+    definition: {
+        popMeasure: {
+            measureIdentifier: "m1",
+            popAttribute: {
+                uri: "/gdc/md/project/obj/11",
+            },
+        },
+    },
+    alias: "Measure M1 - SP year ago",
+    format: "$#,##0 custom",
 };
 
 export const previousPeriodMeasure: IMeasure = {
@@ -266,6 +229,42 @@ export const arithmeticMeasure: IMeasure = {
         arithmeticMeasure: {
             measureIdentifiers: ["m1", "m2"],
             operator: "sum",
+        },
+    },
+};
+
+export const arithmeticMeasureWithCustomFormat: IMeasure = {
+    localIdentifier: "arithmetic_measure_1",
+    alias: "Sum of m1 and m2",
+    definition: {
+        arithmeticMeasure: {
+            measureIdentifiers: ["m1", "m2"],
+            operator: "sum",
+        },
+    },
+    format: "$#,##0 custom",
+};
+
+export const arithmeticMeasureChange: IMeasure = {
+    localIdentifier: "arithmetic_measure_1",
+    alias: "Sum of m1 and m2",
+    format: "#,##0.00%",
+    definition: {
+        arithmeticMeasure: {
+            measureIdentifiers: ["m1", "m2"],
+            operator: "change",
+        },
+    },
+};
+
+export const arithmeticMeasureWithChangeOperatorAndCustomFormat: IMeasure = {
+    localIdentifier: "arithmetic_measure_1",
+    alias: "Sum of m1 and m2",
+    format: "$#,##0 custom",
+    definition: {
+        arithmeticMeasure: {
+            measureIdentifiers: ["m1", "m2"],
+            operator: "change",
         },
     },
 };

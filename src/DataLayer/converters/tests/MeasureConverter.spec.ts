@@ -1,145 +1,41 @@
-// (C) 2007-2018 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import * as measures from "./fixtures/MeasureConverter.visObj.fixtures";
 import * as afm from "./fixtures/MeasureConverter.afm.fixtures";
 import MeasureConverter from "../MeasureConverter";
+import { VisualizationObject } from "@gooddata/typings";
+import IMeasure = VisualizationObject.IMeasure;
+
+function addFormat(measure: IMeasure) {
+    return {
+        measure: {
+            ...measure.measure,
+            format: "$#,##0 custom",
+        },
+    };
+}
 
 describe("convertMeasure", () => {
-    it("should convert simple measures", () => {
-        expect(MeasureConverter.convertMeasure(measures.simpleMeasure)).toEqual({
-            ...afm.simpleMeasure,
-        });
-    });
-
-    it("should convert simple measures with identifiers", () => {
-        expect(MeasureConverter.convertMeasure(measures.simpleMeasureWithIdentifiers)).toEqual({
-            ...afm.simpleMeasureWithIdentifiers,
-        });
-    });
-
-    it("should convert simple measure with format", () => {
-        expect(MeasureConverter.convertMeasure(measures.simpleMeasureWithFormat)).toEqual({
-            ...afm.simpleMeasureWithFormat,
-        });
-    });
-
-    it("should convert simple measure with filter", () => {
-        expect(MeasureConverter.convertMeasure(measures.simpleMeasureWithFilter)).toEqual({
-            ...afm.simpleMeasureWithFilter,
-        });
-    });
-
-    it("should convert simple renamed measures", () => {
-        expect(MeasureConverter.convertMeasure(measures.renamedMeasure)).toEqual({
-            ...afm.renamedMeasure,
-        });
-    });
-
-    it("should convert filtered measures", () => {
-        expect(MeasureConverter.convertMeasure(measures.filteredMeasure)).toEqual({
-            ...afm.filteredMeasure,
-        });
-    });
-
-    it("should convert relative date filtered measures", () => {
-        expect(MeasureConverter.convertMeasure(measures.measureWithRelativeDate)).toEqual({
-            ...afm.measureWithRelativeDate,
-        });
-    });
-
-    it("should convert absolute date filtered measures", () => {
-        expect(MeasureConverter.convertMeasure(measures.measureWithAbsoluteDate)).toEqual({
-            ...afm.measureWithAbsoluteDate,
-        });
-    });
-
-    it("should convert fact based measures", () => {
-        expect(MeasureConverter.convertMeasure(measures.factBasedMeasure)).toEqual({
-            ...afm.factBasedMeasure,
-        });
-    });
-
-    it("should convert fact based renamed measures", () => {
-        expect(MeasureConverter.convertMeasure(measures.factBasedRenamedMeasure)).toEqual({
-            ...afm.factBasedRenamedMeasure,
-        });
-    });
-
-    it("should convert attribute based measures", () => {
-        expect(MeasureConverter.convertMeasure(measures.attributeBasedMeasure)).toEqual({
-            ...afm.attributeBasedMeasure,
-        });
-    });
-
-    it("should convert attribute based measures without format", () => {
-        expect(MeasureConverter.convertMeasure(measures.attributeBasedMeasureWithoutFormat)).toEqual({
-            ...afm.attributeBasedMeasure,
-        });
-    });
-
-    it("should convert attribute based renamed measures", () => {
-        expect(MeasureConverter.convertMeasure(measures.attributeBasedRenamedMeasure)).toEqual({
-            ...afm.attributeBasedRenamedMeasure,
-        });
-    });
-
-    it("should convert measure with show in percent", () => {
-        expect(MeasureConverter.convertMeasure(measures.showInPercent)).toEqual({
-            ...afm.showInPercent,
-        });
-    });
-
-    it("should convert measure with show in percent without format", () => {
-        expect(MeasureConverter.convertMeasure(measures.showInPercentWithoutFormat)).toEqual({
-            ...afm.showInPercent,
-        });
-    });
-
-    it("should convert pop measure", () => {
-        expect(MeasureConverter.convertMeasure(measures.popMeasure)).toEqual({
-            ...afm.popMeasure,
-        });
-    });
-
-    it("should convert previous period measure", () => {
-        expect(MeasureConverter.convertMeasure(measures.previousPeriodMeasure)).toEqual({
-            ...afm.previousPeriodMeasure,
-        });
-    });
-
-    it("should convert arithmetic measure", () => {
-        const arithmeticMeasure = measures.buildArithmeticMeasure(
-            "arithmetic_measure_1",
-            {},
-            "Sum of m1 and m2",
-        );
-        expect(MeasureConverter.convertMeasure(arithmeticMeasure)).toEqual({
-            ...afm.arithmeticMeasure,
-        });
-    });
-
-    it("should convert arithmetic without modification to the original object", () => {
-        const arithmeticMeasure = measures.buildArithmeticMeasure(
-            "arithmetic_measure_1",
-            {},
-            "Sum of m1 and m2",
-        );
-        expect(MeasureConverter.convertMeasure(arithmeticMeasure)).toEqual({
-            ...afm.arithmeticMeasure,
-        });
-        expect(MeasureConverter.convertMeasure(arithmeticMeasure)).toEqual({
-            ...afm.arithmeticMeasure,
-        });
-    });
-
-    describe("getFormat", () => {
-        it("should return default format for arithmetic measure sum operation", () => {
-            const arithmeticMeasure = measures.buildArithmeticMeasure("am1", { operator: "sum" });
-            expect(MeasureConverter.getFormat(arithmeticMeasure)).toBeUndefined();
-        });
-
-        it("should return percentage format for change operation", () => {
-            const arithmeticMeasure = measures.buildArithmeticMeasure("am1", { operator: "change" });
-            expect(MeasureConverter.getFormat(arithmeticMeasure)).toEqual("#,##0.00%");
-        });
+    it.each`
+        testCase                                                 | inputVizObjMeasure                             | outputAfmMeasure
+        ${"simple measures defined by URI"}                      | ${measures.simpleMeasureWithUri}               | ${afm.simpleMeasureWithUri}
+        ${"simple measure defined by identifier"}                | ${measures.simpleMeasureWithIdentifiers}       | ${afm.simpleMeasureWithIdentifiers}
+        ${"simple measure, keeping custom format"}               | ${addFormat(measures.simpleMeasureWithUri)}    | ${afm.simpleMeasureWithFormat}
+        ${"measure with filters"}                                | ${measures.measureWithFilters}                 | ${afm.measureWithFilters}
+        ${"renamed measure"}                                     | ${measures.renamedMeasure}                     | ${afm.renamedMeasure}
+        ${"fact-based measure, not adding default format"}       | ${measures.factBasedMeasure}                   | ${afm.factBasedMeasure}
+        ${"fact-based measure, keeping custom format"}           | ${addFormat(measures.factBasedMeasure)}        | ${afm.factBasedMeasureWithCustomFormat}
+        ${"attribute-based measure, adding default format"}      | ${measures.attributeBasedMeasure}              | ${afm.attributeBasedMeasure}
+        ${"attribute-based measure, keeping custom format"}      | ${addFormat(measures.attributeBasedMeasure)}   | ${afm.attributeBasedMeasureWithCustomFormat}
+        ${"POP measure, not adding default format"}              | ${measures.popMeasure}                         | ${afm.popMeasure}
+        ${"POP measure, keeping default format"}                 | ${addFormat(measures.popMeasure)}              | ${afm.popMeasureWithCustomFormat}
+        ${"previous period measure, not adding default format"}  | ${measures.previousPeriodMeasure}              | ${afm.previousPeriodMeasure}
+        ${"measure with show in percent, adding default format"} | ${measures.showInPercentMeasure}               | ${afm.showInPercentMeasure}
+        ${"measure with show in percent, keeping custom format"} | ${addFormat(measures.showInPercentMeasure)}    | ${afm.showInPercentWithCustomFormat}
+        ${"arithmetic measure, not adding default format"}       | ${measures.arithmeticMeasure}                  | ${afm.arithmeticMeasure}
+        ${"arithmetic measure, keeping custom format"}           | ${addFormat(measures.arithmeticMeasure)}       | ${afm.arithmeticMeasureWithCustomFormat}
+        ${"arithmetic measure-change, adding default format"}    | ${measures.arithmeticMeasureChange}            | ${afm.arithmeticMeasureChange}
+        ${"arithmetic measure-change, keeping custom format"}    | ${addFormat(measures.arithmeticMeasureChange)} | ${afm.arithmeticMeasureWithChangeOperatorAndCustomFormat}
+    `(`should convert $testCase`, ({ inputVizObjMeasure, outputAfmMeasure }) => {
+        expect(MeasureConverter.convertMeasure(inputVizObjMeasure)).toEqual(outputAfmMeasure);
     });
 });
