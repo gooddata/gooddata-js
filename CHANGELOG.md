@@ -13,6 +13,11 @@ The REST API versions in the table are just for your information as the values a
 |\>= 10.0.0|3
 |<= 9.0.1|2
 
+<a name="13.0.0"></a>
+## 2020-05-07 Version [13.0.0](https://github.com/gooddata/gooddata-js/compare/v12.5.4...v13.0.0)
+
+- Fix toAfmResultSpec to prefer custom measure format from visualization object over default formats
+
 <a name="12.5.4"></a>
 ## 2020-04-21 Version [12.5.4](https://github.com/gooddata/gooddata-js/compare/v12.5.3...v12.5.4)
 

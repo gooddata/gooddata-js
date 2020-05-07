@@ -1,18 +1,18 @@
-// (C) 2007-2018 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import compact from "lodash/compact";
-import get from "lodash/get";
 import { AFM, VisualizationObject } from "@gooddata/typings";
+
 import IArithmeticMeasureDefinition = VisualizationObject.IArithmeticMeasureDefinition;
 import IMeasure = VisualizationObject.IMeasure;
 import IMeasureDefinition = VisualizationObject.IMeasureDefinition;
 import IMeasureDefinitionType = VisualizationObject.IMeasureDefinitionType;
 import IPoPMeasureDefinition = VisualizationObject.IPoPMeasureDefinition;
 import IPreviousPeriodMeasureDefinition = VisualizationObject.IPreviousPeriodMeasureDefinition;
+
 import { convertVisualizationObjectFilter } from "./FilterConverter";
 
 const MeasureConverter = {
     convertMeasure,
-    getFormat,
 };
 
 export default MeasureConverter;
@@ -115,29 +115,30 @@ function convertArithmeticMeasureDefinition(
 
 function getFormat(measure: IMeasure): string | undefined {
     const {
-        measure: { definition },
+        measure: { definition, format },
     } = measure;
-    const measureFormat = get(measure.measure, "format");
 
-    if (VisualizationObject.isArithmeticMeasureDefinition(definition)) {
-        if (definition.arithmeticMeasure.operator === "change") {
+    if (format) {
+        return format;
+    }
+
+    const isArithmeticMeasureChange =
+        VisualizationObject.isArithmeticMeasureDefinition(definition) &&
+        definition.arithmeticMeasure.operator === "change";
+
+    if (isArithmeticMeasureChange) {
+        return "#,##0.00%";
+    }
+
+    if (VisualizationObject.isMeasureDefinition(definition)) {
+        const { measureDefinition } = definition;
+        if (measureDefinition.computeRatio) {
             return "#,##0.00%";
+        }
+        if (measureDefinition.aggregation === "count") {
+            return "#,##0";
         }
     }
 
-    const predefinedFormat = VisualizationObject.isMeasureDefinition(definition)
-        ? getPredefinedFormat(definition)
-        : undefined;
-
-    return predefinedFormat || measureFormat;
-}
-
-function getPredefinedFormat(definition: IMeasureDefinition): string | null {
-    const { measureDefinition } = definition;
-    // should we prefer format defined on measure? If so, fix computeRatio format in AD
-    return measureDefinition.computeRatio
-        ? "#,##0.00%"
-        : measureDefinition.aggregation === "count"
-        ? "#,##0"
-        : null;
+    return undefined;
 }
