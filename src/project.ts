@@ -1,4 +1,4 @@
-// (C) 2007-2017 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import { getIn, handlePolling, getAllPagesByOffsetLimit } from "./util";
 import { ITimezone, IColor, IColorPalette, IFeatureFlags } from "./interfaces";
 import { IStyleSettingsResponse, IFeatureFlagsResponse } from "./apiResponsesInterfaces";
@@ -82,15 +82,22 @@ export class ProjectModule {
         return this.xhr
             .get("/gdc/app/account/bootstrap")
             .then(r => r.getData())
-            .then((result: any) => {
-                const currentProject = result.bootstrapResource.current.project;
-                // handle situation in which current project is missing (e.g. new user)
-                if (!currentProject) {
-                    return null;
-                }
+            .then(this.getCurrentProjectIdInBootstrap);
+    }
 
-                return result.bootstrapResource.current.project.links.self.split("/").pop();
-            });
+    /**
+     * Return current project id in bootstrap
+     * @method getCurrentProjectIdInBootstrap
+     * @param bootstrapData - data was got from bootstrap resource
+     */
+    public getCurrentProjectIdInBootstrap(bootstrapData: any): string | null {
+        const currentProject = bootstrapData.bootstrapResource.current.project;
+        // handle situation in which current project is missing (e.g. new user)
+        if (!currentProject) {
+            return null;
+        }
+
+        return bootstrapData.bootstrapResource.current.project.links.self.split("/").pop();
     }
 
     /**
