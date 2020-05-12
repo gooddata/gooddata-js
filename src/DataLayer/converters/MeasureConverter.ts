@@ -10,6 +10,11 @@ import IPoPMeasureDefinition = VisualizationObject.IPoPMeasureDefinition;
 import IPreviousPeriodMeasureDefinition = VisualizationObject.IPreviousPeriodMeasureDefinition;
 
 import { convertVisualizationObjectFilter } from "./FilterConverter";
+import {
+    DEFAULT_DECIMAL_FORMAT,
+    DEFAULT_INTEGER_FORMAT,
+    DEFAULT_PERCENTAGE_FORMAT,
+} from "../constants/formats";
 
 const MeasureConverter = {
     convertMeasure,
@@ -118,6 +123,24 @@ function getFormat(measure: IMeasure): string | undefined {
         measure: { definition, format },
     } = measure;
 
+    // Override incorrect formats of ad-hoc measures with computeRatio
+    // and use decimal percentage  instead.
+    // This code will be removed once saved viz. objects are fixed in BB-2287
+    if (VisualizationObject.isMeasureDefinition(definition)) {
+        const { measureDefinition } = definition;
+        if (measureDefinition.computeRatio && measureDefinition.aggregation) {
+            if (measureDefinition.aggregation === "count") {
+                if (format === DEFAULT_INTEGER_FORMAT) {
+                    return DEFAULT_PERCENTAGE_FORMAT;
+                }
+            } else {
+                if (format === DEFAULT_DECIMAL_FORMAT) {
+                    return DEFAULT_PERCENTAGE_FORMAT;
+                }
+            }
+        }
+    }
+
     if (format) {
         return format;
     }
@@ -125,18 +148,17 @@ function getFormat(measure: IMeasure): string | undefined {
     const isArithmeticMeasureChange =
         VisualizationObject.isArithmeticMeasureDefinition(definition) &&
         definition.arithmeticMeasure.operator === "change";
-
     if (isArithmeticMeasureChange) {
-        return "#,##0.00%";
+        return DEFAULT_PERCENTAGE_FORMAT;
     }
 
     if (VisualizationObject.isMeasureDefinition(definition)) {
         const { measureDefinition } = definition;
         if (measureDefinition.computeRatio) {
-            return "#,##0.00%";
+            return DEFAULT_PERCENTAGE_FORMAT;
         }
         if (measureDefinition.aggregation === "count") {
-            return "#,##0";
+            return DEFAULT_INTEGER_FORMAT;
         }
     }
 
