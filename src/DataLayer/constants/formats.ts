@@ -1,3 +1,4 @@
-// (C) 2007-2018 GoodData Corporation
-export const SHOW_IN_PERCENT_MEASURE_FORMAT = "#,##0.00%";
-export const DEFAULT_METRIC_FORMAT = "#,##0.00";
+// (C) 2007-2020 GoodData Corporation
+export const DEFAULT_DECIMAL_FORMAT = "#,##0.00";
+export const DEFAULT_PERCENTAGE_FORMAT = "#,##0.00%";
+export const DEFAULT_INTEGER_FORMAT = "#,##0";

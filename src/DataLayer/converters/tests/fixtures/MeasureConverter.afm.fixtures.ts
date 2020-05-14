@@ -132,6 +132,34 @@ export const factBasedMeasure: IMeasure = {
     },
 };
 
+export const factBasedMeasureInPercent: IMeasure = {
+    localIdentifier: "m1",
+    definition: {
+        measure: {
+            item: {
+                uri: "/gdc/md/project/obj/fact.id",
+            },
+            aggregation: "sum",
+            computeRatio: true,
+        },
+    },
+    format: "#,##0.00%",
+};
+
+export const factBasedMeasureInPercentWithCustomFormat: IMeasure = {
+    localIdentifier: "m1",
+    definition: {
+        measure: {
+            item: {
+                uri: "/gdc/md/project/obj/fact.id",
+            },
+            aggregation: "sum",
+            computeRatio: true,
+        },
+    },
+    format: "$#,##0 custom",
+};
+
 export const factBasedMeasureWithCustomFormat: IMeasure = {
     localIdentifier: "m1",
     definition: {
@@ -158,6 +186,20 @@ export const attributeBasedMeasure: IMeasure = {
     format: "#,##0",
 };
 
+export const attributeBasedMeasureInPercent: IMeasure = {
+    localIdentifier: "m1",
+    definition: {
+        measure: {
+            item: {
+                uri: "/gdc/md/project/obj/1",
+            },
+            aggregation: "count",
+            computeRatio: true,
+        },
+    },
+    format: "#,##0.00%",
+};
+
 export const attributeBasedMeasureWithCustomFormat: IMeasure = {
     localIdentifier: "m1",
     definition: {
@@ -166,6 +208,20 @@ export const attributeBasedMeasureWithCustomFormat: IMeasure = {
                 uri: "/gdc/md/project/obj/1",
             },
             aggregation: "count",
+        },
+    },
+    format: "$#,##0 custom",
+};
+
+export const attributeBasedMeasureInPercentWithCustomFormat: IMeasure = {
+    localIdentifier: "m1",
+    definition: {
+        measure: {
+            item: {
+                uri: "/gdc/md/project/obj/1",
+            },
+            aggregation: "count",
+            computeRatio: true,
         },
     },
     format: "$#,##0 custom",

@@ -101,6 +101,21 @@ export const factBasedMeasure: IMeasure = {
     },
 };
 
+export const factBasedMeasureInPercent: IMeasure = {
+    measure: {
+        localIdentifier: "m1",
+        definition: {
+            measureDefinition: {
+                item: {
+                    uri: "/gdc/md/project/obj/fact.id",
+                },
+                aggregation: "sum",
+                computeRatio: true,
+            },
+        },
+    },
+};
+
 export const attributeBasedMeasure: IMeasure = {
     measure: {
         localIdentifier: "m1",
@@ -110,6 +125,21 @@ export const attributeBasedMeasure: IMeasure = {
                     uri: "/gdc/md/project/obj/1",
                 },
                 aggregation: "count",
+            },
+        },
+    },
+};
+
+export const attributeBasedMeasureInPercent: IMeasure = {
+    measure: {
+        localIdentifier: "m1",
+        definition: {
+            measureDefinition: {
+                item: {
+                    uri: "/gdc/md/project/obj/1",
+                },
+                aggregation: "count",
+                computeRatio: true,
             },
         },
     },
