@@ -15,7 +15,10 @@ function getExecutionResponse(numOfDimensions: number = 2): Execution.IExecution
 
 function getExecutionResult(): Execution.IExecutionResult {
     return {
-        data: [[11, 12], [51, 52]],
+        data: [
+            [11, 12],
+            [51, 52],
+        ],
         paging: {
             count: [2, 2],
             offset: [0, 0],

@@ -144,10 +144,9 @@ export class MetadataModuleExt {
                 },
             };
 
-            const duplicateDashboardUri: string = (await this.metadataModule.createObject(
-                projectId,
-                duplicateDashboard,
-            )).analyticalDashboard.meta.uri;
+            const duplicateDashboardUri: string = (
+                await this.metadataModule.createObject(projectId, duplicateDashboard)
+            ).analyticalDashboard.meta.uri;
 
             return duplicateDashboardUri;
         } catch (err) {
@@ -223,10 +222,9 @@ export class MetadataModuleExt {
                     .filter((obj: any) => this.unwrapObj(obj).meta.category === "kpi")
                     .map(async (kpiWidget: any) => {
                         const { kpi }: { kpi: IKPI } = kpiWidget;
-                        const newUriKpiObj: string = (await this.metadataModule.createObject(
-                            projectId,
-                            kpiWidget,
-                        )).kpi.meta.uri;
+                        const newUriKpiObj: string = (
+                            await this.metadataModule.createObject(projectId, kpiWidget)
+                        ).kpi.meta.uri;
                         uriMap.set(kpi.meta.uri as string, newUriKpiObj);
                     }),
             );
@@ -303,9 +301,11 @@ export class MetadataModuleExt {
     }
 
     private async getObjectsUrisInDashboard(projectId: string, dashboardUri: string): Promise<string[]> {
-        return (await this.metadataModule.getObjectUsing(projectId, dashboardUri, {
-            types: ["kpi", "visualizationWidget", "filterContext"],
-        })).map((obj: any) => {
+        return (
+            await this.metadataModule.getObjectUsing(projectId, dashboardUri, {
+                types: ["kpi", "visualizationWidget", "filterContext"],
+            })
+        ).map((obj: any) => {
             return obj.link;
         });
     }
