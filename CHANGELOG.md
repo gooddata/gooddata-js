@@ -13,6 +13,16 @@ The REST API versions in the table are just for your information as the values a
 |\>= 10.0.0|3
 |<= 9.0.1|2
 
+<a name="13.0.2"></a>
+## 2020-05-29 Version [13.0.2](https://github.com/gooddata/gooddata-js/compare/v13.0.1...v13.0.2)
+
+- minor upgrade of `grunt-grizzly` and other `devDependencies`
+
+<a name="13.0.1"></a>
+## 2020-05-14 Version [13.0.1](https://github.com/gooddata/gooddata-js/compare/v13.0.0...v13.0.1)
+
+- adhoc measure number format bugfix
+
 <a name="13.0.0"></a>
 ## 2020-05-07 Version [13.0.0](https://github.com/gooddata/gooddata-js/compare/v12.5.4...v13.0.0)
 

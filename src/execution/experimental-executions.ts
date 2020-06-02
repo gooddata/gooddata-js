@@ -21,16 +21,16 @@ import { sortDefinitions } from "../utils/definitions";
 import { getMissingUrisInAttributesMap } from "../utils/attributesMapLoader";
 import {
     getAttributes,
-    getMeasures,
-    getMeasureFilters,
-    getDefinition,
-    isAttributeMeasureFilter,
     getAttributesDisplayForms,
+    getDefinition,
+    getMeasureFilters,
+    getMeasures,
+    isAttributeMeasureFilter,
 } from "../utils/visualizationObjectHelper";
 import { IMeasure } from "../interfaces";
 import { XhrModule } from "../xhr";
 
-const notEmpty = negate<Array<string | null>>(isEmpty);
+const notEmpty = negate(isEmpty);
 
 function findHeaderForMappingFn(mapping: any, header: any) {
     return (

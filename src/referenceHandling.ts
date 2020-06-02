@@ -31,13 +31,11 @@ const traverse = (obj: any, convert: StringTransformation): any => {
     if (isArray(obj)) {
         return obj.map(a => traverse(a, convert));
     } else if (isObject(obj)) {
-        return Object.keys(obj).reduce(
-            (result, key) => {
-                result[key] = traverse(obj[key], convert);
-                return result;
-            },
-            {} as any,
-        );
+        const object = obj as Record<string, any>;
+        return Object.keys(object).reduce((result: any, key: string) => {
+            result[key] = traverse(object[key], convert);
+            return result;
+        }, {} as any);
     } else if (isString(obj)) {
         return convert(obj);
     } else {
