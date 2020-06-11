@@ -1,4 +1,4 @@
 # The `scan_image` should ideally use the same tools and versions (NodeJS, Yarn...)
 # as the image defined in `docker/.config`.
 ---
-scan_image: "harbor.intgdc.com/tool/gdc-fossa-cli-frontend-node:node-12.16.1-yarn-1.22.4"
+scan_image: "harbor.intgdc.com/tools/gdc-fossa-cli-frontend-node:node-12.16.1-yarn-1.22.4"
