@@ -72,6 +72,11 @@ export class MetadataModule {
                                 visualizationObject: convertReferencesToUris(item.visualizationObject),
                             };
                         }
+                        if (item.visualizationWidget) {
+                            return {
+                                visualizationWidget: convertReferencesToUris(item.visualizationWidget),
+                            };
+                        }
                         return item;
                     }),
                 );
@@ -734,7 +739,9 @@ export class MetadataModule {
             (visualizationObject: VisualizationObject.IVisualizationObjectResponse) => {
                 const mdObject = visualizationObject.visualizationObject;
                 return {
-                    visualizationObject: convertReferencesToUris(mdObject),
+                    visualizationObject: convertReferencesToUris(
+                        mdObject,
+                    ) as VisualizationObject.IVisualizationObject,
                 };
             },
         );

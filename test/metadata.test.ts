@@ -846,7 +846,7 @@ describe("metadata", () => {
                     });
             });
 
-            it("should translate properties using references", () => {
+            it("should translate visualizationObject properties using references", () => {
                 const uris = ["/gdc/md/123/obj/456"];
                 const serverResponses = [
                     {
@@ -861,6 +861,49 @@ describe("metadata", () => {
                 const expectedResponses = [
                     {
                         visualizationObject: {
+                            content: {
+                                properties: '{"foo":"/gdc/md/123/obj/45678"}',
+                                references: { id_0: "/gdc/md/123/obj/45678" },
+                            },
+                        },
+                    },
+                ];
+
+                fetchMock.mock(getUri, {
+                    status: 200,
+                    body: JSON.stringify({ objects: { items: serverResponses } }),
+                });
+
+                return createMd()
+                    .getObjects(projectId, uris)
+                    .then((result: any) => {
+                        const request = fetchMock.lastOptions(getUri) as RequestInit;
+
+                        expect(JSON.parse(request.body!.toString())).toEqual({
+                            get: {
+                                items: uris,
+                            },
+                        });
+
+                        expect(result).toEqual(expectedResponses);
+                    });
+            });
+
+            it("should translate visualizationWidget properties using references", () => {
+                const uris = ["/gdc/md/123/obj/456"];
+                const serverResponses = [
+                    {
+                        visualizationWidget: {
+                            content: {
+                                properties: '{"foo":"id_0"}',
+                                references: { id_0: "/gdc/md/123/obj/45678" },
+                            },
+                        },
+                    },
+                ];
+                const expectedResponses = [
+                    {
+                        visualizationWidget: {
                             content: {
                                 properties: '{"foo":"/gdc/md/123/obj/45678"}',
                                 references: { id_0: "/gdc/md/123/obj/45678" },
