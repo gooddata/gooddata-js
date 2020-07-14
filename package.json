@@ -60,7 +60,7 @@
     ]
   },
   "devDependencies": {
-    "@gooddata/frontend-npm-scripts": "1.1.0",
+    "@gooddata/frontend-npm-scripts": "1.2.0",
     "@gooddata/tslint-config": "^1.0.0",
     "@types/fast-levenshtein": "0.0.1",
     "@types/fetch-mock": "5.*",
