@@ -101,7 +101,7 @@
     "tslint-config-prettier": "^1.18.0",
     "typescript": "3.3.4000",
     "webpack": "^1.15.0",
-    "webpack-dev-server": "^1.16.5"
+    "webpack-dev-server": "^3.1.11"
   },
   "dependencies": {
     "@gooddata/typings": "^2.26.0",
