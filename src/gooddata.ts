@@ -13,7 +13,7 @@ import { AdminModule } from "./admin";
 
 import { AttributesMapLoaderModule } from "./utils/attributesMapLoader";
 import { getAttributesDisplayForms } from "./utils/visualizationObjectHelper";
-import { convertReferencesToUris, ReferenceConverter } from "./referenceHandling";
+import { convertReferencesToUris, convertUrisToReferences, ReferenceConverter } from "./referenceHandling";
 import { MetadataModuleExt } from "./metadataExt";
 import { BootstrapModule } from "./bootstrap";
 
@@ -52,6 +52,7 @@ export class SDK {
         loadAttributesMap: any;
         getAttributesDisplayForms: any;
         convertReferencesToUris: ReferenceConverter;
+        convertUrisToReferences: ReferenceConverter;
     };
 
     constructor(private fetchMethod: typeof fetch, config = {}) {
@@ -75,6 +76,7 @@ export class SDK {
             loadAttributesMap: attributesMapLoaderModule.loadAttributesMap.bind(attributesMapLoaderModule),
             getAttributesDisplayForms,
             convertReferencesToUris,
+            convertUrisToReferences,
         };
     }
 

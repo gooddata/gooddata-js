@@ -1,5 +1,5 @@
 // (C) 2007-2020 GoodData Corporation
-import { VisualizationObject } from "@gooddata/typings";
+import { VisualizationObject, IVisualizationWidget } from "@gooddata/typings";
 import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
 import isArray from "lodash/isArray";
@@ -10,7 +10,6 @@ import { v4 as uuid } from "uuid";
 
 import { IProperties } from "./interfaces";
 import { isUri } from "./DataLayer/helpers/uri";
-
 /*
  * Helpers
  */
@@ -54,15 +53,19 @@ type ConversionFunction = (
     idGenerator: IdGenerator,
 ) => IConversionResult;
 
-export type ReferenceConverter = (
-    mdObject: VisualizationObject.IVisualizationObject,
-    idGenerator?: IdGenerator,
-) => VisualizationObject.IVisualizationObject;
+export type IObjectWithProperties = VisualizationObject.IVisualizationObject | IVisualizationWidget;
 
-const createConverter = (conversionFunction: ConversionFunction): ReferenceConverter => (
-    mdObject: VisualizationObject.IVisualizationObject,
+export type ReferenceConverter = (
+    mdObject: IObjectWithProperties,
+    idGenerator?: IdGenerator,
+) => IObjectWithProperties;
+
+const createConverter = (conversionFunction: ConversionFunction): ReferenceConverter => <
+    T extends IObjectWithProperties
+>(
+    mdObject: T,
     idGenerator: IdGenerator = defaultIdGenerator,
-): VisualizationObject.IVisualizationObject => {
+): T => {
     const { content } = mdObject;
     if (!content) {
         return mdObject;
@@ -85,15 +88,16 @@ const createConverter = (conversionFunction: ConversionFunction): ReferenceConve
 
     // set the new properties and references
     const referencesProp = isEmpty(convertedReferences) ? undefined : { references: convertedReferences };
-
-    return {
+    const result: T = {
         ...mdObject,
         content: {
-            ...(omit(mdObject.content, "references") as VisualizationObject.IVisualizationObjectContent),
+            ...omit(mdObject.content, "references"),
             properties: stringify(convertedProperties),
             ...referencesProp,
         },
     };
+
+    return result;
 };
 
 /*
