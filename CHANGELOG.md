@@ -13,6 +13,11 @@ The REST API versions in the table are just for your information as the values a
 |\>= 10.0.0|3
 |<= 9.0.1|2
 
+<a name="13.1.0"></a>
+## 2020-07-22 Version [13.1.0](https://github.com/gooddata/gooddata-js/compare/v13.0.2...v13.1.0)
+
+- add LDM module with the getCommonAttributes method
+
 <a name="13.0.2"></a>
 ## 2020-05-29 Version [13.0.2](https://github.com/gooddata/gooddata-js/compare/v13.0.1...v13.0.2)
 
