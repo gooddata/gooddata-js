@@ -10,6 +10,7 @@ import { DashboardModule } from "./dashboard/dashboard";
 import { sanitizeConfig, IConfigStorage, ConfigModule } from "./config";
 import { CatalogueModule } from "./catalogue";
 import { AdminModule } from "./admin";
+import { LdmModule } from "./ldm";
 
 import { AttributesMapLoaderModule } from "./utils/attributesMapLoader";
 import { getAttributesDisplayForms } from "./utils/visualizationObjectHelper";
@@ -47,6 +48,7 @@ export class SDK {
     public catalogue: CatalogueModule;
     public admin: AdminModule;
     public bootstrap: BootstrapModule;
+    public ldm: LdmModule;
     public configStorage: IConfigStorage;
     public utils: {
         loadAttributesMap: any;
@@ -70,6 +72,7 @@ export class SDK {
         this.catalogue = new CatalogueModule(this.xhr, this.execution);
         this.admin = new AdminModule(this.xhr);
         this.bootstrap = new BootstrapModule(this.xhr);
+        this.ldm = new LdmModule(this.xhr);
 
         const attributesMapLoaderModule = new AttributesMapLoaderModule(this.md);
         this.utils = {
