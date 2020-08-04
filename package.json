@@ -61,6 +61,7 @@
   },
   "devDependencies": {
     "@gooddata/frontend-npm-scripts": "1.2.0",
+    "@gooddata/grunt-grizzly": "1.0.1",
     "@gooddata/tslint-config": "^1.0.0",
     "@types/fast-levenshtein": "0.0.1",
     "@types/fetch-mock": "5.*",
@@ -83,7 +84,6 @@
     "grunt-contrib-watch": "1.1.0",
     "grunt-contrib-yuidoc": "1.0.0",
     "grunt-gh-pages": "2.0.0",
-    "grunt-grizzly": "0.17.0",
     "grunt-run": "0.8.0",
     "grunt-webpack": "1.0.14",
     "husky": "3.0.0",

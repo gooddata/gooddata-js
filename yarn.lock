@@ -273,6 +273,19 @@
     line-replace "^1.0.2"
     linebyline "^1.3.0"
 
+"@gooddata/grunt-grizzly@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@gooddata/grunt-grizzly/-/grunt-grizzly-1.0.1.tgz#7c3eb12393d9801a4ee9e16765f0156075980124"
+  integrity sha512-NcIzVw/Hm+ZynHdgdTZ4WIMXgqWwNrkX5VIIcnnXEkPwpZ1qmETIfnafUBTnLE7RUrqs4xMDLNfy/fuJmTdnrQ==
+  dependencies:
+    chalk "^2.4.2"
+    cli-table3 "^0.5.1"
+    express "^4.17.1"
+    express-redirect "^1.2.2"
+    http-proxy "^1.18.1"
+    lodash.defaults "^4.2.0"
+    optimist "^0.6.1"
+
 "@gooddata/tslint-config@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@gooddata/tslint-config/-/tslint-config-1.0.0.tgz#287981e8e9040a7d94d17c495c170c4697759242"
@@ -2776,19 +2789,6 @@ grunt-gh-pages@2.0.0:
     q "0.9.3"
     q-io "2.0.2"
     url-safe "^2.0.0"
-
-grunt-grizzly@0.17.0:
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/grunt-grizzly/-/grunt-grizzly-0.17.0.tgz#6c7d3b3bf690c011b3d27c16773e4c457b75c143"
-  integrity sha512-01p5LlJ1ISF/DJEj7x215PfYC2tjourrmP/03NU3WUzfHUzHiy0vqWVVT1GcZI+c3QW20owI84aHxl+AhZOsPg==
-  dependencies:
-    chalk "^2.4.2"
-    cli-table3 "^0.5.1"
-    express "^4.17.1"
-    express-redirect "^1.2.2"
-    http-proxy "^1.18.1"
-    lodash.defaults "^4.2.0"
-    optimist "^0.6.1"
 
 grunt-known-options@~1.1.0:
   version "1.1.1"
