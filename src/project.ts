@@ -359,6 +359,9 @@ export class ProjectModule {
                 ? settingItems.filter(settingItem => settingItem.settingItem.source === source)
                 : settingItems;
             const featureFlags: IFeatureFlags = {};
+            const x = featureFlags ? 0 : 1;
+            // tslint:disable-next-line:no-console
+            console.log(x);
             filteredSettingItems.forEach(settingItem => {
                 featureFlags[settingItem.settingItem.key] = parseSettingItemValue(
                     settingItem.settingItem.value,
