@@ -9,7 +9,6 @@ import { ReportModule } from "./report/report";
 import { DashboardModule } from "./dashboard/dashboard";
 import { sanitizeConfig, IConfigStorage, ConfigModule } from "./config";
 import { CatalogueModule } from "./catalogue";
-import { AdminModule } from "./admin";
 import { LdmModule } from "./ldm";
 
 import { AttributesMapLoaderModule } from "./utils/attributesMapLoader";
@@ -46,7 +45,6 @@ export class SDK {
     public report: ReportModule;
     public dashboard: DashboardModule;
     public catalogue: CatalogueModule;
-    public admin: AdminModule;
     public bootstrap: BootstrapModule;
     public ldm: LdmModule;
     public configStorage: IConfigStorage;
@@ -70,7 +68,6 @@ export class SDK {
         this.report = new ReportModule(this.xhr);
         this.dashboard = new DashboardModule(this.xhr);
         this.catalogue = new CatalogueModule(this.xhr, this.execution);
-        this.admin = new AdminModule(this.xhr);
         this.bootstrap = new BootstrapModule(this.xhr);
         this.ldm = new LdmModule(this.xhr);
 
