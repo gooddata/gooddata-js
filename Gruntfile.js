@@ -1,6 +1,6 @@
 // Copyright (C) 2007-2014, GoodData(R) Corporation. All rights reserved.
-const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.js');
+const webpack = require('webpack');
 
 module.exports = (grunt) => {
     grunt.initConfig({
@@ -47,14 +47,28 @@ module.exports = (grunt) => {
         },
         webpack: {
             options: webpackConfig,
-            'build-dev': {},
-            build: {
-                output: {
-                    filename: './dist/gooddata.min.js'
-                },
-                plugins: [
-                    new webpack.optimize.UglifyJsPlugin()
-                ].concat(webpackConfig.plugins)
+            'build-dev': (config) => {
+                return {
+                    mode: 'development',
+                    plugins: [
+                        new webpack.BannerPlugin({
+                            banner: config.license,
+                        })
+                    ].concat(webpackConfig.plugins)
+                };
+            },
+            build: (config) => {
+                return {
+                    mode: 'production',
+                    output: {
+                        filename: './gooddata.min.js'
+                    },
+                    plugins: [
+                        new webpack.BannerPlugin({
+                            banner: config.license,
+                        })
+                    ].concat(webpackConfig.plugins)
+                }
             }
         },
         yuidoc: {
