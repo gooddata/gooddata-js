@@ -24,6 +24,8 @@ export interface ICopyDashboardOptions {
     copyVisObj?: boolean;
     /** optional, default value of name is "Copy of (current dashboard title)" */
     name?: string;
+    /** optional, default value of summary is (current dashboard summary) */
+    summary?: string;
 }
 
 type UriTranslator = (oldUri: string) => string;
@@ -125,6 +127,10 @@ export class MetadataModuleExt {
             const translator = createTranslator(kpiMap, visWidgetMap);
             const updatedContent = updateContent(analyticalDashboard, translator, filterContext);
             const dashboardTitle = this.getDashboardName(analyticalDashboard.meta.title, options.name);
+            const dashboardSummary = this.getDashboardSummary(
+                analyticalDashboard.meta.summary,
+                options.summary,
+            );
             const duplicateDashboard = {
                 ...dashboardDetails,
                 analyticalDashboard: {
@@ -140,6 +146,7 @@ export class MetadataModuleExt {
                             "contributor",
                         ]),
                         title: dashboardTitle,
+                        summary: dashboardSummary,
                     },
                 },
             };
@@ -208,6 +215,15 @@ export class MetadataModuleExt {
             return newName;
         }
         return `Copy of ${originalName}`;
+    }
+
+    private getDashboardSummary(originalSummary?: string, newSummary?: string): string {
+        if (newSummary !== undefined) {
+            return newSummary;
+        } else if (originalSummary !== undefined) {
+            return originalSummary;
+        }
+        return "";
     }
 
     private async duplicateOrKeepKpis(
