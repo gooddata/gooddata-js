@@ -10,11 +10,7 @@ import IPoPMeasureDefinition = VisualizationObject.IPoPMeasureDefinition;
 import IPreviousPeriodMeasureDefinition = VisualizationObject.IPreviousPeriodMeasureDefinition;
 
 import { convertVisualizationObjectFilter } from "./FilterConverter";
-import {
-    DEFAULT_DECIMAL_FORMAT,
-    DEFAULT_INTEGER_FORMAT,
-    DEFAULT_PERCENTAGE_FORMAT,
-} from "../constants/formats";
+import { DEFAULT_INTEGER_FORMAT, DEFAULT_PERCENTAGE_FORMAT } from "../constants/formats";
 
 const MeasureConverter = {
     convertMeasure,
@@ -122,24 +118,6 @@ function getFormat(measure: IMeasure): string | undefined {
     const {
         measure: { definition, format },
     } = measure;
-
-    // Override incorrect formats of ad-hoc measures with computeRatio
-    // and use decimal percentage  instead.
-    // This code will be removed once saved viz. objects are fixed in BB-2287
-    if (VisualizationObject.isMeasureDefinition(definition)) {
-        const { measureDefinition } = definition;
-        if (measureDefinition.computeRatio && measureDefinition.aggregation) {
-            if (measureDefinition.aggregation === "count") {
-                if (format === DEFAULT_INTEGER_FORMAT) {
-                    return DEFAULT_PERCENTAGE_FORMAT;
-                }
-            } else {
-                if (format === DEFAULT_DECIMAL_FORMAT) {
-                    return DEFAULT_PERCENTAGE_FORMAT;
-                }
-            }
-        }
-    }
 
     if (format) {
         return format;
