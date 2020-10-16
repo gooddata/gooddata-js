@@ -13,18 +13,29 @@ The REST API versions in the table are just for your information as the values a
 |\>= 10.0.0|3
 |<= 9.0.1|2
 
-<a name="13.2.0"></a>
-## 2020-08-04 Version [13.1.3](https://github.com/gooddata/gooddata-js/compare/v13.1.1...v13.2.0)
+<a name="13.1.4"></a>
+## 2020-10-16 Version [13.1.4](https://github.com/gooddata/gooddata-js/compare/v13.1.3...v13.1.4)
 
-- add optional summary attribute to saveDashboardAs options parameter
+- Remove format override for ad-hoc fact-based measures with incorrect decimal format
+
+<a name="13.1.3"></a>
+## 2020-09-30 Version [13.1.3](https://github.com/gooddata/gooddata-js/compare/v13.1.2...v13.1.3)
+
+- Add optional summary attribute to saveDashboardAs options parameter
+
+<a name="13.1.2"></a>
+## 2020-09-09 Version [13.1.2](https://github.com/gooddata/gooddata-js/compare/v13.1.1...v13.1.2)
+
+- Update webpack
+- Delete unneeded Admin UI code	
 
 <a name="13.1.1"></a>
-## 2020-08-04 Version [13.1.0](https://github.com/gooddata/gooddata-js/compare/v13.1.0...v13.1.1)
+## 2020-08-04 Version [13.1.1](https://github.com/gooddata/gooddata-js/compare/v13.1.0...v13.1.1)
 
 - grunt-grizzly under gooddata organization (renamed package)
 
 <a name="13.1.0"></a>
-## 2020-07-22 Version [13.1.0](https://github.com/gooddata/gooddata-js/compare/v13.0.2...v13.1.0)
+## 2020-07-28 Version [13.1.0](https://github.com/gooddata/gooddata-js/compare/v13.0.2...v13.1.0)
 
 - add LDM module with the getCommonAttributes method
 
