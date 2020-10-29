@@ -1,4 +1,4 @@
-// (C) 2007-2019 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import { AFM, VisualizationObject } from "@gooddata/typings";
 import VisualizationObjectAttributeFilter = VisualizationObject.VisualizationObjectAttributeFilter;
 import IVisualizationObjectRelativeDateFilter = VisualizationObject.IVisualizationObjectRelativeDateFilter;
@@ -77,6 +77,8 @@ export function convertVisualizationObjectExtendedFilter(
 ): AFM.ExtendedFilter | null {
     if (VisualizationObject.isMeasureValueFilter(filter)) {
         return convertMeasureValueFilter(filter);
+    } else if (VisualizationObject.isRankingFilter(filter)) {
+        return filter;
     } else {
         return convertVisualizationObjectFilter(filter);
     }
