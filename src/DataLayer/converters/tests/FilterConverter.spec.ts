@@ -1,4 +1,4 @@
-// (C) 2007-2019 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import * as input from "./fixtures/FilterConverter.input.fixtures";
 import * as expected from "./fixtures/FilterConverter.afm.fixtures";
 import { convertVisualizationObjectExtendedFilter } from "../FilterConverter";
@@ -28,6 +28,7 @@ const VIS_OBJ_TESTS = [
         expected.comparisonMeasureValueFilter,
     ],
     ["range measure value filter", input.rangeMeasureValueFilter, expected.rangeMeasureValueFilter],
+    ["ranking filter", input.rankingFilter, expected.rankingFilter],
 ];
 
 describe.each(VIS_OBJ_TESTS)("convertVisualizationObjectExtendedFilter", (desc, input, expected) => {

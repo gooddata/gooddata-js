@@ -1,4 +1,4 @@
-// (C) 2007-2019 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 import { AFM } from "@gooddata/typings";
 import { Granularities } from "../../../constants/granularities";
 
@@ -88,5 +88,17 @@ export const rangeMeasureValueFilter: AFM.IMeasureValueFilter = {
                 to: 100,
             },
         },
+    },
+};
+
+export const rankingFilter: AFM.IRankingFilter = {
+    rankingFilter: {
+        measures: [
+            {
+                uri: "some/measure",
+            },
+        ],
+        operator: "BOTTOM",
+        value: 42,
     },
 };

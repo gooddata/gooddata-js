@@ -1,4 +1,4 @@
-// (C) 2007-2019 GoodData Corporation
+// (C) 2007-2020 GoodData Corporation
 
 import { VisualizationObject } from "@gooddata/typings";
 import { Granularities } from "../../../constants/granularities";
@@ -115,5 +115,17 @@ export const rangeMeasureValueFilter: VisualizationObject.IMeasureValueFilter = 
                 to: 100,
             },
         },
+    },
+};
+
+export const rankingFilter: VisualizationObject.IRankingFilter = {
+    rankingFilter: {
+        measures: [
+            {
+                uri: "some/measure",
+            },
+        ],
+        operator: "BOTTOM",
+        value: 42,
     },
 };
