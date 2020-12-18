@@ -13,6 +13,11 @@ The REST API versions in the table are just for your information as the values a
 |\>= 10.0.0|3
 |<= 9.0.1|2
 
+<a name="13.3.0"></a>
+## 2020-12-18 Version [13.3.0](https://github.com/gooddata/gooddata-js/compare/v13.2.0...v13.3.0)
+
+- Add the clearLockedFlag option to saveDashboardAs function
+
 <a name="13.2.0"></a>
 ## 2020-11-23 Version [13.2.0](https://github.com/gooddata/gooddata-js/compare/v13.1.4...v13.2.0)
 
