@@ -4,6 +4,7 @@ import { XhrModule } from "./xhr";
 import { UserModule } from "./user";
 import cloneDeepWith from "lodash/cloneDeepWith";
 import isEmpty from "lodash/isEmpty";
+import compact from "lodash/compact";
 import omit from "lodash/omit";
 import {
     IKPI,
@@ -11,6 +12,7 @@ import {
     DashboardExport,
     IVisualizationWidget,
     IAnalyticalDashboard,
+    IObjectMeta,
 } from "@gooddata/typings";
 
 /**
@@ -26,6 +28,8 @@ export interface ICopyDashboardOptions {
     name?: string;
     /** optional, default value of summary is (current dashboard summary) */
     summary?: string;
+    /** optional, if true, the isLocked flag will be cleared for the newly created dashboard, defaults to false */
+    clearLockedFlag?: boolean;
 }
 
 type UriTranslator = (oldUri: string) => string;
@@ -116,7 +120,7 @@ export class MetadataModuleExt {
         const allCreatedObjUris: string[] = [];
         const visWidgetUris: string[] = [];
         try {
-            const filterContext = await this.duplicateFilterContext(projectId, objectsFromDashboard);
+            const filterContext = await this.duplicateFilterContext(projectId, objectsFromDashboard, options);
             allCreatedObjUris.push(filterContext);
             const kpiMap = await this.duplicateOrKeepKpis(projectId, objectsFromDashboard, options);
             if (this.shouldCopyKpi(options)) {
@@ -137,14 +141,7 @@ export class MetadataModuleExt {
                     ...dashboardDetails.analyticalDashboard,
                     content: this.getDashboardDetailObject(updatedContent, filterContext),
                     meta: {
-                        ...omit(dashboardDetails.analyticalDashboard.meta, [
-                            "identifier",
-                            "uri",
-                            "author",
-                            "created",
-                            "updated",
-                            "contributor",
-                        ]),
+                        ...this.getSanitizedMeta(dashboardDetails.analyticalDashboard.meta, options),
                         title: dashboardTitle,
                         summary: dashboardSummary,
                     },
@@ -238,8 +235,14 @@ export class MetadataModuleExt {
                     .filter((obj: any) => this.unwrapObj(obj).meta.category === "kpi")
                     .map(async (kpiWidget: any) => {
                         const { kpi }: { kpi: IKPI } = kpiWidget;
+                        const toSave = {
+                            kpi: {
+                                meta: this.getSanitizedMeta(kpi.meta as IObjectMeta, options),
+                                content: { ...kpi.content },
+                            },
+                        };
                         const newUriKpiObj: string = (
-                            await this.metadataModule.createObject(projectId, kpiWidget)
+                            await this.metadataModule.createObject(projectId, toSave)
                         ).kpi.meta.uri;
                         uriMap.set(kpi.meta.uri as string, newUriKpiObj);
                     }),
@@ -278,13 +281,19 @@ export class MetadataModuleExt {
             const visObj = await this.metadataModule.getObjectDetails(
                 visualizationWidget.content.visualization,
             );
-            const newUriVisObj = (await this.metadataModule.createObject(projectId, visObj))
+            const toSave = {
+                visualizationObject: {
+                    meta: this.getSanitizedMeta(visObj.visualizationObject.meta, options),
+                    content: { ...visObj.visualizationObject.content },
+                },
+            };
+            const newUriVisObj = (await this.metadataModule.createObject(projectId, toSave))
                 .visualizationObject.meta.uri;
 
             const updatedVisWidget = {
                 ...visWidget,
                 visualizationWidget: {
-                    ...visWidget.visualizationWidget,
+                    meta: this.getSanitizedMeta(visWidget.visualizationWidget.meta, options),
                     content: {
                         ...visWidget.visualizationWidget.content,
                         visualization: newUriVisObj,
@@ -295,17 +304,54 @@ export class MetadataModuleExt {
                 .visualizationWidget.meta.uri;
             uriMap.set(visualizationWidget.meta.uri, visUri);
         } else {
-            const { visualizationWidget } = await this.metadataModule.createObject(projectId, visWidget);
+            const updatedVisWidget = {
+                ...visWidget,
+                visualizationWidget: {
+                    meta: this.getSanitizedMeta(visWidget.visualizationWidget.meta, options),
+                    content: { ...visWidget.visualizationWidget.content },
+                },
+            };
+            const { visualizationWidget } = await this.metadataModule.createObject(
+                projectId,
+                updatedVisWidget,
+            );
             uriMap.set(visWidget.visualizationWidget.meta.uri, visualizationWidget.meta.uri);
         }
     }
 
-    private async duplicateFilterContext(projectId: string, objsFromDashboard: any): Promise<string> {
-        const { filterContext } = await this.metadataModule.createObject(
-            projectId,
-            objsFromDashboard.filter((obj: any) => this.unwrapObj(obj).meta.category === "filterContext")[0],
-        );
+    private async duplicateFilterContext(
+        projectId: string,
+        objsFromDashboard: any,
+        options: ICopyDashboardOptions,
+    ): Promise<string> {
+        const originalFilterContext = objsFromDashboard.filter(
+            (obj: any) => this.unwrapObj(obj).meta.category === "filterContext",
+        )[0];
+
+        const toSave = {
+            filterContext: {
+                meta: this.getSanitizedMeta(originalFilterContext.filterContext.meta, options),
+                content: { ...originalFilterContext.filterContext.content },
+            },
+        };
+
+        const { filterContext } = await this.metadataModule.createObject(projectId, toSave);
         return filterContext.meta.uri;
+    }
+
+    private getSanitizedMeta(originalMeta: IObjectMeta, options: ICopyDashboardOptions): IObjectMeta {
+        return omit(
+            originalMeta,
+            compact([
+                "identifier",
+                "uri",
+                "author",
+                "created",
+                "updated",
+                "contributor",
+                options && options.clearLockedFlag && "locked",
+            ]),
+        ) as IObjectMeta;
     }
 
     private async getObjectsFromDashboard(
