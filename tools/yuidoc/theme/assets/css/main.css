@@ -575,7 +575,7 @@ h2, h3, h4, h5, h6 {
 .apidocs ul.commas li:last-child:after { content: ''; }
 
 /* Keyboard shortcuts. */
-kbd .cmd { font-family: Monaco, Helvetica; }
+kbd .cmd { font-family: Monaco, Helvetica, monospace; }
 
 /* -- Generic Access Level styles ------------------------------------------- */
 .apidocs .item.protected,
@@ -865,8 +865,6 @@ kbd .cmd { font-family: Monaco, Helvetica; }
     margin: 0 0 0 -4px;
     padding: 1px 4px 0;
     text-decoration: none;
-    _border: none;
-    _display: inline;
 }
 
 .apis a:hover,
