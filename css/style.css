@@ -4,10 +4,10 @@
 }
 
 body {
+	display: none;
 	font-family: "Avenir", Arial, sans-serif;
 	font-size: 16px;
 	line-height: 22px;
-	opacity: 0;
 }
 
 
