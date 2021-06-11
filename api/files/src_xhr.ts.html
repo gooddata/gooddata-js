@@ -1,0 +1,413 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1 class="file-heading">File: src/xhr.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // (C) 2007-2020 GoodData Corporation
+                        import isPlainObject from &quot;lodash/isPlainObject&quot;;
+                        import isFunction from &quot;lodash/isFunction&quot;;
+                        import set from &quot;lodash/set&quot;;
+                        import defaults from &quot;lodash/defaults&quot;;
+                        import merge from &quot;lodash/merge&quot;;
+                        import result from &quot;lodash/result&quot;;
+                        
+                        import { thisPackage } from &quot;./util&quot;;
+                        
+                        /**
+                         * Ajax wrapper around GDC authentication mechanisms, SST and TT token handling and polling.
+                         * Interface is the same as original jQuery.ajax.
+                         *
+                         * If token is expired, current request is &quot;paused&quot;, token is refreshed and request is retried and result
+                         * is transparently returned to the original call.
+                         *
+                         * Additionally polling is handled. Only final result of polling returned.
+                         * @module xhr
+                         * @class xhr
+                         */
+                        
+                        const DEFAULT_POLL_DELAY = 1000;
+                        
+                        const REST_API_VERSION_HEADER = &quot;X-GDC-VERSION&quot;;
+                        const REST_API_DEPRECATED_VERSION_HEADER = &quot;X-GDC-DEPRECATED&quot;;
+                        
+                        // The version used in X-GDC-VERSION header (see https://confluence.intgdc.com/display/Development/REST+API+versioning)
+                        const LATEST_REST_API_VERSION = 5;
+                        
+                        function simulateBeforeSend(url: string, settings: any) {
+                            const xhrMockInBeforeSend = {
+                                setRequestHeader(key: string, value: string) {
+                                    set(settings, [&quot;headers&quot;, key], value);
+                                },
+                            };
+                        
+                            if (isFunction(settings.beforeSend)) {
+                                settings.beforeSend(xhrMockInBeforeSend, url);
+                            }
+                        }
+                        
+                        function enrichSettingWithCustomDomain(originalUrl: string, originalSettings: any, domain: string): any {
+                            let url = originalUrl;
+                            const settings = originalSettings;
+                            if (domain) {
+                                // protect url to be prepended with domain on retry
+                                if (originalUrl.indexOf(domain) === -1) {
+                                    url = domain + originalUrl;
+                                }
+                                settings.mode = &quot;cors&quot;;
+                                settings.credentials = &quot;include&quot;;
+                            }
+                        
+                            return { url, settings };
+                        }
+                        
+                        export function handlePolling(
+                            url: string,
+                            settings: any,
+                            sendRequest: (url: string, settings: any) =&gt; any,
+                        ): Promise&lt;ApiResponse&gt; {
+                            const pollingDelay: number = result(settings, &quot;pollDelay&quot;);
+                        
+                            return new Promise((resolve, reject) =&gt; {
+                                setTimeout(() =&gt; {
+                                    sendRequest(url, settings).then(resolve, reject);
+                                }, pollingDelay);
+                            });
+                        }
+                        
+                        export interface IPackageHeaders {
+                            name: string;
+                            version: string;
+                        }
+                        
+                        export function originPackageHeaders({ name, version }: IPackageHeaders) {
+                            return {
+                                &quot;X-GDC-JS-PKG&quot;: name,
+                                &quot;X-GDC-JS-PKG-VERSION&quot;: version,
+                            };
+                        }
+                        
+                        export class ApiError extends Error {
+                            constructor(message: string, public cause: any) {
+                                super(message);
+                            }
+                        }
+                        
+                        export class ApiResponseError extends ApiError {
+                            constructor(message: string, public response: any, public responseBody: any) {
+                                super(message, null);
+                            }
+                        }
+                        
+                        export class ApiNetworkError extends ApiError {}
+                        
+                        export class ApiResponse {
+                            public response: Response;
+                            public responseBody: string;
+                        
+                            constructor(response: Response, responseBody: string) {
+                                this.response = response;
+                                this.responseBody = responseBody;
+                            }
+                        
+                            get data() {
+                                try {
+                                    return JSON.parse(this.responseBody);
+                                } catch (error) {
+                                    return this.responseBody;
+                                }
+                            }
+                        
+                            public getData() {
+                                try {
+                                    return JSON.parse(this.responseBody);
+                                } catch (error) {
+                                    return this.responseBody;
+                                }
+                            }
+                        
+                            public getHeaders() {
+                                return this.response;
+                            }
+                        }
+                        
+                        // the variable must be outside of the scope of the XhrModule to not log the message multiple times in SDK and KD
+                        let shouldLogDeprecatedRestApiCall = true;
+                        
+                        export class XhrModule {
+                            private tokenRequest?: any;
+                        
+                            constructor(private fetch: any, private configStorage: any) {
+                                defaults(configStorage, { xhrSettings: {} });
+                            }
+                        
+                            /**
+                             * Back compatible method for setting common XHR settings
+                             *
+                             * Usually in our apps we used beforeSend ajax callback to set the X-GDC-REQUEST header with unique ID.
+                             *
+                             * @param settings object XHR settings as
+                             */
+                            public ajaxSetup(settings: any) {
+                                Object.assign(this.configStorage.xhrSettings, settings);
+                            }
+                        
+                            public async ajax(originalUrl: string, customSettings = {}): Promise&lt;ApiResponse&gt; {
+                                // TODO refactor to: getRequestParams(originalUrl, customSettings);
+                                const firstSettings = this.createRequestSettings(customSettings);
+                                const { url, settings } = enrichSettingWithCustomDomain(
+                                    originalUrl,
+                                    firstSettings,
+                                    this.configStorage.domain,
+                                );
+                        
+                                simulateBeforeSend(url, settings); // mutates &#x60;settings&#x60; param
+                        
+                                if (this.tokenRequest) {
+                                    return this.continueAfterTokenRequest(url, settings);
+                                }
+                        
+                                let response;
+                                try {
+                                    // TODO: We should clean up the settings at this point to be pure &#x60;RequestInit&#x60; object
+                                    response = await this.fetch(url, settings);
+                                } catch (e) {
+                                    throw new ApiNetworkError(e.message, e); // TODO is it really necessary? couldn&#x27;t we throw just Error?
+                                }
+                        
+                                // Fetch URL and resolve body promise (if left unresolved, the body isn&#x27;t even shown in chrome-dev-tools)
+                                const responseBody = await response.text();
+                        
+                                if (response.status === 401) {
+                                    // if 401 is in login-request, it means wrong user/password (we wont continue)
+                                    if (url.indexOf(&quot;/gdc/account/login&quot;) !== -1) {
+                                        throw new ApiResponseError(&quot;Unauthorized&quot;, response, responseBody);
+                                    }
+                                    return this.handleUnauthorized(url, settings);
+                                }
+                        
+                                // Note: Fetch does redirects automagically for 301 (and maybe more .. TODO when?)
+                                // see https://fetch.spec.whatwg.org/#ref-for-concept-request%E2%91%A3%E2%91%A2
+                                if (response.status === 202 &amp;&amp; !settings.dontPollOnResult) {
+                                    // poll on new provided url, fallback to the original one
+                                    // (for example validElements returns 303 first with new url which may then return 202 to poll on)
+                                    let finalUrl = response.url || url;
+                        
+                                    const finalSettings = settings;
+                        
+                                    // if the response is 202 and Location header is not empty, let&#x27;s poll on the new Location
+                                    if (response.headers.has(&quot;Location&quot;)) {
+                                        finalUrl = response.headers.get(&quot;Location&quot;);
+                                    }
+                                    finalSettings.method = &quot;GET&quot;;
+                                    delete finalSettings.data;
+                                    delete finalSettings.body;
+                        
+                                    return handlePolling(finalUrl, finalSettings, this.ajax.bind(this));
+                                }
+                        
+                                this.verifyRestApiDeprecationStatus(response.headers);
+                        
+                                if (response.status &gt;= 200 &amp;&amp; response.status &lt;= 399) {
+                                    return new ApiResponse(response, responseBody);
+                                }
+                        
+                                // throws on 400, 500, etc.
+                                throw new ApiResponseError(response.statusText, response, responseBody);
+                            }
+                        
+                            /**
+                             * Wrapper for xhr.ajax method GET
+                             */
+                            public get(url: string, settings?: any) {
+                                return this.ajax(url, merge({ method: &quot;GET&quot; }, settings));
+                            }
+                        
+                            /**
+                             * Wrapper for xhr.ajax method HEAD
+                             */
+                            public head(url: string, settings?: any) {
+                                return this.ajax(url, merge({ method: &quot;HEAD&quot; }, settings));
+                            }
+                        
+                            /**
+                             * Wrapper for xhr.ajax method POST
+                             */
+                            public post(url: string, settings?: any) {
+                                return this.ajax(url, merge({ method: &quot;POST&quot; }, settings));
+                            }
+                        
+                            /**
+                             * Wrapper for xhr.ajax method PUT
+                             */
+                            public put(url: string, settings: any) {
+                                return this.ajax(url, merge({ method: &quot;PUT&quot; }, settings));
+                            }
+                        
+                            /**
+                             * Wrapper for xhr.ajax method DELETE
+                             */
+                            public del(url: string, settings?: any) {
+                                return this.ajax(url, merge({ method: &quot;DELETE&quot; }, settings));
+                            }
+                        
+                            private createRequestSettings(customSettings: any) {
+                                const settings = merge(
+                                    {
+                                        headers: {
+                                            Accept: &quot;application/json; charset=utf-8&quot;,
+                                            &quot;Content-Type&quot;: &quot;application/json&quot;,
+                                            [REST_API_VERSION_HEADER]: LATEST_REST_API_VERSION,
+                                            ...originPackageHeaders(this.configStorage.originPackage || thisPackage),
+                                        },
+                                    },
+                                    this.configStorage.xhrSettings,
+                                    customSettings,
+                                );
+                        
+                                settings.pollDelay = settings.pollDelay !== undefined ? settings.pollDelay : DEFAULT_POLL_DELAY;
+                        
+                                // TODO jquery compat - add to warnings
+                                settings.body = settings.data ? settings.data : settings.body;
+                                settings.mode = &quot;same-origin&quot;;
+                                settings.credentials = &quot;same-origin&quot;;
+                        
+                                if (isPlainObject(settings.body)) {
+                                    settings.body = JSON.stringify(settings.body);
+                                }
+                        
+                                return settings;
+                            }
+                        
+                            private continueAfterTokenRequest(url: string, settings: any) {
+                                return this.tokenRequest.then(
+                                    async (response: Response) =&gt; {
+                                        if (!response.ok) {
+                                            throw new ApiResponseError(&quot;Unauthorized&quot;, response, null);
+                                        }
+                                        this.tokenRequest = null;
+                        
+                                        return this.ajax(url, settings);
+                                    },
+                                    (reason: any) =&gt; {
+                                        this.tokenRequest = null;
+                                        return reason;
+                                    },
+                                );
+                            }
+                        
+                            private async handleUnauthorized(originalUrl: string, originalSettings: any) {
+                                // Create only single token request for any number of waiting request.
+                                // If token request exist, just listen for it&#x27;s end.
+                                if (this.tokenRequest) {
+                                    return this.continueAfterTokenRequest(originalUrl, originalSettings);
+                                }
+                        
+                                const { url, settings } = enrichSettingWithCustomDomain(
+                                    &quot;/gdc/account/token&quot;,
+                                    this.createRequestSettings({}),
+                                    this.configStorage.domain,
+                                );
+                        
+                                this.tokenRequest = this.fetch(url, settings);
+                                const response = await this.tokenRequest;
+                                const responseBody = await response.text();
+                                this.tokenRequest = null;
+                                // TODO jquery compat - allow to attach unauthorized callback and call it if attached
+                                // if ((xhrObj.status === 401) &amp;&amp; (isFunction(req.unauthorized))) {
+                                //     req.unauthorized(xhrObj, textStatus, err, deferred);
+                                //     return;
+                                // }
+                                // unauthorized handler is not defined or not http 401
+                                // unauthorized when retrieving token -&gt; not logged
+                        
+                                if (response.status === 401) {
+                                    throw new ApiResponseError(&quot;Unauthorized&quot;, response, responseBody);
+                                }
+                        
+                                return this.ajax(originalUrl, originalSettings);
+                            }
+                        
+                            private logDeprecatedRestApiCall(deprecatedVersionDetails: string) {
+                                // tslint:disable-next-line:no-console
+                                console.warn(
+                                    &#x60;The REST API version ${LATEST_REST_API_VERSION} is deprecated (${deprecatedVersionDetails}). &#x60; +
+                                        &quot;Please migrate your application to use GoodData.UI SDK or @gooddata/gooddata-js package that &quot; +
+                                        &quot;supports newer version of the API.&quot;,
+                                );
+                            }
+                        
+                            private isRestApiDeprecated(responseHeaders: any) {
+                                return responseHeaders.has(REST_API_DEPRECATED_VERSION_HEADER);
+                            }
+                        
+                            private verifyRestApiDeprecationStatus(responseHeaders: any) {
+                                if (shouldLogDeprecatedRestApiCall &amp;&amp; this.isRestApiDeprecated(responseHeaders)) {
+                                    const deprecatedVersionDetails = responseHeaders.get(REST_API_DEPRECATED_VERSION_HEADER);
+                                    this.logDeprecatedRestApiCall(deprecatedVersionDetails);
+                                    shouldLogDeprecatedRestApiCall = false;
+                                }
+                            }
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

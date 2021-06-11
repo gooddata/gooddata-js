@@ -1,0 +1,477 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1 class="file-heading">File: src/execution/execute-afm.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // (C) 2007-2020 GoodData Corporation
+                        import invariant from &quot;invariant&quot;;
+                        import qs from &quot;qs&quot;;
+                        import range from &quot;lodash/range&quot;;
+                        import get from &quot;lodash/get&quot;;
+                        import { Execution, AFM } from &quot;@gooddata/typings&quot;;
+                        
+                        import { XhrModule, ApiResponseError } from &quot;../xhr&quot;;
+                        import { convertExecutionToJson } from &quot;./execute-afm.convert&quot;;
+                        
+                        export const DEFAULT_LIMIT = 1000;
+                        
+                        /**
+                         * This interface represents input for executeVisualization API endpoint.
+                         *
+                         * NOTE: all functionality related to executeVisualization is experimental and subject to possible breaking changes
+                         * in the future; location and shape of this interface WILL change when the functionality is made GA.
+                         *
+                         * @private
+                         * @internal
+                         */
+                        export interface IVisualizationExecution {
+                            visualizationExecution: {
+                                reference: string;
+                                resultSpec?: AFM.IResultSpec;
+                                filters?: AFM.CompatibilityFilter[];
+                            };
+                        }
+                        
+                        /**
+                         * This interface represents error caused during second part of api execution (data fetching)
+                         * and contains information about first execution part if that part was successful.
+                         */
+                        export class ApiExecutionResponseError extends ApiResponseError {
+                            constructor(error: ApiResponseError, public executionResponse: any) {
+                                super(error.message, error.response, error.responseBody);
+                            }
+                        }
+                        
+                        export class ExecuteAfmModule {
+                            constructor(private xhr: XhrModule) {}
+                        
+                            /**
+                             * Execute AFM and fetch all data results
+                             *
+                             * @method executeAfm
+                             * @param {String} projectId - GD project identifier
+                             * @param {AFM.IExecution} execution - See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/AFM.ts#L2
+                             *
+                             * @returns {Promise&lt;Execution.IExecutionResponses&gt;} Structure with &#x60;executionResponse&#x60; and &#x60;executionResult&#x60; -
+                             *  See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/Execution.ts#L113
+                             */
+                            public executeAfm(projectId: string, execution: AFM.IExecution): Promise&lt;Execution.IExecutionResponses&gt; {
+                                validateNumOfDimensions(get(execution, &quot;execution.resultSpec.dimensions&quot;).length);
+                                return this.getExecutionResponse(projectId, execution).then(
+                                    (executionResponse: Execution.IExecutionResponse) =&gt; {
+                                        return this.getExecutionResult(executionResponse.links.executionResult)
+                                            .then((executionResult: Execution.IExecutionResult | null) =&gt; {
+                                                return { executionResponse, executionResult };
+                                            })
+                                            .catch(error =&gt; {
+                                                throw new ApiExecutionResponseError(error, executionResponse);
+                                            });
+                                    },
+                                );
+                            }
+                        
+                            /**
+                             * Execute AFM and return execution&#x27;s response; the response describes dimensionality of the results and
+                             * includes link to poll for the results.
+                             *
+                             * @method getExecutionResponse
+                             * @param {string} projectId - GD project identifier
+                             * @param {AFM.IExecution} execution - See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/AFM.ts#L2
+                             *
+                             * @returns {Promise&lt;Execution.IExecutionResponse&gt;} Promise with &#x60;executionResponse&#x60;
+                             *  See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/Execution.ts#L69
+                             */
+                            public getExecutionResponse(
+                                projectId: string,
+                                execution: AFM.IExecution,
+                            ): Promise&lt;Execution.IExecutionResponse&gt; {
+                                validateNumOfDimensions(get(execution, &quot;execution.resultSpec.dimensions&quot;).length);
+                                return this.xhr
+                                    .post(&#x60;/gdc/app/projects/${projectId}/executeAfm&#x60;, { body: convertExecutionToJson(execution) })
+                                    .then(apiResponse =&gt; apiResponse.getData())
+                                    .then(unwrapExecutionResponse);
+                            }
+                        
+                            /**
+                             * Execute saved visualization and get all data.
+                             *
+                             * NOTE: all functionality related to executeVisualization is experimental and subject to possible breaking changes
+                             * in the future; location and shape of this interface WILL change when the functionality is made GA.
+                             *
+                             * @param {string} projectId - GD project identifier
+                             * @param {IVisualizationExecution} visExecution - execution payload
+                             *
+                             * @private
+                             * @internal
+                             */
+                            public _executeVisualization(
+                                projectId: string,
+                                visExecution: IVisualizationExecution,
+                            ): Promise&lt;Execution.IExecutionResponses&gt; {
+                                // We have ONE-3961 as followup to take this out of experimental mode
+                        
+                                return this._getVisExecutionResponse(projectId, visExecution).then(
+                                    (executionResponse: Execution.IExecutionResponse) =&gt; {
+                                        return this.getExecutionResult(executionResponse.links.executionResult).then(
+                                            (executionResult: Execution.IExecutionResult | null) =&gt; {
+                                                return { executionResponse, executionResult };
+                                            },
+                                        );
+                                    },
+                                );
+                            }
+                        
+                            /**
+                             *
+                             * Execute visualization and return the response; the response describes dimensionality of the results and
+                             * includes link to poll for the results.
+                             *
+                             * NOTE: all functionality related to executeVisualization is experimental and subject to possible breaking changes
+                             * in the future; location and shape of this interface WILL change when the functionality is made GA.
+                             *
+                             * @param {string} projectId - GD project identifier
+                             * @param {IVisualizationExecution} visExecution - execution payload
+                             *
+                             * @private
+                             * @internal
+                             */
+                            public _getVisExecutionResponse(
+                                projectId: string,
+                                visExecution: IVisualizationExecution,
+                            ): Promise&lt;Execution.IExecutionResponse&gt; {
+                                // We have ONE-3961 as followup to take this out of experimental mode
+                        
+                                const body = createExecuteVisualizationBody(visExecution);
+                        
+                                return this.xhr
+                                    .post(&#x60;/gdc/app/projects/${projectId}/executeVisualization&#x60;, { body })
+                                    .then(apiResponse =&gt; apiResponse.getData())
+                                    .then(unwrapExecutionResponse);
+                            }
+                        
+                            //
+                            // working with results
+                            //
+                        
+                            /**
+                             * Get one page of Result from Execution (with requested limit and offset)
+                             *
+                             * @method getPartialExecutionResult
+                             * @param {string} executionResultUri
+                             * @param {number[]} limit - limit for each dimension
+                             * @param {number[]} offset - offset for each dimension
+                             *
+                             * @returns {Promise&lt;Execution.IExecutionResult | null&gt;}
+                             *  Promise with &#x60;executionResult&#x60; or &#x60;null&#x60; (null means empty response - HTTP 204)
+                             *  See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/Execution.ts#L88
+                             */
+                            public getPartialExecutionResult(
+                                executionResultUri: string,
+                                limit: number[],
+                                offset: number[],
+                            ): Promise&lt;Execution.IExecutionResult | null&gt; {
+                                const executionResultUriQueryPart = getExecutionResultUriQueryPart(executionResultUri);
+                                const numOfDimensions = Number(qs.parse(executionResultUriQueryPart).dimensions);
+                                validateNumOfDimensions(numOfDimensions);
+                        
+                                return this.getPage(executionResultUri, limit, offset);
+                            }
+                        
+                            /**
+                             * Get whole ExecutionResult
+                             *
+                             * @method getExecutionResult
+                             * @param {string} executionResultUri
+                             *
+                             * @returns {Promise&lt;Execution.IExecutionResult | null&gt;}
+                             *  Promise with &#x60;executionResult&#x60; or &#x60;null&#x60; (null means empty response - HTTP 204)
+                             *  See https://github.com/gooddata/gooddata-typings/blob/v2.1.0/src/Execution.ts#L88
+                             */
+                            public getExecutionResult(executionResultUri: string): Promise&lt;Execution.IExecutionResult | null&gt; {
+                                const executionResultUriQueryPart = getExecutionResultUriQueryPart(executionResultUri);
+                                const numOfDimensions = Number(qs.parse(executionResultUriQueryPart).dimensions);
+                                validateNumOfDimensions(numOfDimensions);
+                        
+                                const limit = Array(numOfDimensions).fill(DEFAULT_LIMIT);
+                                const offset = Array(numOfDimensions).fill(0);
+                        
+                                return this.getAllPages(executionResultUri, limit, offset);
+                            }
+                        
+                            private getPage(
+                                executionResultUri: string,
+                                limit: number[],
+                                offset: number[],
+                            ): Promise&lt;Execution.IExecutionResult | null&gt; {
+                                return this.fetchExecutionResult(executionResultUri, limit, offset).then(
+                                    (executionResultWrapper: Execution.IExecutionResultWrapper | null) =&gt; {
+                                        return executionResultWrapper ? unwrapExecutionResult(executionResultWrapper) : null;
+                                    },
+                                );
+                            }
+                        
+                            private getAllPages(
+                                executionResultUri: string,
+                                limit: number[],
+                                offset: number[],
+                                prevExecutionResult?: Execution.IExecutionResult,
+                            ): Promise&lt;Execution.IExecutionResult | null&gt; {
+                                return this.fetchExecutionResult(executionResultUri, limit, offset).then(
+                                    (executionResultWrapper: Execution.IExecutionResultWrapper | null) =&gt; {
+                                        if (!executionResultWrapper) {
+                                            return null;
+                                        }
+                        
+                                        const executionResult = unwrapExecutionResult(executionResultWrapper);
+                        
+                                        const newExecutionResult = prevExecutionResult
+                                            ? mergePage(prevExecutionResult, executionResult)
+                                            : executionResult;
+                        
+                                        const { offset, total } = executionResult.paging;
+                                        const nextOffset = getNextOffset(limit, offset, total);
+                                        const nextLimit = getNextLimit(limit, nextOffset, total);
+                        
+                                        return nextPageExists(nextOffset, total)
+                                            ? this.getAllPages(executionResultUri, nextLimit, nextOffset, newExecutionResult)
+                                            : newExecutionResult;
+                                    },
+                                );
+                            }
+                        
+                            private fetchExecutionResult(
+                                executionResultUri: string,
+                                limit: number[],
+                                offset: number[],
+                            ): Promise&lt;Execution.IExecutionResultWrapper | null&gt; {
+                                const uri = replaceLimitAndOffsetInUri(executionResultUri, limit, offset);
+                        
+                                return this.xhr
+                                    .get(uri)
+                                    .then(apiResponse =&gt; (apiResponse.response.status === 204 ? null : apiResponse.getData()));
+                            }
+                        }
+                        
+                        function getExecutionResultUriQueryPart(executionResultUri: string): string {
+                            return executionResultUri.split(/\?(.+)/)[1];
+                        }
+                        
+                        function unwrapExecutionResponse(
+                            executionResponseWrapper: Execution.IExecutionResponseWrapper,
+                        ): Execution.IExecutionResponse {
+                            return executionResponseWrapper.executionResponse;
+                        }
+                        
+                        function unwrapExecutionResult(
+                            executionResultWrapper: Execution.IExecutionResultWrapper,
+                        ): Execution.IExecutionResult {
+                            return executionResultWrapper.executionResult;
+                        }
+                        
+                        function validateNumOfDimensions(numOfDimensions: number): void {
+                            invariant(
+                                numOfDimensions === 1 || numOfDimensions === 2,
+                                &#x60;${numOfDimensions} dimensions are not allowed. Only 1 or 2 dimensions are supported.&#x60;,
+                            );
+                        }
+                        
+                        function createExecuteVisualizationBody(visExecution: IVisualizationExecution): string {
+                            const { reference, resultSpec, filters } = visExecution.visualizationExecution;
+                            const resultSpecProp = resultSpec ? { resultSpec } : undefined;
+                            const filtersProp = filters ? { filters } : undefined;
+                        
+                            return JSON.stringify({
+                                visualizationExecution: {
+                                    reference,
+                                    ...resultSpecProp,
+                                    ...filtersProp,
+                                },
+                            });
+                        }
+                        
+                        export function replaceLimitAndOffsetInUri(oldUri: string, limit: number[], offset: number[]): string {
+                            const [uriPart, queryPart] = oldUri.split(/\?(.+)/);
+                            const query = {
+                                ...qs.parse(queryPart),
+                                limit: limit.join(&quot;,&quot;),
+                                offset: offset.join(&quot;,&quot;),
+                            };
+                        
+                            return uriPart + qs.stringify(query, { addQueryPrefix: true });
+                        }
+                        
+                        export function getNextOffset(limit: number[], offset: number[], total: number[]): number[] {
+                            const numOfDimensions = total.length;
+                            const defaultNextRowsOffset = offset[0] + limit[0];
+                        
+                            if (numOfDimensions === 1) {
+                                return [defaultNextRowsOffset];
+                            }
+                        
+                            const defaultNextColumnsOffset = offset[1] + limit[1];
+                            const nextColumnsExist = offset[1] + limit[1] &lt; total[1];
+                        
+                            const nextRowsOffset = nextColumnsExist
+                                ? offset[0] // stay in the same rows
+                                : defaultNextRowsOffset; // go to the next rows
+                        
+                            const nextColumnsOffset = nextColumnsExist
+                                ? defaultNextColumnsOffset // next columns for the same rows
+                                : 0; // start in the beginning of the next rows
+                        
+                            return [nextRowsOffset, nextColumnsOffset];
+                        }
+                        
+                        export function getNextLimit(limit: number[], nextOffset: number[], total: number[]): number[] {
+                            const numOfDimensions = total.length;
+                            validateNumOfDimensions(numOfDimensions);
+                        
+                            const getSingleNextLimit = (limit: number, nextOffset: number, total: number): number =&gt;
+                                nextOffset + limit &gt; total ? total - nextOffset : limit;
+                        
+                            // prevent set up lower limit than possible for 2nd dimension in the beginning of the next rows
+                            if (
+                                numOfDimensions === 2 &amp;&amp;
+                                nextOffset[1] === 0 &amp;&amp; // beginning of the next rows
+                                limit[0] &lt; total[1] // limit from 1st dimension should be used in 2nd dimension
+                            ) {
+                                return [getSingleNextLimit(limit[0], nextOffset[0], total[0]), limit[0]];
+                            }
+                        
+                            return range(numOfDimensions).map((i: number) =&gt; getSingleNextLimit(limit[i], nextOffset[i], total[i]));
+                        }
+                        
+                        export function nextPageExists(nextOffset: number[], total: number[]): boolean {
+                            // expression &quot;return nextLimit[0] &gt; 0&quot; also returns correct result
+                            return nextOffset[0] &lt; total[0];
+                        }
+                        
+                        function mergeHeaderItemsForEachAttribute(
+                            dimension: number,
+                            headerItems: Execution.IResultHeaderItem[][][] | undefined,
+                            result: Execution.IExecutionResult,
+                        ) {
+                            if (headerItems &amp;&amp; result.headerItems) {
+                                for (let attrIdx = 0; attrIdx &lt; headerItems[dimension].length; attrIdx += 1) {
+                                    result.headerItems[dimension][attrIdx].push(...headerItems[dimension][attrIdx]);
+                                }
+                            }
+                        }
+                        
+                        // works only for one or two dimensions
+                        export function mergePage(
+                            prevExecutionResult: Execution.IExecutionResult,
+                            executionResult: Execution.IExecutionResult,
+                        ): Execution.IExecutionResult {
+                            const result = prevExecutionResult;
+                            const { headerItems, data, paging } = executionResult;
+                        
+                            const mergeHeaderItems = (dimension: number) =&gt; {
+                                // for 1 dimension we already have the headers from first page
+                                const otherDimension = dimension === 0 ? 1 : 0;
+                                const isEdge = paging.offset[otherDimension] === 0;
+                                if (isEdge) {
+                                    mergeHeaderItemsForEachAttribute(dimension, headerItems, result);
+                                }
+                            };
+                        
+                            // merge data
+                            const rowOffset = paging.offset[0];
+                            if (result.data[rowOffset]) {
+                                // appending columns to existing rows
+                                for (let i = 0; i &lt; data.length; i += 1) {
+                                    const columns = data[i] as Execution.DataValue[];
+                                    const resultData = result.data[i + rowOffset] as Execution.DataValue[];
+                                    resultData.push(...columns);
+                                }
+                            } else {
+                                // appending new rows
+                                const resultData = result.data as Execution.DataValue[];
+                                const currentPageData = data as Execution.DataValue[];
+                                resultData.push(...currentPageData);
+                            }
+                        
+                            // merge headerItems
+                            if (paging.offset.length &gt; 1) {
+                                mergeHeaderItems(0);
+                                mergeHeaderItems(1);
+                            } else {
+                                mergeHeaderItemsForEachAttribute(0, headerItems, result);
+                            }
+                        
+                            // update page count
+                            if (paging.offset.length === 1) {
+                                result.paging.count = [get(result, &quot;headerItems[0][0]&quot;, []).length];
+                            }
+                            if (paging.offset.length === 2) {
+                                result.paging.count = [
+                                    get(result, &quot;headerItems[0][0]&quot;, []).length,
+                                    get(result, &quot;headerItems[1][0]&quot;, []).length,
+                                ];
+                            }
+                        
+                            return result;
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

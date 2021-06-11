@@ -1,0 +1,773 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1>util Class</h1>
+                        <div class="meta">
+                        
+                        
+                                <div class="foundat">
+                                    <strong>Defined in:</strong> <a href="../files/src_util.ts.html#l8"><code>src&#x2F;util.ts:8</code></a>
+                                </div>
+                        
+                                    <strong>Module:</strong> <a href="../modules/util.html">util</a>
+                        
+                        </div>
+                        
+                        
+                        <div class="intro">
+                            <p>Utility methods. Mostly private</p>
+                        
+                        </div>
+                        
+                        
+                        
+                        <div id="classdocs" class="tabview no-columns">
+                            <ul class="api-class-tabs">
+                                <li class="api-class-tab index"><a href="#index">Index</a></li>
+                        
+                                    <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+                            </ul>
+                            <div>
+                        
+                                <div id="index" class="api-class-tabpanel index">
+                                        <div class="api-options">
+                                            Show:
+                                            <label>
+                                                <input type="checkbox" class="api-show-inherited" checked>
+                                                Inherited
+                                            </label>
+                                    
+                                            <label>
+                                                <input type="checkbox" class="api-show-protected">
+                                                Protected
+                                            </label>
+                                    
+                                            <label>
+                                                <input type="checkbox" class="api-show-private">
+                                                Private
+                                            </label>
+                                            <label>
+                                                <input type="checkbox" class="api-show-deprecated">
+                                                Deprecated
+                                            </label>
+                                        </div>
+                                    
+                        
+                                        <div class="index-section methods">
+                                            <h3>Methods</h3>
+                        
+                                            <ul class="index-list methods">
+                                                    <li class="index-item method">
+                                                        <a href="#method_getAccountInfo">getAccountInfo</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_getAccountInfoInBootstrap">getAccountInfoInBootstrap</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_getCurrentProfile">getCurrentProfile</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_getFeatureFlags">getFeatureFlags</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method private">
+                                                        <a href="#method_getIn">getIn</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_isLoggedIn">isLoggedIn</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_isLoggedInProject">isLoggedInProject</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_login">login</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_loginSso">loginSso</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_logout">logout</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_updateProfileSettings">updateProfileSettings</a>
+                        
+                                                    </li>
+                                            </ul>
+                                        </div>
+                        
+                        
+                        
+                                </div>
+                        
+                                    <div id="methods" class="api-class-tabpanel">
+                                            <div class="api-options">
+                                                Show:
+                                                <label>
+                                                    <input type="checkbox" class="api-show-inherited" checked>
+                                                    Inherited
+                                                </label>
+                                        
+                                                <label>
+                                                    <input type="checkbox" class="api-show-protected">
+                                                    Protected
+                                                </label>
+                                        
+                                                <label>
+                                                    <input type="checkbox" class="api-show-private">
+                                                    Private
+                                                </label>
+                                                <label>
+                                                    <input type="checkbox" class="api-show-deprecated">
+                                                    Deprecated
+                                                </label>
+                                            </div>
+                                        
+                        
+                                            <div id="method_getAccountInfo" class="method item">
+                                                <h3 class="name"><code>getAccountInfo</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.ts.html#l174"><code>src&#x2F;user.ts:174</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Returns info about currently logged in user from bootstrap resource</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                            
+                                            </div>
+                                            <div id="method_getAccountInfoInBootstrap" class="method item">
+                                                <h3 class="name"><code>getAccountInfoInBootstrap</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>bootstrapData</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.ts.html#l185"><code>src&#x2F;user.ts:185</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Returns current user info from bootstrapData</p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">bootstrapData</code>
+                                                                    <span class="type">Object</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <ul>
+                                            <li>data was got from bootstrap resource</li>
+                                            </ul>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                            
+                                            </div>
+                                            <div id="method_getCurrentProfile" class="method item">
+                                                <h3 class="name"><code>getCurrentProfile</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                                    <span class="returns-inline">
+                                                        <span class="type">Promise</span>
+                                                    </span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.ts.html#l152"><code>src&#x2F;user.ts:152</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Gets current user's profile</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                                    <div class="returns">
+                                                        <h4>Returns</h4>
+                                            
+                                                        <div class="returns-description">
+                                                                    <span class="type">Promise</span>:
+                                                                <p>Resolves with account setting object</p>
+                                            
+                                                        </div>
+                                                    </div>
+                                            
+                                            </div>
+                                            <div id="method_getFeatureFlags" class="method item">
+                                                <h3 class="name"><code>getFeatureFlags</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.ts.html#l230"><code>src&#x2F;user.ts:230</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Returns the feature flags valid for the currently logged in user.</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                            
+                                            </div>
+                                            <div id="method_getIn" class="method item private">
+                                                <h3 class="name"><code>getIn</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>path</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                            
+                                            
+                                                    <span class="flag private">private</span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_util.ts.html#l22"><code>src&#x2F;util.ts:22</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Create getter function for accessing nested objects</p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">path</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <p>Target path to nested object</p>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                            
+                                            </div>
+                                            <div id="method_isLoggedIn" class="method item">
+                                                <h3 class="name"><code>isLoggedIn</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                                    <span class="returns-inline">
+                                                        <span class="type">Promise</span>
+                                                    </span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.ts.html#l26"><code>src&#x2F;user.ts:26</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Find out whether a user is logged in</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                                    <div class="returns">
+                                                        <h4>Returns</h4>
+                                            
+                                                        <div class="returns-description">
+                                                                    <span class="type">Promise</span>:
+                                                                <p>resolves with true if user logged in, false otherwise</p>
+                                            
+                                                        </div>
+                                                    </div>
+                                            
+                                            </div>
+                                            <div id="method_isLoggedInProject" class="method item">
+                                                <h3 class="name"><code>isLoggedInProject</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>projectId</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                                    <span class="returns-inline">
+                                                        <span class="type">Promise</span>
+                                                    </span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.ts.html#l53"><code>src&#x2F;user.ts:53</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Find out whether a specified project is available to a currently logged user</p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">projectId</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <p>A project identifier</p>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                                    <div class="returns">
+                                                        <h4>Returns</h4>
+                                            
+                                                        <div class="returns-description">
+                                                                    <span class="type">Promise</span>:
+                                                                <p>Resolves with true if user logged in and project available,
+                                            resolves with false if user logged in and project not available,
+                                            rejects if user not logged in</p>
+                                            
+                                                        </div>
+                                                    </div>
+                                            
+                                            </div>
+                                            <div id="method_login" class="method item">
+                                                <h3 class="name"><code>login</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>username</code>
+                                                            </li>
+                                                            <li class="arg">
+                                                                    <code>password</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.ts.html#l83"><code>src&#x2F;user.ts:83</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>This function provides an authentication entry point to the GD API. It is needed to authenticate
+                                            by calling this function prior any other API calls. After providing valid credentials
+                                            every subsequent API call in a current session will be authenticated.</p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">username</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
+                                                                </div>
+                                            
+                                                            </li>
+                                                            <li class="param">
+                                                                    <code class="param-name">password</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                            
+                                            </div>
+                                            <div id="method_loginSso" class="method item">
+                                                <h3 class="name"><code>loginSso</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>encryptedClaims</code>
+                                                            </li>
+                                                            <li class="arg">
+                                                                    <code>ssoProvider</code>
+                                                            </li>
+                                                            <li class="arg">
+                                                                    <code>targetUrl</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.ts.html#l108"><code>src&#x2F;user.ts:108</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>This function provides an authentication entry point to the GD API via SSO
+                                            <a href="https://help.gooddata.com/display/developer/GoodData+PGP+Single+Sign-On">https://help.gooddata.com/display/developer/GoodData+PGP+Single+Sign-On</a></p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">encryptedClaims</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <p>PGP message</p>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                            <li class="param">
+                                                                    <code class="param-name">ssoProvider</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
+                                                                </div>
+                                            
+                                                            </li>
+                                                            <li class="param">
+                                                                    <code class="param-name">targetUrl</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                            
+                                            </div>
+                                            <div id="method_logout" class="method item">
+                                                <h3 class="name"><code>logout</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.ts.html#l129"><code>src&#x2F;user.ts:129</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Logs out current user</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                            
+                                            </div>
+                                            <div id="method_updateProfileSettings" class="method item">
+                                                <h3 class="name"><code>updateProfileSettings</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>profileId</code>
+                                                            </li>
+                                                            <li class="arg">
+                                                                    <code>profileSetting</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/project.html">project</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_user.ts.html#l161"><code>src&#x2F;user.ts:161</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Updates user's profile settings</p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">profileId</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <ul>
+                                            <li>User profile identifier</li>
+                                            </ul>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                            <li class="param">
+                                                                    <code class="param-name">profileSetting</code>
+                                                                    <span class="type">Object</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                     
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                            
+                                            </div>
+                                    </div>
+                        
+                        
+                        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,162 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1 class="file-heading">File: src/gooddata.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // (C) 2007-2020 GoodData Corporation
+                        import cloneDeep from &quot;lodash/cloneDeep&quot;;
+                        import { XhrModule } from &quot;./xhr&quot;;
+                        import { UserModule } from &quot;./user&quot;;
+                        import { MetadataModule } from &quot;./metadata&quot;;
+                        import { ExecutionModule } from &quot;./execution&quot;;
+                        import { ProjectModule } from &quot;./project&quot;;
+                        import { ReportModule } from &quot;./report/report&quot;;
+                        import { DashboardModule } from &quot;./dashboard/dashboard&quot;;
+                        import { sanitizeConfig, IConfigStorage, ConfigModule } from &quot;./config&quot;;
+                        import { CatalogueModule } from &quot;./catalogue&quot;;
+                        import { LdmModule } from &quot;./ldm&quot;;
+                        
+                        import { AttributesMapLoaderModule } from &quot;./utils/attributesMapLoader&quot;;
+                        import { getAttributesDisplayForms } from &quot;./utils/visualizationObjectHelper&quot;;
+                        import { convertReferencesToUris, convertUrisToReferences, ReferenceConverter } from &quot;./referenceHandling&quot;;
+                        import { MetadataModuleExt } from &quot;./metadataExt&quot;;
+                        import { BootstrapModule } from &quot;./bootstrap&quot;;
+                        
+                        /**
+                         * # JS SDK
+                         * Here is a set of functions that mostly are a thin wraper over the [GoodData API](https://developer.gooddata.com/api).
+                         * Before calling any of those functions, you need to authenticate with a valid GoodData
+                         * user credentials. After that, every subsequent call in the current session is authenticated.
+                         * You can find more about the GD authentication mechanism here.
+                         *
+                         * ## GD Authentication Mechansim
+                         * In this JS SDK library we provide you with a simple &#x60;login(username, passwd)&#x60; function
+                         * that does the magic for you.
+                         * To fully understand the authentication mechansim, please read
+                         * [Authentication via API article](http://developer.gooddata.com/article/authentication-via-api)
+                         * on [GoodData Developer Portal](http://developer.gooddata.com/)
+                         *
+                         * @module sdk
+                         * @class sdk
+                         */
+                        export class SDK {
+                            public config: ConfigModule;
+                            public xhr: XhrModule;
+                            public user: UserModule;
+                            public md: MetadataModule;
+                            public mdExt: MetadataModuleExt;
+                            public execution: ExecutionModule;
+                            public project: ProjectModule;
+                            public report: ReportModule;
+                            public dashboard: DashboardModule;
+                            public catalogue: CatalogueModule;
+                            public bootstrap: BootstrapModule;
+                            public ldm: LdmModule;
+                            public configStorage: IConfigStorage;
+                            public utils: {
+                                loadAttributesMap: any;
+                                getAttributesDisplayForms: any;
+                                convertReferencesToUris: ReferenceConverter;
+                                convertUrisToReferences: ReferenceConverter;
+                            };
+                        
+                            constructor(private fetchMethod: typeof fetch, config = {}) {
+                                this.configStorage = sanitizeConfig(config); // must be plain object, SDK modules MUST use this storage
+                        
+                                this.config = new ConfigModule(this.configStorage);
+                                this.xhr = new XhrModule(fetchMethod, this.configStorage);
+                                this.user = new UserModule(this.xhr);
+                                this.md = new MetadataModule(this.xhr);
+                                this.mdExt = new MetadataModuleExt(this.xhr);
+                                this.execution = new ExecutionModule(this.xhr, this.md);
+                                this.project = new ProjectModule(this.xhr);
+                                this.report = new ReportModule(this.xhr);
+                                this.dashboard = new DashboardModule(this.xhr);
+                                this.catalogue = new CatalogueModule(this.xhr, this.execution);
+                                this.bootstrap = new BootstrapModule(this.xhr);
+                                this.ldm = new LdmModule(this.xhr);
+                        
+                                const attributesMapLoaderModule = new AttributesMapLoaderModule(this.md);
+                                this.utils = {
+                                    loadAttributesMap: attributesMapLoaderModule.loadAttributesMap.bind(attributesMapLoaderModule),
+                                    getAttributesDisplayForms,
+                                    convertReferencesToUris,
+                                    convertUrisToReferences,
+                                };
+                            }
+                        
+                            public clone() {
+                                return new SDK(this.fetchMethod, cloneDeep(this.configStorage));
+                            }
+                        }
+                        
+                        /**
+                         * # Factory for creating SDK instances
+                         *
+                         * @param {object|null} config object to be passed to SDK constructor
+                         * @method setCustomDomain
+                         */
+                        export const factory = (fetchMethod: typeof fetch) =&gt; (config = {}) =&gt; new SDK(fetchMethod, config);
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

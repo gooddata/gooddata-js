@@ -1,0 +1,90 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1 class="file-heading">File: src/bootstrap.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // (C) 2020-2021 GoodData Corporation
+                        import { XhrModule } from &quot;./xhr&quot;;
+                        export class BootstrapModule {
+                            constructor(private xhr: XhrModule) {}
+                        
+                            /**
+                             * Returns information about currently logged in user from bootstrap resource
+                             * @method getBootstrapData
+                             */
+                            public getBootstrapData(): Promise&lt;any&gt; {
+                                return this.xhr.get(&quot;/gdc/app/account/bootstrap&quot;).then((result: any) =&gt; result.getData());
+                            }
+                        
+                            /**
+                             * Returns the mapboxToken for using GeoPushpinChart
+                             * @method getMapboxToken
+                             * @param {any} bootstrapData - data from bootstrap resource
+                             */
+                            public getMapboxToken(bootstrapData: any): string | null {
+                                return bootstrapData.bootstrapResource.current.mapboxToken || null;
+                            }
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

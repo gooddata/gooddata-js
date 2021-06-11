@@ -1,0 +1,192 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1 class="file-heading">File: src/execution/execute-afm.convert.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // (C) 2007-2019 GoodData Corporation
+                        
+                        import cloneDeep from &quot;lodash/cloneDeep&quot;;
+                        import { AFM, ExecuteAFM } from &quot;@gooddata/typings&quot;;
+                        
+                        function convertElementsArray(arr: string[], isText?: boolean): ExecuteAFM.AttributeElements {
+                            return isText ? { values: arr } : { uris: arr };
+                        }
+                        
+                        function convertPositiveAttributeFilter(
+                            filter: AFM.IPositiveAttributeFilter,
+                        ): ExecuteAFM.IPositiveAttributeFilter {
+                            const { positiveAttributeFilter: oldFilter } = filter;
+                        
+                            return {
+                                positiveAttributeFilter: {
+                                    displayForm: oldFilter.displayForm,
+                                    in: convertElementsArray(oldFilter.in, oldFilter.textFilter),
+                                },
+                            };
+                        }
+                        
+                        function convertNegativeAttributeFilter(
+                            filter: AFM.INegativeAttributeFilter,
+                        ): ExecuteAFM.INegativeAttributeFilter {
+                            const { negativeAttributeFilter: oldFilter } = filter;
+                        
+                            return {
+                                negativeAttributeFilter: {
+                                    displayForm: oldFilter.displayForm,
+                                    notIn: convertElementsArray(oldFilter.notIn, oldFilter.textFilter),
+                                },
+                            };
+                        }
+                        
+                        export function convertFilter(filter: AFM.CompatibilityFilter): ExecuteAFM.CompatibilityFilter {
+                            if (AFM.isPositiveAttributeFilter(filter)) {
+                                return convertPositiveAttributeFilter(filter);
+                            } else if (AFM.isNegativeAttributeFilter(filter)) {
+                                return convertNegativeAttributeFilter(filter);
+                            }
+                        
+                            return filter;
+                        }
+                        
+                        function convertMeasureFilter(filter: AFM.FilterItem): ExecuteAFM.FilterItem {
+                            if (AFM.isPositiveAttributeFilter(filter)) {
+                                return convertPositiveAttributeFilter(filter);
+                            } else if (AFM.isNegativeAttributeFilter(filter)) {
+                                return convertNegativeAttributeFilter(filter);
+                            }
+                        
+                            return filter;
+                        }
+                        
+                        function convertFilters(filters?: AFM.CompatibilityFilter[]): ExecuteAFM.CompatibilityFilter[] | undefined {
+                            return filters !== undefined ? filters.map(convertFilter) : filters;
+                        }
+                        
+                        function convertMeasureFilters(filters?: AFM.FilterItem[]): ExecuteAFM.FilterItem[] | undefined {
+                            return filters !== undefined ? filters.map(convertMeasureFilter) : filters;
+                        }
+                        
+                        function convertMeasure(measure: AFM.IMeasure): ExecuteAFM.IMeasure {
+                            if (AFM.isSimpleMeasureDefinition(measure.definition)) {
+                                const simpleMeasure = measure.definition.measure;
+                                const filters = convertMeasureFilters(simpleMeasure.filters);
+                                const filtersProp = filters ? { filters } : {};
+                        
+                                return {
+                                    ...measure,
+                                    definition: {
+                                        measure: {
+                                            ...simpleMeasure,
+                                            ...filtersProp,
+                                        },
+                                    },
+                                };
+                            }
+                        
+                            return measure;
+                        }
+                        
+                        function convertMeasures(measures?: AFM.IMeasure[]): ExecuteAFM.IMeasure[] | undefined {
+                            return measures !== undefined ? measures.map(convertMeasure) : measures;
+                        }
+                        
+                        /**
+                         * Converts &#x27;client-land&#x27; AFM to one that will be sent to backend.
+                         *
+                         * @param afm afm to convert
+                         * @returns new instance of ExecuteAFM.IAfm structure
+                         */
+                        export function convertAfm(afm?: AFM.IAfm): ExecuteAFM.IAfm {
+                            if (afm === undefined) {
+                                return {};
+                            }
+                        
+                            const executeAFM: ExecuteAFM.IAfm = {
+                                ...afm,
+                                measures: convertMeasures(afm.measures),
+                                filters: convertFilters(afm.filters),
+                            };
+                        
+                            return cloneDeep(executeAFM);
+                        }
+                        
+                        function convertExecution(execution: AFM.IExecution): ExecuteAFM.IExecution {
+                            return {
+                                execution: {
+                                    afm: convertAfm(execution.execution.afm),
+                                    resultSpec: execution.execution.resultSpec,
+                                },
+                            };
+                        }
+                        
+                        /**
+                         * Converts &#x27;client-land&#x27; AFM to JSON payload acceptable by REST API.
+                         *
+                         * @param execution execution to send to API
+                         */
+                        export function convertExecutionToJson(execution: AFM.IExecution): string {
+                            return JSON.stringify(convertExecution(execution));
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,107 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1 class="file-heading">File: src/DataLayer/index.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // (C) 2007-2018 GoodData Corporation
+                        import * as Header from &quot;./interfaces/Header&quot;;
+                        import * as DataSourceUtils from &quot;./dataSources/utils&quot;;
+                        import * as DataSource from &quot;./dataSources/DataSource&quot;;
+                        import * as Filters from &quot;./helpers/filters&quot;;
+                        import * as Uri from &quot;./helpers/uri&quot;;
+                        import { createSubject, ISubject } from &quot;./utils/async&quot;;
+                        import { toAfmResultSpec } from &quot;./converters/toAfmResultSpec&quot;;
+                        import * as ResultSpecUtils from &quot;./utils/ResultSpecUtils&quot;;
+                        import * as AfmUtils from &quot;./utils/AfmUtils&quot;;
+                        import { DataTable } from &quot;./DataTable&quot;;
+                        import { DummyAdapter } from &quot;./utils/DummyAdapter&quot;;
+                        import { ExecuteAfmAdapter } from &quot;./adapters/ExecuteAfmAdapter&quot;;
+                        import { UriAdapter } from &quot;./adapters/UriAdapter&quot;;
+                        import { IAdapter } from &quot;./interfaces/Adapter&quot;;
+                        
+                        /**
+                         * Data layer
+                         *
+                         * @module DataLayer
+                         * @class DataLayer
+                         */
+                        export {
+                            Header,
+                            AfmUtils,
+                            ExecuteAfmAdapter,
+                            DataSourceUtils,
+                            toAfmResultSpec,
+                            createSubject,
+                            ISubject,
+                            IAdapter,
+                            DataSource,
+                            DataTable,
+                            DummyAdapter,
+                            Filters,
+                            ResultSpecUtils,
+                            Uri,
+                            UriAdapter,
+                        };
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,134 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1 class="file-heading">File: src/execution.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // (C) 2007-2018 GoodData Corporation
+                        import { ExperimentalExecutionsModule } from &quot;./execution/experimental-executions&quot;;
+                        import { AttributesMapLoaderModule } from &quot;./utils/attributesMapLoader&quot;;
+                        import { ExecuteAfmModule } from &quot;./execution/execute-afm&quot;;
+                        import { XhrModule } from &quot;./xhr&quot;;
+                        import { MetadataModule } from &quot;./metadata&quot;;
+                        
+                        /**
+                         * Execution endpoints
+                         *
+                         * @module execution
+                         * @class execution
+                         *
+                         */
+                        export class ExecutionModule {
+                            public readonly executeAfm: ExecuteAfmModule[&quot;executeAfm&quot;];
+                            public readonly getExecutionResponse: ExecuteAfmModule[&quot;getExecutionResponse&quot;];
+                        
+                            public readonly _executeVisualization: ExecuteAfmModule[&quot;_executeVisualization&quot;];
+                            public readonly _getVisExecutionResponse: ExecuteAfmModule[&quot;_getVisExecutionResponse&quot;];
+                        
+                            public readonly getPartialExecutionResult: ExecuteAfmModule[&quot;getPartialExecutionResult&quot;];
+                            public readonly getExecutionResult: ExecuteAfmModule[&quot;getExecutionResult&quot;];
+                            private readonly executeAfmModule: ExecuteAfmModule;
+                            private readonly xhr: XhrModule;
+                            private readonly md: MetadataModule;
+                        
+                            constructor(xhr: XhrModule, md: MetadataModule) {
+                                this.executeAfmModule = new ExecuteAfmModule(xhr);
+                                this.executeAfm = this.executeAfmModule.executeAfm.bind(this.executeAfmModule);
+                                this.getExecutionResponse = this.executeAfmModule.getExecutionResponse.bind(this.executeAfmModule);
+                                this._executeVisualization = this.executeAfmModule._executeVisualization.bind(this.executeAfmModule);
+                                this._getVisExecutionResponse = this.executeAfmModule._getVisExecutionResponse.bind(
+                                    this.executeAfmModule,
+                                );
+                                this.getPartialExecutionResult = this.executeAfmModule.getPartialExecutionResult.bind(
+                                    this.executeAfmModule,
+                                );
+                                this.getExecutionResult = this.executeAfmModule.getExecutionResult.bind(this.executeAfmModule);
+                                this.xhr = xhr;
+                                this.md = md;
+                            }
+                        
+                            public getData(projectId: string, columns: any[], executionConfiguration: any = {}, settings: any = {}) {
+                                return this.getExperimentalExecutionsModule().getData(
+                                    projectId,
+                                    columns,
+                                    executionConfiguration,
+                                    settings,
+                                );
+                            }
+                        
+                            public mdToExecutionDefinitionsAndColumns(projectId: string, mdObj: any, options = {}) {
+                                return this.getExperimentalExecutionsModule().mdToExecutionDefinitionsAndColumns(
+                                    projectId,
+                                    mdObj,
+                                    options,
+                                );
+                            }
+                        
+                            private getExperimentalExecutionsModule() {
+                                const loaderModule = new AttributesMapLoaderModule(this.md);
+                        
+                                return new ExperimentalExecutionsModule(this.xhr, loaderModule.loadAttributesMap.bind(loaderModule));
+                            }
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,194 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1 class="file-heading">File: src/report/report.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // (C) 2007-2019 GoodData Corporation
+                        import { AFM, ExecuteAFM } from &quot;@gooddata/typings&quot;;
+                        import compact from &quot;lodash/compact&quot;;
+                        import isEmpty from &quot;lodash/isEmpty&quot;;
+                        import { ERROR_RESTRICTED_CODE, ERROR_RESTRICTED_MESSAGE } from &quot;../constants/errors&quot;;
+                        import {
+                            convertAbsoluteDateFilter,
+                            convertRelativeDateFilter,
+                        } from &quot;../DataLayer/converters/FilterConverter&quot;;
+                        import { convertFilter as convertAttributeFilter } from &quot;../execution/execute-afm.convert&quot;;
+                        import { IBaseExportConfig, IExportConfig, IExportResponse } from &quot;../interfaces&quot;;
+                        import { ApiResponseError, XhrModule, ApiResponse } from &quot;../xhr&quot;;
+                        import { handleHeadPolling, IPollingOptions } from &quot;../util&quot;;
+                        import { isExportFinished } from &quot;../utils/export&quot;;
+                        
+                        interface IExtendedExportConfig extends IBaseExportConfig {
+                            showFilters?: boolean;
+                            afm?: ExecuteAFM.IAfm;
+                        }
+                        
+                        interface IResultExport {
+                            executionResult: string;
+                            exportConfig: IExtendedExportConfig;
+                        }
+                        
+                        interface IExportResultPayload {
+                            resultExport: IResultExport;
+                        }
+                        
+                        /**
+                         * Functions for working with reports
+                         *
+                         * @Class report
+                         * @module report
+                         */
+                        export class ReportModule {
+                            constructor(private xhr: XhrModule) {}
+                        
+                            /**
+                             * exportResult
+                             * request new result export
+                             * request new export of existing AFM execution
+                             *
+                             * @experimental
+                             * @method exportResult
+                             * @param {String} projectId GoodData projectId
+                             * @param {String} executionResult report which should be exported
+                             * @param {IExportConfig} exportConfig requested export options
+                             * @param {Object} pollingOptions for polling (maxAttempts, pollStep)
+                             * @return {Promise} Resolves if export successfully,
+                             *                   Reject if export has error (network error, api error)
+                             */
+                            public exportResult(
+                                projectId: string,
+                                executionResult: string,
+                                exportConfig: IExportConfig = {},
+                                pollingOptions: IPollingOptions = {},
+                            ): Promise&lt;IExportResponse&gt; {
+                                const requestPayload: IExportResultPayload = {
+                                    resultExport: {
+                                        executionResult,
+                                        exportConfig: {
+                                            ...exportConfig,
+                                            ...this.sanitizeExportConfig(exportConfig),
+                                        },
+                                    },
+                                };
+                        
+                                return this.xhr
+                                    .post(&#x60;/gdc/internal/projects/${projectId}/exportResult&#x60;, { body: requestPayload })
+                                    .then((response: ApiResponse) =&gt; response.getData())
+                                    .then((data: IExportResponse) =&gt;
+                                        handleHeadPolling(this.xhr.get.bind(this.xhr), data.uri, isExportFinished, pollingOptions),
+                                    )
+                                    .catch(this.handleExportResultError);
+                            }
+                        
+                            private sanitizeExportConfig(exportConfig: IExportConfig): IExtendedExportConfig {
+                                const { afm } = exportConfig;
+                        
+                                if (afm &amp;&amp; !isEmpty(afm.filters)) {
+                                    const sanitizedAfm: ExecuteAFM.IAfm = {
+                                        ...afm,
+                                        filters: this.sanitizeFilters(afm.filters),
+                                    };
+                                    return {
+                                        ...exportConfig,
+                                        afm: sanitizedAfm,
+                                    };
+                                }
+                                return exportConfig;
+                            }
+                        
+                            private handleExportResultError = (error: ApiResponseError | Error): Promise&lt;Error&gt; =&gt; {
+                                if (
+                                    this.isApiResponseError(error) &amp;&amp;
+                                    error.response.status === 400 &amp;&amp;
+                                    error.responseBody.indexOf(ERROR_RESTRICTED_CODE) !== -1
+                                ) {
+                                    return Promise.reject({
+                                        ...error,
+                                        message: ERROR_RESTRICTED_MESSAGE,
+                                    });
+                                }
+                                return Promise.reject(error);
+                            };
+                        
+                            private isApiResponseError(error: ApiResponseError | Error): error is ApiResponseError {
+                                return (error as ApiResponseError).response !== undefined;
+                            }
+                        
+                            private sanitizeFilters(filters?: AFM.CompatibilityFilter[]): ExecuteAFM.CompatibilityFilter[] {
+                                return filters ? compact(filters.map(this.sanitizeFilter)) : [];
+                            }
+                        
+                            private sanitizeFilter(filter: AFM.CompatibilityFilter): ExecuteAFM.CompatibilityFilter | null {
+                                if (AFM.isAttributeFilter(filter)) {
+                                    return convertAttributeFilter(filter);
+                                } else if (AFM.isAbsoluteDateFilter(filter)) {
+                                    return convertAbsoluteDateFilter(filter);
+                                } else if (AFM.isRelativeDateFilter(filter)) {
+                                    return convertRelativeDateFilter(filter);
+                                }
+                                return filter;
+                            }
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

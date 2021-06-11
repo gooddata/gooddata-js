@@ -1,0 +1,579 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1>config Class</h1>
+                        <div class="meta">
+                        
+                        
+                                <div class="foundat">
+                                    <strong>Defined in:</strong> <a href="../files/src_config.ts.html#l5"><code>src&#x2F;config.ts:5</code></a>
+                                </div>
+                        
+                                    <strong>Module:</strong> <a href="../modules/config.html">config</a>
+                        
+                        </div>
+                        
+                        
+                        <div class="intro">
+                            <p>Config module holds SDK configuration variables</p>
+                        <p>Currently its only custom domain - which enabled using
+                        sdk from different domain (using CORS)</p>
+                        <p>Never set properties directly - always use setter methods</p>
+                        
+                        </div>
+                        
+                        
+                        
+                        <div id="classdocs" class="tabview no-columns">
+                            <ul class="api-class-tabs">
+                                <li class="api-class-tab index"><a href="#index">Index</a></li>
+                        
+                                    <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+                            </ul>
+                            <div>
+                        
+                                <div id="index" class="api-class-tabpanel index">
+                                        <div class="api-options">
+                                            Show:
+                                            <label>
+                                                <input type="checkbox" class="api-show-inherited" checked>
+                                                Inherited
+                                            </label>
+                                    
+                                            <label>
+                                                <input type="checkbox" class="api-show-protected">
+                                                Protected
+                                            </label>
+                                    
+                                            <label>
+                                                <input type="checkbox" class="api-show-private">
+                                                Private
+                                            </label>
+                                            <label>
+                                                <input type="checkbox" class="api-show-deprecated">
+                                                Deprecated
+                                            </label>
+                                        </div>
+                                    
+                        
+                                        <div class="index-section methods">
+                                            <h3>Methods</h3>
+                        
+                                            <ul class="index-list methods">
+                                                    <li class="index-item method">
+                                                        <a href="#method_createModule">createModule</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_getBootstrapData">getBootstrapData</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_getCustomDomain">getCustomDomain</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method private">
+                                                        <a href="#method_getJsPackage">getJsPackage</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_getMapboxToken">getMapboxToken</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_sanitizeConfig">sanitizeConfig</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method">
+                                                        <a href="#method_setCustomDomain">setCustomDomain</a>
+                        
+                                                    </li>
+                                                    <li class="index-item method private">
+                                                        <a href="#method_setJsPackage">setJsPackage</a>
+                        
+                                                    </li>
+                                            </ul>
+                                        </div>
+                        
+                        
+                        
+                                </div>
+                        
+                                    <div id="methods" class="api-class-tabpanel">
+                                            <div class="api-options">
+                                                Show:
+                                                <label>
+                                                    <input type="checkbox" class="api-show-inherited" checked>
+                                                    Inherited
+                                                </label>
+                                        
+                                                <label>
+                                                    <input type="checkbox" class="api-show-protected">
+                                                    Protected
+                                                </label>
+                                        
+                                                <label>
+                                                    <input type="checkbox" class="api-show-private">
+                                                    Private
+                                                </label>
+                                                <label>
+                                                    <input type="checkbox" class="api-show-deprecated">
+                                                    Deprecated
+                                                </label>
+                                            </div>
+                                        
+                        
+                                            <div id="method_createModule" class="method item">
+                                                <h3 class="name"><code>createModule</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>configStorage</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                                    <span class="returns-inline">
+                                                        <span class="type"></span>
+                                                    </span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_config.ts.html#l58"><code>src&#x2F;config.ts:58</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Config factory</p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">configStorage</code>
+                                                                    <span class="type">Object | Null</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <p>config object</p>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                                    <div class="returns">
+                                                        <h4>Returns</h4>
+                                            
+                                                        <div class="returns-description">
+                                                                <p>SDK config module</p>
+                                            
+                                                        </div>
+                                                    </div>
+                                            
+                                            </div>
+                                            <div id="method_getBootstrapData" class="method item">
+                                                <h3 class="name"><code>getBootstrapData</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/report.html">report</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_bootstrap.ts.html#l6"><code>src&#x2F;bootstrap.ts:6</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Returns information about currently logged in user from bootstrap resource</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                            
+                                            </div>
+                                            <div id="method_getCustomDomain" class="method item">
+                                                <h3 class="name"><code>getCustomDomain</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_config.ts.html#l85"><code>src&#x2F;config.ts:85</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Returns current domain</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                            
+                                            </div>
+                                            <div id="method_getJsPackage" class="method item private">
+                                                <h3 class="name"><code>getJsPackage</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                                    <span class="returns-inline">
+                                                        <span class="type">Object</span>
+                                                    </span>
+                                            
+                                            
+                                                    <span class="flag private">private</span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_config.ts.html#l109"><code>src&#x2F;config.ts:109</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Returns JS package and version info</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                                    <div class="returns">
+                                                        <h4>Returns</h4>
+                                            
+                                                        <div class="returns-description">
+                                                                    <span class="type">Object</span>:
+                                                                <p>with 'name' and 'version' properties</p>
+                                            
+                                                        </div>
+                                                    </div>
+                                            
+                                            </div>
+                                            <div id="method_getMapboxToken" class="method item">
+                                                <h3 class="name"><code>getMapboxToken</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>bootstrapData</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                                <p>Provided by the <a href="../modules/report.html">report</a> module.</p>
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_bootstrap.ts.html#l14"><code>src&#x2F;bootstrap.ts:14</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Returns the mapboxToken for using GeoPushpinChart</p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">bootstrapData</code>
+                                                                    <span class="type">Any</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <ul>
+                                            <li>data from bootstrap resource</li>
+                                            </ul>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                            
+                                            </div>
+                                            <div id="method_sanitizeConfig" class="method item">
+                                                <h3 class="name"><code>sanitizeConfig</code></h3>
+                                            
+                                                    <span class="paren">()</span>
+                                            
+                                                    <span class="returns-inline">
+                                                        <span class="type">Object | Undefined</span>
+                                                    </span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_config.ts.html#l34"><code>src&#x2F;config.ts:34</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Returns sanitized config</p>
+                                            
+                                                </div>
+                                            
+                                            
+                                                    <div class="returns">
+                                                        <h4>Returns</h4>
+                                            
+                                                        <div class="returns-description">
+                                                                    <span class="type">Object | Undefined</span>:
+                                                                <p>config with sanitized domain</p>
+                                            
+                                                        </div>
+                                                    </div>
+                                            
+                                            </div>
+                                            <div id="method_setCustomDomain" class="method item">
+                                                <h3 class="name"><code>setCustomDomain</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>domain</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_config.ts.html#l72"><code>src&#x2F;config.ts:72</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Sets custom domain. Parameter is url which has always to be https://
+                                            (if you don't provide it, we will do it for you).</p>
+                                            <p>RegExp inspired taken from
+                                            <a href="https://github.com/jarib/google-closure-library/blob/master/closure/goog/string/linkify.js">https://github.com/jarib/google-closure-library/blob/master/closure/goog/string/linkify.js</a></p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">domain</code>
+                                                                    <span class="type">String | Null</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <p>valid domain starting with https:// or null for removing</p>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                            
+                                            </div>
+                                            <div id="method_setJsPackage" class="method item private">
+                                                <h3 class="name"><code>setJsPackage</code></h3>
+                                            
+                                                    <div class="args">
+                                                        <span class="paren">(</span><ul class="args-list inline commas">
+                                                            <li class="arg">
+                                                                    <code>name</code>
+                                                            </li>
+                                                            <li class="arg">
+                                                                    <code>version</code>
+                                                            </li>
+                                                        </ul><span class="paren">)</span>
+                                                    </div>
+                                            
+                                            
+                                            
+                                                    <span class="flag private">private</span>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                <div class="meta">
+                                                            <p>
+                                                            Defined in
+                                                    <a href="../files/src_config.ts.html#l94"><code>src&#x2F;config.ts:94</code></a>
+                                                    </p>
+                                            
+                                            
+                                            
+                                                </div>
+                                            
+                                                <div class="description">
+                                                    <p>Sets JS package and version info</p>
+                                            
+                                                </div>
+                                            
+                                                    <div class="params">
+                                                        <h4>Parameters</h4>
+                                            
+                                                        <ul class="params-list">
+                                                            <li class="param">
+                                                                    <code class="param-name">name</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <p>package name</p>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                            <li class="param">
+                                                                    <code class="param-name">version</code>
+                                                                    <span class="type">String</span>
+                                            
+                                            
+                                                                <div class="param-description">
+                                                                    <p>package version (semver)</p>
+                                            
+                                                                </div>
+                                            
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                            
+                                            
+                                            </div>
+                                    </div>
+                        
+                        
+                        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

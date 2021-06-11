@@ -1,0 +1,264 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1 class="file-heading">File: src/DataLayer/converters/toAfmResultSpec.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // (C) 2007-2020 GoodData Corporation
+                        import compact from &quot;lodash/compact&quot;;
+                        import flatMap from &quot;lodash/flatMap&quot;;
+                        import get from &quot;lodash/get&quot;;
+                        import { AFM, VisualizationObject } from &quot;@gooddata/typings&quot;;
+                        import { convertVisualizationObjectExtendedFilter } from &quot;./FilterConverter&quot;;
+                        import MeasureConverter from &quot;./MeasureConverter&quot;;
+                        import { LOCATION, TOOLTIP_TEXT } from &quot;../../DataLayer/constants/buckets&quot;;
+                        import { IVisualizationProperties } from &quot;./model/VisualizationObject&quot;;
+                        
+                        function convertAttribute(
+                            attribute: VisualizationObject.IVisualizationAttribute,
+                            idx: number,
+                        ): AFM.IAttribute {
+                            const alias = attribute.visualizationAttribute.alias;
+                            const aliasProp = alias ? { alias } : {};
+                            return {
+                                displayForm: attribute.visualizationAttribute.displayForm,
+                                localIdentifier: attribute.visualizationAttribute.localIdentifier || &#x60;a${idx + 1}&#x60;,
+                                ...aliasProp,
+                            };
+                        }
+                        
+                        function convertAFM(visualizationObject: VisualizationObject.IVisualizationObjectContent): AFM.IAfm {
+                            const textualAttributes: AFM.IAttribute[] = getAttributes(visualizationObject.buckets).map(
+                                convertAttribute,
+                            );
+                            const geoAttribute = getGeoAttributeForTooltip(visualizationObject);
+                            const attributes = geoAttribute ? [...textualAttributes, geoAttribute] : textualAttributes;
+                        
+                            const attrProp = attributes.length ? { attributes } : {};
+                        
+                            const measures: AFM.IMeasure[] = getMeasures(visualizationObject.buckets).map(
+                                MeasureConverter.convertMeasure,
+                            );
+                            const measuresProp = measures.length ? { measures } : {};
+                        
+                            const filters: AFM.CompatibilityFilter[] = visualizationObject.filters
+                                ? compact(visualizationObject.filters.map(convertVisualizationObjectExtendedFilter))
+                                : [];
+                            const filtersProp = filters.length ? { filters } : {};
+                        
+                            const nativeTotals = convertNativeTotals(visualizationObject);
+                            const nativeTotalsProp = nativeTotals.length ? { nativeTotals } : {};
+                        
+                            return {
+                                ...measuresProp,
+                                ...attrProp,
+                                ...filtersProp,
+                                ...nativeTotalsProp,
+                            };
+                        }
+                        
+                        function getMeasures(buckets: VisualizationObject.IBucket[]): VisualizationObject.IMeasure[] {
+                            return buckets.reduce((result: VisualizationObject.IMeasure[], bucket: VisualizationObject.IBucket) =&gt; {
+                                const measureItems: VisualizationObject.IMeasure[] = bucket.items.filter(
+                                    VisualizationObject.isMeasure,
+                                );
+                        
+                                return result.concat(measureItems);
+                            }, []);
+                        }
+                        
+                        function getNativeTotalAttributeIdentifiers(
+                            bucket: VisualizationObject.IBucket,
+                            total: VisualizationObject.IVisualizationTotal,
+                        ): string[] {
+                            const attributes = bucket.items.filter(VisualizationObject.isAttribute);
+                        
+                            const totalAttributeIndex = attributes.findIndex(
+                                attribute =&gt; attribute.visualizationAttribute.localIdentifier === total.attributeIdentifier,
+                            );
+                        
+                            return attributes
+                                .slice(0, totalAttributeIndex)
+                                .map(attribute =&gt; attribute.visualizationAttribute.localIdentifier);
+                        }
+                        
+                        function convertNativeTotals(
+                            visObj: VisualizationObject.IVisualizationObjectContent,
+                        ): AFM.INativeTotalItem[] {
+                            const nativeTotalsPerBucket = visObj.buckets.map(bucket =&gt; {
+                                const totals = bucket.totals || [];
+                                const nativeTotals = totals.filter(total =&gt; total.type === &quot;nat&quot;);
+                        
+                                return nativeTotals.map(total =&gt; ({
+                                    measureIdentifier: total.measureIdentifier,
+                                    attributeIdentifiers: getNativeTotalAttributeIdentifiers(bucket, total),
+                                }));
+                            });
+                        
+                            return flatMap(nativeTotalsPerBucket);
+                        }
+                        
+                        function getAttributes(
+                            buckets: VisualizationObject.IBucket[],
+                        ): VisualizationObject.IVisualizationAttribute[] {
+                            return buckets.reduce(
+                                (result: VisualizationObject.IVisualizationAttribute[], bucket: VisualizationObject.IBucket) =&gt; {
+                                    const items: VisualizationObject.IVisualizationAttribute[] = bucket.items.filter(
+                                        VisualizationObject.isAttribute,
+                                    );
+                        
+                                    return result.concat(items);
+                                },
+                                [],
+                            );
+                        }
+                        
+                        function parsePropertyItem(item: string): IVisualizationProperties {
+                            try {
+                                return JSON.parse(item);
+                            } catch (e) {
+                                return {};
+                            }
+                        }
+                        
+                        function buildTooltipBucketItem(tooltipText: string, alias: string): AFM.IAttribute {
+                            const tooltipAlias = alias ? { alias } : {};
+                            return {
+                                localIdentifier: TOOLTIP_TEXT,
+                                displayForm: {
+                                    uri: tooltipText,
+                                },
+                                ...tooltipAlias,
+                            };
+                        }
+                        
+                        function getGeoAttributeForTooltip(
+                            visualizationObject: VisualizationObject.IVisualizationObjectContent,
+                        ): AFM.IAttribute | null {
+                            const properties: IVisualizationProperties = parsePropertyItem(visualizationObject.properties || &quot;&quot;);
+                            const tooltipText: string = get(properties, &quot;controls.tooltipText&quot;, &quot;&quot;);
+                            if (tooltipText) {
+                                // copy alias of Geo attribute to alias of tooltipText attribute
+                                const locationAlias: string = visualizationObject.buckets.reduce(
+                                    (locationAlias: string, bucket: VisualizationObject.IBucket): string =&gt; {
+                                        if (!locationAlias &amp;&amp; bucket.localIdentifier === LOCATION) {
+                                            return get(bucket, &quot;items[0].visualizationAttribute.alias&quot;);
+                                        }
+                                        return locationAlias;
+                                    },
+                                    &quot;&quot;,
+                                );
+                                return buildTooltipBucketItem(tooltipText, locationAlias);
+                            }
+                        
+                            return null;
+                        }
+                        
+                        function convertSorting(visObj: VisualizationObject.IVisualizationObjectContent): AFM.SortItem[] {
+                            if (visObj.properties) {
+                                let properties = {};
+                                try {
+                                    properties = JSON.parse(visObj.properties);
+                                } catch {
+                                    // tslint:disable-next-line:no-console
+                                    console.error(&quot;Properties contains invalid JSON string.&quot;);
+                                }
+                        
+                                const sorts: AFM.SortItem[] = get(properties, &quot;sortItems&quot;, []);
+                                return sorts ? sorts : [];
+                            }
+                        
+                            return [];
+                        }
+                        
+                        function convertResultSpec(visObj: VisualizationObject.IVisualizationObjectContent): AFM.IResultSpec {
+                            const sorts = convertSorting(visObj);
+                            // Workaround because we can handle only 1 sort item for now
+                            const sortsProp = sorts.length ? { sorts: sorts.slice(0, 1) } : {};
+                        
+                            return {
+                                ...sortsProp,
+                            };
+                        }
+                        
+                        export interface IConvertedAFM {
+                            afm: AFM.IAfm;
+                            resultSpec: AFM.IResultSpec;
+                        }
+                        
+                        /**
+                         * Converts visualizationObject to afm and resultSpec
+                         *
+                         * @method toAfmResultSpec
+                         * @param {VisualizationObject.IVisualizationObjectContent} visObj
+                         * @returns {IConvertedAFM}
+                         */
+                        export function toAfmResultSpec(visObj: VisualizationObject.IVisualizationObjectContent): IConvertedAFM {
+                            const afm = convertAFM(visObj);
+                            return {
+                                afm,
+                                resultSpec: convertResultSpec(visObj),
+                            };
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,130 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1 class="file-heading">File: src/DataLayer/helpers/filters.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // (C) 2007-2018 GoodData Corporation
+                        import cloneDeep from &quot;lodash/cloneDeep&quot;;
+                        import isEmpty from &quot;lodash/isEmpty&quot;;
+                        import { AFM } from &quot;@gooddata/typings&quot;;
+                        import isDateFilter = AFM.isDateFilter;
+                        import isNegativeAttributeFilter = AFM.isNegativeAttributeFilter;
+                        import isPositiveAttributeFilter = AFM.isPositiveAttributeFilter;
+                        
+                        /**
+                         * Tests whether attribute elements are empty of not.
+                         *
+                         * @param elements one of the acceptable attribute element forms
+                         */
+                        export function isEmptyAttributeElements(elements: string[]): boolean {
+                            return isEmpty(elements);
+                        }
+                        
+                        /**
+                         * Tests whether filter if semantically empty - e.g. it will not have any effect on the results and can thus
+                         * be discarded.
+                         *
+                         * @param filter any acceptable AFM filter
+                         */
+                        export function isEmptyFilter(filter: AFM.CompatibilityFilter): boolean {
+                            if (isPositiveAttributeFilter(filter)) {
+                                return isEmptyAttributeElements(filter.positiveAttributeFilter.in);
+                            } else if (isNegativeAttributeFilter(filter)) {
+                                return isEmptyAttributeElements(filter.negativeAttributeFilter.notIn);
+                            }
+                        
+                            // expression filters were always considered empty
+                            return !isDateFilter(filter);
+                        }
+                        
+                        /**
+                         * Tests whether filter is semantically not empty - e.g. it will have some effect on the results.
+                         *
+                         * @param filter any acceptable AFM filter
+                         * @deprecated use isEmptyFilter instead
+                         */
+                        export function isNotEmptyFilter(filter: AFM.CompatibilityFilter): boolean {
+                            return !isEmptyFilter(filter);
+                        }
+                        
+                        /**
+                         * Merges new filters into existing AFM. This essentially concatenates/appends new filters at the end of the
+                         * existing filter list defined in the AFM and then filters out any semantically empty, no-effect filters.
+                         *
+                         * This function is immutable, it constructs new instance of AFM.
+                         *
+                         * @param afm afm to merge filters into
+                         * @param filters filters to merge
+                         * @returns new instance of AFM.
+                         */
+                        export function mergeFilters(afm: AFM.IAfm, filters: AFM.FilterItem[]): AFM.IAfm {
+                            const cloned = cloneDeep(afm);
+                        
+                            return {
+                                ...cloned,
+                                filters: [...(cloned.filters || []), ...filters].filter(isNotEmptyFilter),
+                            };
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,299 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1 class="file-heading">File: src/catalogue.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // (C) 2007-2018 GoodData Corporation
+                        import get from &quot;lodash/get&quot;;
+                        import find from &quot;lodash/find&quot;;
+                        import omit from &quot;lodash/omit&quot;;
+                        import cloneDeep from &quot;lodash/cloneDeep&quot;;
+                        import { XhrModule } from &quot;./xhr&quot;;
+                        import { ExecutionModule } from &quot;./execution&quot;;
+                        import { IAdHocItemDescription, IStoredItemDescription, ItemDescription } from &quot;./interfaces&quot;;
+                        
+                        const REQUEST_DEFAULTS = {
+                            types: [&quot;attribute&quot;, &quot;metric&quot;, &quot;fact&quot;],
+                            paging: {
+                                offset: 0,
+                            },
+                        };
+                        
+                        const LOAD_DATE_DATASET_DEFAULTS = {
+                            includeUnavailableDateDataSetsCount: true,
+                            includeAvailableDateAttributes: true,
+                        };
+                        
+                        /**
+                         * Convert specific params in options to &quot;requiredDataSets&quot; structure. For more details look into
+                         * res file https://github.com/gooddata/gdc-bear/blob/develop/resources/specification/internal/catalog.res
+                         *
+                         * @param options Supported keys in options are:
+                         * &lt;ul&gt;
+                         * &lt;li&gt;dataSetIdentifier - in value is string identifier of dataSet - this leads to CUSTOM type
+                         * &lt;li&gt;returnAllDateDataSets - true value means to return ALL values without dataSet differentiation
+                         * &lt;li&gt;returnAllRelatedDateDataSets - only related date dataSets are loaded across all dataSets
+                         * &lt;li&gt;by default we get PRODUCTION dataSets
+                         * &lt;/ul&gt;
+                         * @returns {Object} &quot;requiredDataSets&quot; object hash.
+                         */
+                        const getRequiredDataSets = (options: any) =&gt; {
+                            if (get(options, &quot;returnAllRelatedDateDataSets&quot;)) {
+                                return {};
+                            }
+                        
+                            if (get(options, &quot;returnAllDateDataSets&quot;)) {
+                                return { requiredDataSets: { type: &quot;ALL&quot; } };
+                            }
+                        
+                            if (get(options, &quot;dataSetIdentifier&quot;)) {
+                                return {
+                                    requiredDataSets: {
+                                        type: &quot;CUSTOM&quot;,
+                                        customIdentifiers: [get(options, &quot;dataSetIdentifier&quot;)],
+                                    },
+                                };
+                            }
+                        
+                            return { requiredDataSets: { type: &quot;PRODUCTION&quot; } };
+                        };
+                        
+                        interface IColumnsAndDefinitions {
+                            columns: string[];
+                            definitions: any[];
+                        }
+                        
+                        const buildItemDescriptionObjects = ({ columns, definitions }: IColumnsAndDefinitions): ItemDescription[] =&gt; {
+                            if (!columns) {
+                                return [];
+                            }
+                        
+                            return columns.map((column: string) =&gt; {
+                                const definition = find(
+                                    definitions,
+                                    ({ metricDefinition }) =&gt; metricDefinition.identifier === column,
+                                );
+                                const maql = get(definition, &quot;metricDefinition.expression&quot;);
+                                if (maql) {
+                                    return { expression: maql };
+                                }
+                                return { uri: column };
+                            });
+                        };
+                        
+                        const isStoredItemDescription = (
+                            itemDescription: ItemDescription,
+                        ): itemDescription is IStoredItemDescription =&gt; {
+                            return !!(itemDescription as IStoredItemDescription).uri;
+                        };
+                        
+                        const isAdHocItemDescription = (
+                            itemDescription: ItemDescription,
+                        ): itemDescription is IAdHocItemDescription =&gt; {
+                            return !!(itemDescription as IAdHocItemDescription).expression;
+                        };
+                        
+                        const unwrapItemDescriptionObject = (itemDescription: ItemDescription): string =&gt; {
+                            if (isStoredItemDescription(itemDescription)) {
+                                return itemDescription.uri;
+                            }
+                            if (isAdHocItemDescription(itemDescription)) {
+                                return itemDescription.expression;
+                            }
+                            throw new Error(&quot;Item description can only have expression or uri&quot;);
+                        };
+                        
+                        export class CatalogueModule {
+                            constructor(private xhr: XhrModule, private execution: ExecutionModule) {}
+                        
+                            public loadItems(projectId: string, options = {}) {
+                                const request = omit(
+                                    {
+                                        ...REQUEST_DEFAULTS,
+                                        ...options,
+                                        ...getRequiredDataSets(options),
+                                    },
+                                    [&quot;dataSetIdentifier&quot;, &quot;returnAllDateDataSets&quot;, &quot;attributesMap&quot;],
+                                );
+                        
+                                const mdObj = get(cloneDeep(options), &quot;bucketItems&quot;);
+                                const attributesMap = get(options, &quot;attributesMap&quot;);
+                                const hasBuckets = get(mdObj, &quot;buckets&quot;) !== undefined;
+                                if (hasBuckets) {
+                                    return this.loadItemDescriptions(projectId, mdObj, attributesMap).then((bucketItems: any) =&gt;
+                                        this.loadCatalog(projectId, { ...request, bucketItems }),
+                                    );
+                                }
+                        
+                                return this.loadCatalog(projectId, request);
+                            }
+                        
+                            public async loadDateDataSets(projectId: string, options: any) {
+                                const mdObj = cloneDeep(options).bucketItems;
+                                const bucketItems = mdObj
+                                    ? await this.loadItemDescriptions(projectId, mdObj, get(options, &quot;attributesMap&quot;), true)
+                                    : undefined;
+                        
+                                const omittedOptions = [
+                                    &quot;filter&quot;,
+                                    &quot;types&quot;,
+                                    &quot;paging&quot;,
+                                    &quot;dataSetIdentifier&quot;,
+                                    &quot;returnAllDateDataSets&quot;,
+                                    &quot;returnAllRelatedDateDataSets&quot;,
+                                    &quot;attributesMap&quot;,
+                                ];
+                                // includeObjectsWithTags has higher priority than excludeObjectsWithTags,
+                                // so when present omit excludeObjectsWithTags
+                                if (options.includeObjectsWithTags) {
+                                    omittedOptions.push(&quot;excludeObjectsWithTags&quot;);
+                                }
+                        
+                                const request = omit(
+                                    {
+                                        ...LOAD_DATE_DATASET_DEFAULTS,
+                                        ...REQUEST_DEFAULTS,
+                                        ...options,
+                                        ...getRequiredDataSets(options),
+                                        bucketItems,
+                                    },
+                                    omittedOptions,
+                                );
+                        
+                                return this.requestDateDataSets(projectId, request);
+                            }
+                        
+                            /**
+                             * Loads item description objects and returns them
+                             *
+                             * @internal
+                             * @private
+                             *
+                             * @param projectId {string}
+                             * @param mdObj metadata object containing buckets, visualization class, properties etc.
+                             * @param attributesMap contains map of attributes where the keys are the attributes display forms URIs
+                             * @param removeDateItems {boolean} skip date items
+                             * @return ItemDescription which is either &#x60;{ uri: string }&#x60; or &#x60;{ expression: string }&#x60;
+                             */
+                            public async loadItemDescriptionObjects(
+                                projectId: string,
+                                mdObj: any,
+                                attributesMap: any,
+                                removeDateItems = false,
+                            ): Promise&lt;ItemDescription[]&gt; {
+                                const definitionsAndColumns = await this.execution.mdToExecutionDefinitionsAndColumns(
+                                    projectId,
+                                    mdObj,
+                                    { attributesMap, removeDateItems },
+                                );
+                        
+                                return buildItemDescriptionObjects(definitionsAndColumns);
+                            }
+                        
+                            /**
+                             * ItemDescription is either URI or MAQL expression
+                             * https://github.com/gooddata/gdc-bear/blob/185.4/resources/specification/md/obj.res#L284
+                             *
+                             * @param projectId {string}
+                             * @param mdObj metadata object containing buckets, visualization class, properties etc.
+                             * @param attributesMap contains map of attributes where the keys are the attributes display forms URIs
+                             * @param removeDateItems {boolean} skip date items
+                             * @deprecated
+                             */
+                            public async loadItemDescriptions(
+                                projectId: string,
+                                mdObj: any,
+                                attributesMap: any,
+                                removeDateItems = false,
+                            ): Promise&lt;string[]&gt; {
+                                const itemDescriptions = await this.loadItemDescriptionObjects(
+                                    projectId,
+                                    mdObj,
+                                    attributesMap,
+                                    removeDateItems,
+                                );
+                        
+                                return itemDescriptions.map(unwrapItemDescriptionObject);
+                            }
+                        
+                            private requestDateDataSets(projectId: string, dateDataSetsRequest: any) {
+                                const uri = &#x60;/gdc/internal/projects/${projectId}/loadDateDataSets&#x60;;
+                        
+                                return this.xhr
+                                    .post(uri, { data: { dateDataSetsRequest } })
+                                    .then(r =&gt; r.getData())
+                                    .then(data =&gt; data.dateDataSetsResponse);
+                            }
+                        
+                            private loadCatalog(projectId: string, catalogRequest: any) {
+                                const uri = &#x60;/gdc/internal/projects/${projectId}/loadCatalog&#x60;;
+                        
+                                return this.xhr
+                                    .post(uri, { data: { catalogRequest } })
+                                    .then(r =&gt; r.getData())
+                                    .then(data =&gt; data.catalogResponse);
+                            }
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

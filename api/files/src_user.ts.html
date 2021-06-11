@@ -1,0 +1,322 @@
+---
+layout: api
+title: foobar
+---
+<div id="doc">
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <div id="api-tabview" class="tabview">
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul class="tabs">
+                                <li><a href="#api-modules" class="category">Modules</a>
+                                    <ul id="api-modules" class="apis modules">
+                                        <li><a href="../modules/config.html">config</a></li>
+                                        <li><a href="../modules/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../modules/execution.html">execution</a></li>
+                                        <li><a href="../modules/metadata.html">metadata</a></li>
+                                        <li><a href="../modules/project.html">project</a></li>
+                                        <li><a href="../modules/report.html">report</a></li>
+                                        <li><a href="../modules/sdk.html">sdk</a></li>
+                                        <li><a href="../modules/util.html">util</a></li>
+                                        <li><a href="../modules/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#api-classes" class="category">Classes</a>
+                                    <ul id="api-classes" class="apis classes">
+                                        <li><a href="../classes/config.html">config</a></li>
+                                        <li><a href="../classes/DataLayer.html">DataLayer</a></li>
+                                        <li><a href="../classes/execution.html">execution</a></li>
+                                        <li><a href="../classes/metadata.html">metadata</a></li>
+                                        <li><a href="../classes/project.html">project</a></li>
+                                        <li><a href="../classes/report.html">report</a></li>
+                                        <li><a href="../classes/sdk.html">sdk</a></li>
+                                        <li><a href="../classes/util.html">util</a></li>
+                                        <li><a href="../classes/xhr.html">xhr</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <strong>gooddata-js</strong> <span class="version">v13.5.0</span>
+                        <h1 class="file-heading">File: src/user.ts</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        // (C) 2007-2020 GoodData Corporation
+                        import { XhrModule, ApiResponseError, ApiResponse } from &quot;./xhr&quot;;
+                        import { ProjectModule } from &quot;./project&quot;;
+                        import qs from &quot;qs&quot;;
+                        
+                        export interface IUserConfigsSettingItem {
+                            settingItem: {
+                                key: string;
+                                links: {
+                                    self: string;
+                                };
+                                source: string;
+                                value: string;
+                            };
+                        }
+                        
+                        export interface IUserConfigsResponse {
+                            settings: {
+                                items: IUserConfigsSettingItem[];
+                            };
+                        }
+                        
+                        export class UserModule {
+                            constructor(private xhr: XhrModule) {}
+                        
+                            /**
+                             * Find out whether a user is logged in
+                             *
+                             * @return {Promise} resolves with true if user logged in, false otherwise
+                             * @method isLoggedIn
+                             */
+                            public isLoggedIn(): Promise&lt;boolean&gt; {
+                                return new Promise((resolve, reject) =&gt; {
+                                    this.xhr.get(&quot;/gdc/account/token&quot;).then(
+                                        r =&gt; {
+                                            if (r.response.ok) {
+                                                resolve(true);
+                                            }
+                        
+                                            resolve(false);
+                                        },
+                                        (err: any) =&gt; {
+                                            if (err.response.status === 401) {
+                                                resolve(false);
+                                            } else {
+                                                reject(err);
+                                            }
+                                        },
+                                    );
+                                });
+                            }
+                        
+                            /**
+                             * Find out whether a specified project is available to a currently logged user
+                             *
+                             * @method isLoggedInProject
+                             * @param {String} projectId A project identifier
+                             * @return {Promise} Resolves with true if user logged in and project available,
+                             *                   resolves with false if user logged in and project not available,
+                             *                   rejects if user not logged in
+                             */
+                            public isLoggedInProject(projectId: string) {
+                                return this.getCurrentProfile().then(profile =&gt; {
+                                    return new Promise((resolve, reject) =&gt; {
+                                        const projectModule = new ProjectModule(this.xhr);
+                        
+                                        projectModule.getProjects(profile.links.self.split(&quot;/&quot;)[4]).then(
+                                            projects =&gt; {
+                                                if (projects.find((p: any) =&gt; p.links.self === &#x60;/gdc/projects/${projectId}&#x60;)) {
+                                                    resolve(true);
+                                                } else {
+                                                    resolve(false);
+                                                }
+                                            },
+                                            (err: ApiResponseError) =&gt; {
+                                                reject(err);
+                                            },
+                                        );
+                                    });
+                                });
+                            }
+                        
+                            /**
+                             * This function provides an authentication entry point to the GD API. It is needed to authenticate
+                             * by calling this function prior any other API calls. After providing valid credentials
+                             * every subsequent API call in a current session will be authenticated.
+                             *
+                             * @method login
+                             * @param {String} username
+                             * @param {String} password
+                             */
+                            public login(username: string, password: string) {
+                                return this.xhr
+                                    .post(&quot;/gdc/account/login&quot;, {
+                                        body: JSON.stringify({
+                                            postUserLogin: {
+                                                login: username,
+                                                password,
+                                                remember: 1,
+                                                captcha: &quot;&quot;,
+                                                verifyCaptcha: &quot;&quot;,
+                                            },
+                                        }),
+                                    })
+                                    .then(r =&gt; r.getData());
+                            }
+                        
+                            /**
+                             * This function provides an authentication entry point to the GD API via SSO
+                             * https://help.gooddata.com/display/developer/GoodData+PGP+Single+Sign-On
+                             *
+                             * @method loginSso
+                             * @param {String} encryptedClaims PGP message
+                             * @param {String} ssoProvider
+                             * @param {String} targetUrl
+                             */
+                            public loginSso(encryptedClaims: string, ssoProvider: string, targetUrl: string) {
+                                return this.xhr.post(&quot;/gdc/account/customerlogin&quot;, {
+                                    data: {
+                                        pgpLoginRequest: {
+                                            targetUrl,
+                                            ssoProvider,
+                                            encryptedClaims,
+                                        },
+                                    },
+                                });
+                            }
+                        
+                            /**
+                             * Logs out current user
+                             * @method logout
+                             */
+                            public logout(): Promise&lt;ApiResponse | void&gt; {
+                                return this.isLoggedIn().then(
+                                    (loggedIn: boolean): Promise&lt;ApiResponse | void&gt; =&gt; {
+                                        if (loggedIn) {
+                                            return this.xhr.get(&quot;/gdc/app/account/bootstrap&quot;).then((result: any) =&gt; {
+                                                const data = result.getData();
+                                                const userUri = data.bootstrapResource.accountSetting.links.self;
+                                                const userId = userUri.match(/([^\/]+)\/?$/)[1];
+                        
+                                                return this.xhr.del(&#x60;/gdc/account/login/${userId}&#x60;);
+                                            });
+                                        }
+                        
+                                        return Promise.resolve();
+                                    },
+                                    (err: ApiResponseError) =&gt; Promise.reject(err),
+                                );
+                            }
+                        
+                            /**
+                             * Gets current user&#x27;s profile
+                             * @method getCurrentProfile
+                             * @return {Promise} Resolves with account setting object
+                             */
+                            public getCurrentProfile() {
+                                return this.xhr.get(&quot;/gdc/account/profile/current&quot;).then(r =&gt; r.getData().accountSetting);
+                            }
+                        
+                            /**
+                             * Updates user&#x27;s profile settings
+                             * @method updateProfileSettings
+                             * @param {String} profileId - User profile identifier
+                             * @param {Object} profileSetting
+                             */
+                            public updateProfileSettings(profileId: string, profileSetting: any): Promise&lt;ApiResponse&gt; {
+                                // TODO
+                                return this.xhr.put(&#x60;/gdc/account/profile/${profileId}/settings&#x60;, {
+                                    body: profileSetting,
+                                });
+                            }
+                        
+                            /**
+                             * Returns info about currently logged in user from bootstrap resource
+                             * @method getAccountInfo
+                             */
+                            public getAccountInfo() {
+                                return this.xhr.get(&quot;/gdc/app/account/bootstrap&quot;).then((result: any) =&gt; {
+                                    const data = result.getData();
+                                    return this.getAccountInfoInBootstrap(data);
+                                });
+                            }
+                        
+                            /**
+                             * Returns current user info from bootstrapData
+                             * @method getAccountInfoInBootstrap
+                             * @param bootstrapData - data was got from bootstrap resource
+                             */
+                            public getAccountInfoInBootstrap(bootstrapData: any) {
+                                const {
+                                    bootstrapResource: {
+                                        accountSetting: {
+                                            login,
+                                            firstName,
+                                            lastName,
+                                            links: { self: profileUri },
+                                        },
+                                        current: { loginMD5 },
+                                        settings: { organizationName },
+                                    },
+                                } = bootstrapData;
+                                return {
+                                    login,
+                                    loginMD5,
+                                    firstName,
+                                    lastName,
+                                    organizationName,
+                                    profileUri,
+                                };
+                            }
+                        
+                            /**
+                             * Gets user configs including user specific feature flags
+                             *
+                             * @param {String} userId - A user identifier
+                             * @return {IUserConfigsSettingItem[]} An array of user configs setting item
+                             */
+                            public getUserConfigs(userId: string): Promise&lt;IUserConfigsSettingItem[]&gt; {
+                                return this.xhr.get(&#x60;/gdc/account/profile/${userId}/config&#x60;).then((apiResponse: ApiResponse) =&gt; {
+                                    const userConfigs: IUserConfigsResponse = apiResponse.getData();
+                                    const {
+                                        settings: { items },
+                                    } = userConfigs;
+                        
+                                    return items || [];
+                                });
+                            }
+                        
+                            /**
+                             * Returns the feature flags valid for the currently logged in user.
+                             * @method getFeatureFlags
+                             */
+                            public getFeatureFlags() {
+                                return this.xhr
+                                    .get(&quot;/gdc/app/account/bootstrap&quot;)
+                                    .then((r: any) =&gt; r.getData())
+                                    .then((result: any) =&gt; result.bootstrapResource.current.featureFlags);
+                            }
+                        
+                            /**
+                             * Initiates SPI SAML SSO
+                             * @param relayState URL of the page where the user is redirected after a successful login
+                             */
+                            public initiateSamlSso(relayState: string) {
+                                this.xhr
+                                    .get(&#x60;/gdc/account/samlrequest?${qs.stringify({ relayState })}&#x60;)
+                                    .then(data =&gt; data.getData())
+                                    .then(response =&gt; {
+                                        const loginUrl = response.samlRequests.items[0].samlRequest.loginUrl;
+                                        window.location.assign(loginUrl);
+                                    });
+                            }
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
