@@ -1,9 +1,0 @@
-language: node_js
-cache: yarn
-
-dist: trusty
-
-node_js:
-  - "12.16.1"
-
-script: yarn test-ci
