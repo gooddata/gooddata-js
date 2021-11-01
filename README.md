@@ -100,6 +100,6 @@ To publish API documentation [sdk.gooddata.com/gooddata-js/api](http://sdk.goodd
 
 
 ## License
-(C) 2007-2018 GoodData Corporation
+(C) 2007-2021 GoodData Corporation
 
 For more information, please see [LICENSE](https://github.com/gooddata/gooddata-js/blob/master/LICENSE)
