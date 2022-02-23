@@ -61,7 +61,7 @@ Then you can import the library file and global variable `gooddata` contains all
 
 We welcome any contribution in form of [issues](https://github.com/gooddata/gooddata-js/issues) or [pull requests](https://github.com/gooddata/gooddata-js/pulls).
 
-Install [Node.js](http://nodejs.org) (node 12.16.1, npm v6.13.4) and [Yarn](https://classic.yarnpkg.com) 1.22.4.
+Install [Node.js](http://nodejs.org) and [Yarn](https://classic.yarnpkg.com) (for versions, see `docker/.config`)
 
 These commands may come in handy while developing:
 
