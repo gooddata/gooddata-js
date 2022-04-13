@@ -74,7 +74,7 @@
     "@types/node-fetch": "^2.5.7",
     "@types/qs": "^6.5.1",
     "@types/uuid": "^8.3.0",
-    "async": "2.1.5",
+    "async": "3.2.2",
     "exports-loader": "0.6.3",
     "fast-levenshtein": "2.0.6",
     "fetch-mock": "5.12.2",
